@@ -1,0 +1,294 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "txVmssSettings": {
+            "type": "secureObject"
+        },
+        "extensionSettings": {
+            "type": "secureObject"
+        },
+        "mnVmssSettings": {
+            "type": "secureObject"
+        },
+        "scriptFileUri": {
+            "type": "object"
+        },
+        "ubuntuImage": {
+            "type": "object"
+        },
+        "location": {
+            "type": "string"
+        },
+        "suffix": {
+            "type": "string"
+        },
+        "vnetName": {
+            "type": "string"
+        },
+        "dbEndpoint": {
+            "type": "string"
+        },
+        "dbPrimaryKey": {
+            "type": "securestring"
+        },
+        "consortium-data": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "ethereumAccountPsswd": "[parameters('extensionSettings').ethereumAccountPsswd]",
+        "ethereumAccountPassphrase": "[parameters('extensionSettings').ethereumAccountPassphrase]",
+        "artifactsLocationURL": "[parameters('extensionSettings').artifactsLocationURL]",
+        "ethereumNetworkID": "[parameters('extensionSettings').ethereumNetworkID]",
+        "maxPeers": "[parameters('extensionSettings').maxPeers]",
+        "mnNode": "[parameters('extensionSettings').mnNode]",
+        "txNode": "[parameters('extensionSettings').txNode]",
+        "gethIPCPort": "[parameters('extensionSettings').gethIPCPort]",
+        "numBootNodes": "[parameters('extensionSettings').numBootNodes]",
+        "numMNNodes": "[parameters('extensionSettings').numMNNodes]",
+        "mnVMNamePrefix": "[parameters('extensionSettings').mnVMNamePrefix]",
+        "genesisBlock": "[parameters('extensionSettings').genesisBlock]",
+        "adminHash": "[parameters('extensionSettings').genesisBlock]",
+        "numTXNodes": "[parameters('extensionSettings').numTXNodes]",
+        "txVMNamePrefix": "[parameters('extensionSettings').txVMNamePrefix]",
+        "adminSitePort": "[parameters('extensionSettings').adminSitePort]",
+        "consortiumMemberId": "[parameters('extensionSettings').consortiumId]",
+        "resourceGuid": "[parameters('txVmssSettings').resourceGuid]",
+        "txOsProfilepassword": {
+            "computerNamePrefix": "[variables('txVmssName')]",
+            "adminUsername": "[variables('adminUsername')]",
+            "adminPassword": "[variables('adminPassword')]"
+        },
+        "sshKeyPath": "[concat('/home/',variables('adminUsername'),'/.ssh/authorized_keys')]",
+        "txOsProfilesshPublicKey": {
+            "computerNamePrefix": "[variables('txVmssName')]",
+            "adminUsername": "[variables('adminUsername')]",
+            "adminPassword": "[variables('adminPassword')]",
+            "linuxConfiguration": {
+                "disablePasswordAuthentication": true,
+                "ssh": {
+                    "publicKeys": [
+                        {
+                            "path": "[variables('sshKeyPath')]",
+                            "keyData": "[variables('sshPublicKey')]"
+                        }
+                    ]
+                }
+            }
+        },
+        "txOsProfileReference": "[variables(concat('txOsProfile', variables('authenticationType')))]",
+        "mnOsProfilepassword": {
+            "computerNamePrefix": "[variables('mnVmssName')]",
+            "adminUsername": "[variables('adminUsername')]",
+            "adminPassword": "[variables('adminPassword')]"
+        },
+        "mnOsProfilesshPublicKey": {
+            "computerNamePrefix": "[variables('mnVmssName')]",
+            "adminUsername": "[variables('adminUsername')]",
+            "adminPassword": "[variables('adminPassword')]",
+            "linuxConfiguration": {
+                "disablePasswordAuthentication": true,
+                "ssh": {
+                    "publicKeys": [
+                        {
+                            "path": "[variables('sshKeyPath')]",
+                            "keyData": "[variables('sshPublicKey')]"
+                        }
+                    ]
+                }
+            }
+        },
+        "mnOsProfileReference": "[variables(concat('mnOsProfile', variables('authenticationType')))]",
+        "authenticationType": "[parameters('txVmssSettings').authenticationType]",
+        "sshPublicKey": "[parameters('txVmssSettings').sshPublicKey]",
+        "adminUsername": "[parameters('txVmssSettings').adminUsername]",
+        "adminPassword": "[parameters('txVmssSettings').adminPassword]",
+        "txVmssName": "[concat(parameters('txVmssSettings').vmssName, '-',parameters('suffix'))]",
+        "apiVersionVirtualMachineScaleSets": "[parameters('txVmssSettings').apiVersionVirtualMachineScaleSets]",
+        "txNodeVMSize": "[parameters('txVmssSettings').nodeVMSize]",
+        "txCapacity": "[parameters('txVmssSettings').txCapacity]",
+        "txStorageAccountType": "[parameters('txVmssSettings').storageAccountType]",
+        "txNicName": "[parameters('txVmssSettings').nicName]",
+        "txIpConfigName": "[parameters('txVmssSettings').ipConfigName]",
+        "vnetName": "[parameters('vnetName')]",
+        "txSubnetName": "[parameters('txVmssSettings').subnetName]",
+        "loadBalancerName": "[concat(parameters('txVmssSettings').loadBalancerName,'-',parameters('suffix'))]",
+        "lbBackendAddressPoolName": "[parameters('txVmssSettings').loadBalancerBackendAddressPoolName]",
+        "lbInboundNatRuleNamePrefix": "[parameters('txVmssSettings').loadBalancerInboundNatRuleNamePrefix]",
+        "txInternalDnsName": "[concat(parameters('txVmssSettings').internalDnsName,'-',parameters('suffix'))]",
+        "mnVmssName": "[concat(parameters('mnVmssSettings').vmssName, '-',parameters('suffix'))]",
+        "mnNodeVMSize": "[parameters('mnVmssSettings').nodeVMSize]",
+        "mnCapacity": "[parameters('mnVmssSettings').mnCapacity]",
+        "mnStorageAccountType": "[parameters('mnVmssSettings').storageAccountType]",
+        "mnNicName": "[parameters('mnVmssSettings').nicName]",
+        "mnIpConfigName": "[parameters('mnVmssSettings').ipConfigName]",
+        "mnSubnetName": "[parameters('mnVmssSettings').subnetName]",
+        "mnInternalDnsName": "[concat(parameters('mnVmssSettings').internalDnsName,'-',parameters('suffix'))]",
+        "mnSeqNum": 1,
+        "empty": " "
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "name": "[variables('txVmssName')]",
+            "location": "[parameters('location')]",
+            "apiVersion": "[variables('apiVersionVirtualMachineScaleSets')]",
+            "tags": {
+                "resourceGuid": "[variables('resourceGuid')]"
+            },
+            "sku": {
+                "name": "[variables('txNodeVMSize')]",
+                "tier": "Standard",
+                "capacity": "[variables('txCapacity')]"
+            },
+            "properties": {
+                "singlePlacementGroup": true,
+                "overprovision": true,
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadWrite",
+                            "managedDisk": {
+                                "storageAccountType": "[variables('txStorageAccountType')]"
+                            }
+                        },
+                        "imageReference": "[parameters('ubuntuImage')]"
+                    },
+                    "osProfile": "[variables('txOsProfileReference')]",
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[variables('txNicName')]",
+                                "properties": {
+                                    "primary": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[variables('txIpConfigName')]",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',variables('vnetName')),'/subnets/',variables('txSubnetName'))]"
+                                                },
+                                                "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')), '/backendAddressPools/',variables('lbBackendAddressPoolName'))]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ],
+                                    "dnsSettings": {
+                                        "internalDnsNameLabel": "[variables('txInternalDnsName')]"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "extensionProfile": {
+                        "extensions": [
+                            {
+                                "name": "gethconfigure",
+                                "properties": {
+                                    "publisher": "Microsoft.Azure.Extensions",
+                                    "type": "CustomScript",
+                                    "typeHandlerVersion": "2.0",
+                                    "autoUpgradeMinorVersion": true,
+                                    "settings": {
+                                        "fileUris": [
+                                            "[parameters('scriptFileUri').fileUri]"
+                                        ]
+                                    },
+                                    "protectedSettings": {
+                                        "commandToExecute": "[concat('/bin/bash ',parameters('scriptFileUri').filename,' \"', variables('adminUsername'), '\" \"', variables('ethereumAccountPsswd'), '\" \"', variables('ethereumAccountPassphrase'), '\" \"', variables('artifactsLocationURL'), '\" \"', variables('ethereumNetworkID'), '\" \"', variables('maxPeers'), '\" \"', variables('txNode'), '\" \"', variables('gethIPCPort'), '\" \"', variables('numBootNodes'), '\" \"', variables('numMNNodes'), '\" \"', variables('mnVMNamePrefix'), '\" \"', variables('genesisBlock'), '\" \"', variables('adminHash'), '\" \"', variables('numTXNodes'), '\" \"', variables('txVMNamePrefix'), '\" \"', variables('adminSitePort'), '\" \"', variables('consortiumMemberId'), '\" \"', parameters('dbPrimaryKey'),'\" \"', parameters('dbEndpoint'),'\" \"', parameters('suffix'),'\" \"', parameters('consortium-data'),'\"')]"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "name": "[variables('mnVmssName')]",
+            "location": "[parameters('location')]",
+            "apiVersion": "[variables('apiVersionVirtualMachineScaleSets')]",
+            "tags": {
+                "resourceGuid": "[variables('resourceGuid')]"
+            },
+            "sku": {
+                "name": "[variables('mnNodeVMSize')]",
+                "tier": "Standard",
+                "capacity": "[variables('mnCapacity')]"
+            },
+            "properties": {
+                "singlePlacementGroup": true,
+                "overprovision": true,
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadWrite",
+                            "managedDisk": {
+                                "storageAccountType": "[variables('mnStorageAccountType')]"
+                            }
+                        },
+                        "imageReference": "[parameters('ubuntuImage')]"
+                    },
+                    "osProfile": "[variables('mnOsProfileReference')]",
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[variables('mnNicName')]",
+                                "properties": {
+                                    "primary": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[variables('mnIpConfigName')]",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',variables('vnetName')),'/subnets/',variables('mnSubnetName'))]"
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "dnsSettings": {
+                                        "internalDnsNameLabel": "[variables('mnInternalDnsName')]"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "extensionProfile": {
+                        "extensions": [
+                            {
+                                "name": "gethconfigure",
+                                "properties": {
+                                    "publisher": "Microsoft.Azure.Extensions",
+                                    "type": "CustomScript",
+                                    "typeHandlerVersion": "2.0",
+                                    "autoUpgradeMinorVersion": true,
+                                    "settings": {
+                                        "fileUris": [
+                                            "[parameters('scriptFileUri').fileUri]"
+                                        ]
+                                    },
+                                    "protectedSettings": {
+                                        "commandToExecute": "[concat('/bin/bash ',parameters('scriptFileUri').filename,' \"', variables('adminUsername'), '\" \"', variables('ethereumAccountPsswd'), '\" \"', variables('ethereumAccountPassphrase'), '\" \"', variables('artifactsLocationURL'), '\" \"', variables('ethereumNetworkID'), '\" \"', variables('maxPeers'), '\" \"', variables('mnNode'), '\" \"', variables('gethIPCPort'), '\" \"', variables('numBootNodes'), '\" \"', variables('numMNNodes'), '\" \"', variables('mnVMNamePrefix'), '\" \"', variables('genesisBlock'), '\" \"', variables('adminHash'), '\" \"', variables('mnSeqNum'), '\" \"', variables('empty'), '\" \"', variables('empty'), '\" \"', variables('empty'), '\" \"', parameters('dbPrimaryKey'),'\" \"', parameters('dbEndpoint'),'\" \"', parameters('suffix'),'\" \"', parameters('consortium-data'),'\"')]"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}

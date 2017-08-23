@@ -1,0 +1,73 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "connectionSettings": {
+      "type": "object"
+    },
+    "locationArray": {
+      "type": "array"
+    },
+    "suffixArray": {
+      "type": "array"
+    }
+  },
+  "variables": {
+    "resourceGuid": "[parameters('connectionSettings').resourceGuid]",
+    "regionCount": "[parameters('connectionSettings').regionCount]",
+    "apiVersionConnections": "[parameters('connectionSettings').apiVersionConnections]",
+    "connectionSharedKey": "[parameters('connectionSettings').connectionSharedKey]"
+  },
+  "resources": [
+    {
+      "apiVersion": "[variables('apiVersionConnections')]",
+      "type": "Microsoft.Network/connections",
+      "name": "[concat(parameters('connectionSettings').connectionName,'-',parameters('suffixArray')[copyIndex()],'-to-',parameters('suffixArray')[copyIndex(1)])]",
+      "location": "[parameters('locationArray')[copyIndex()]]",
+      "tags": {
+        "resourceGuid": "[variables('resourceGuid')]"
+      },
+      "copy": {
+        "name": "loop",
+        "count": "[sub(variables('regionCount'),1)]"
+      },
+      "properties": {
+        "virtualNetworkGateway1": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworkGateways',concat(parameters('connectionSettings').gatewayName,'-',parameters('suffixArray')[copyIndex()]))]"
+        },
+        "virtualNetworkGateway2": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworkGateways',concat(parameters('connectionSettings').gatewayName,'-',parameters('suffixArray')[copyIndex(1)]))]"
+        },
+        "connectionType": "Vnet2Vnet",
+        "sharedKey": "[variables('connectionSharedKey')]",
+        "routingWeight": 3,
+        "enableBGP": true
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersionConnections')]",
+      "type": "Microsoft.Network/connections",
+      "name": "[concat(parameters('connectionSettings').connectionName,'-',parameters('suffixArray')[copyIndex(1)],'-to-',parameters('suffixArray')[copyIndex()])]",
+      "location": "[parameters('locationArray')[copyIndex(1)]]",
+      "tags": {
+        "resourceGuid": "[variables('resourceGuid')]"
+      },
+      "copy": {
+        "name": "loop",
+        "count": "[sub(variables('regionCount'),1)]"
+      },
+      "properties": {
+        "virtualNetworkGateway1": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworkGateways',concat(parameters('connectionSettings').gatewayName,'-',parameters('suffixArray')[copyIndex(1)]))]"
+        },
+        "virtualNetworkGateway2": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworkGateways',concat(parameters('connectionSettings').gatewayName,'-',parameters('suffixArray')[copyIndex()]))]"
+        },
+        "connectionType": "Vnet2Vnet",
+        "sharedKey": "[variables('connectionSharedKey')]",
+        "routingWeight": 3,
+        "enableBGP": true
+      }
+    }
+  ]
+}

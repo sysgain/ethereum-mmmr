@@ -1,0 +1,87 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "namePrefix": {
+            "value": "eth"
+        },
+        "regionCount": {
+            "value": 2
+        },
+        "location_1": {
+            "value": "westus"
+        },
+        "location_2": {
+            "value": "eastus"
+        },
+        "location_3": {
+            "value": "centralus"
+        },
+        "location_4": {
+            "value": "eastus2"
+        },
+        "location_5": {
+            "value": "westus2"
+        },
+        "authType": {
+            "value": "password"
+        },
+        "adminUsername": {
+            "value": "gethadmin"
+        },
+        "adminPassword": {
+            "value": "Ashpassword123"
+        },
+        "adminSSHKey": {
+            "value": ""
+        },
+        "ethereumNetworkID": {
+            "value": 10101010
+        },
+        "consortiumId": {
+            "value": 1
+        },
+        "ethereumAccountPsswd": {
+            "value": "Ashpassword123"
+        },
+        "ethereumAccountPassphrase": {
+            "value": "Ashpassword123"
+        },
+        "numMiningNodesRegion": {
+            "value": 2
+        },
+        "mnNodeVMSize": {
+            "value": "Standard_A1"
+        },
+        "mnStorageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "numTXNodesRegion": {
+            "value": 2
+        },
+        "txNodeVMSize": {
+            "value": "Standard_A1"
+        },
+        "txStorageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "consortiumMemberGatewayId": {
+            "value": ""
+        },
+        "connectionSharedKey": {
+            "value": "Ashpassword123"
+        },
+        "mode": {
+            "value": "Single"
+        },
+        "peerInfoEndpoint": {
+            "value": ""
+        },
+        "genesisBlock": {
+            "value": ""
+        },
+        "baseUrl": {
+            "value": "https://raw.githubusercontent.com/sysgain/Ethereum-consortium-blockchain/eth-multi-dev4"
+        }
+    }
+}
