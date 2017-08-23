@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "namePrefix": {
+            "value": "eth"
+        },
+        "authType": {
+            "value": "password"
+        },
+        "adminUsername": {
+            "value": "gethadmin"
+        },
+        "adminPassword": {
+            "value": "Ashpassword123"
+        },
+        "adminSSHKey": {
+            "value": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAmabE9WpWQwJ/a67CXqosCs0d8DBkOlejNAkXWyiCM+KhCu4dlML+hfHSNOYc4Orz5hK8JFvq98XWFNEuP33bTNe9T7Os0yJ148QOq2dM2hIx8GkYDcqBMAjsFcRo6fkLw/q5fmEXJ/SBbqxD5W2tLeZJcPqESzcloEe1OgdcjWH2iohpgbGjpjj5Pkrq6JHqOCKowa6Itr88cOs4XOkp/cvZEKwMTW4Q3De90/uEcwwVmldPo0mD9QdUUZ6tWG0P7EOee4x72eywTC6BPAXDM4TTw0BL7/o7slHsZSGxs7q9rcUcb7ttM5vbuJNw5PoipxorwgUAJVnZo/3mgXIEAQ== rsa-key-20170822"
+        },
+        "ethereumAccountPsswd": {
+            "value": "Ashpassword123"
+        },
+        "ethereumAccountPassphrase": {
+            "value": "Ashpassword123"
+        },
+        "ethereumNetworkID": {
+            "value": 72
+        },
+        "numConsortiumMembers": {
+            "value": 3
+        },
+        "numMiningNodesPerMember": {
+            "value": 2
+        },
+        "mnNodeVMSize": {
+            "value": "Standard_A1"
+        },
+        "mnStorageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "numTXNodes": {
+            "value": 2
+        },
+        "txNodeVMSize": {
+            "value": "Standard_A1"
+        },
+        "txStorageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "location": {
+            "value": "East US"
+        },
+        "baseUrl": {
+            "value": "https://raw.githubusercontent.com/sysgain/Ethereum-consortium-blockchain/eth-consortium-dev"
+        }
+    }
+}

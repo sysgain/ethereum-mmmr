@@ -1,0 +1,542 @@
+{
+    "handler": "Microsoft.Compute.MultiVm",
+    "version": "0.0.1-preview",
+    "parameters": {
+        "basics": [
+            {
+                "name": "namePrefix",
+                "type": "Microsoft.Common.TextBox",
+                "label": "Resource prefix",
+                "toolTip": "String used as a base for naming resources (4 alphanumeric characters or less).  A unique hash is prepended to the string for some resources, while resource-specific information is appended.",
+                "constraints": {
+                    "required": true,
+                    "regex": "^[a-z][a-z0-9-]{1,4}$",
+                    "validationMessage": "Resource prefix must be between 2 and 4 characters long, must begin with a lowercase letter, and can contain only numbers and lowercase letters."
+                }
+            },
+            {
+                "name": "adminUsername",
+                "type": "Microsoft.Compute.UserNameTextBox",
+                "label": "VM user name",
+                "defaultValue": "gethadmin",
+                "toolTip": "Admin username for all of the deployed virtual machines.",
+                "osPlatform": "Linux"
+            },
+            {
+                "name": "adminCredentials",
+                "type": "Microsoft.Compute.CredentialsCombo",
+                "label": {
+                    "authenticationType": "Authentication type",
+                    "password": "Password",
+                    "confirmPassword": "Confirm password",
+                    "sshPublicKey": "SSH public key"
+                },
+                "toolTip": {
+                    "authenticationType": "",
+                    "password": "VM password must be 12 characters and have 3 of the following: 1 lower case character, 1 upper case character, 1 number, and 1 special character.",
+                    "sshPublicKey": ""
+                },
+                "constraints": {
+                    "required": true
+                },
+                "options": {
+                    "hideConfirmation": false
+                },
+                "osPlatform": "Linux"
+            }
+        ],
+        "steps": [
+            {
+                "name": "NetworkSize",
+                "label": "Network size and performance",
+                "subLabel": {
+                    "preValidation": "Define the number and size and nodes in the network",
+                    "postValidation": "Done"
+                },
+                "bladeTitle": "Network Size and Performance",
+                "elements": [
+                    {
+                        "name": "numConsortiumMembers",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Number of consortium members",
+                        "defaultValue": "2",
+                        "toolTip": "The number of participants in your consortium determines the number of members to deploy. Each member gets its own set of mining nodes within a subnet.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "2",
+                                    "value": 2
+                                },
+                                {
+                                    "label": "3",
+                                    "value": 3
+                                },
+                                {
+                                    "label": "4",
+                                    "value": 4
+                                },
+                                {
+                                    "label": "5",
+                                    "value": 5
+                                },
+                                {
+                                    "label": "6",
+                                    "value": 6
+                                },
+                                {
+                                    "label": "7",
+                                    "value": 7
+                                },
+                                {
+                                    "label": "8",
+                                    "value": 8
+                                },
+                                {
+                                    "label": "9",
+                                    "value": 9
+                                },
+                                {
+                                    "label": "10",
+                                    "value": 10
+                                },
+                                {
+                                    "label": "11",
+                                    "value": 11
+                                },
+                                {
+                                    "label": "12",
+                                    "value": 12
+                                }
+                            ]
+                        },
+                        "visible": true
+                    },
+                    {
+                        "name": "mnSection",
+                        "type": "Microsoft.Common.Section",
+                        "label": "Mining Nodes",
+                        "elements": [
+                            {
+                                "name": "numMiningNodesPerMember",
+                                "type": "Microsoft.Common.DropDown",
+                                "label": "Number of mining nodes per member",
+                                "defaultValue": "1",
+                                "toolTip": "Mining nodes record transactions within a blockchain network.  Choose the number of nodes that meet your availability and security requirements.",
+                                "constraints": {
+                                    "allowedValues": [
+                                        {
+                                            "label": "1",
+                                            "value": 1
+                                        },
+                                        {
+                                            "label": "2",
+                                            "value": 2
+                                        },
+                                        {
+                                            "label": "3",
+                                            "value": 3
+                                        },
+                                        {
+                                            "label": "4",
+                                            "value": 4
+                                        },
+                                        {
+                                            "label": "5",
+                                            "value": 5
+                                        },
+                                        {
+                                            "label": "6",
+                                            "value": 6
+                                        },
+                                        {
+                                            "label": "7",
+                                            "value": 7
+                                        },
+                                        {
+                                            "label": "8",
+                                            "value": 8
+                                        },
+                                        {
+                                            "label": "9",
+                                            "value": 9
+                                        },
+                                        {
+                                            "label": "10",
+                                            "value": 10
+                                        },
+                                        {
+                                            "label": "11",
+                                            "value": 11
+                                        },
+                                        {
+                                            "label": "12",
+                                            "value": 12
+                                        },
+                                        {
+                                            "label": "13",
+                                            "value": 13
+                                        },
+                                        {
+                                            "label": "14",
+                                            "value": 14
+                                        },
+                                        {
+                                            "label": "15",
+                                            "value": 15
+                                        }
+                                    ]
+                                },
+                                "visible": true
+                            },
+                            {
+                                "name": "mnStoragePerformance",
+                                "type": "Microsoft.Common.OptionsGroup",
+                                "label": "Mining node storage performance",
+                                "defaultValue": "Standard",
+                                "toolTip": "Managed Disks is an abstraction of current Standard and Premium storage disk in Azure Storage. You only need to specify the type (Standard or Premium) you need, in your selected Azure region, and Azure will create and manage the Disk accordingly.",
+                                "constraints": {
+                                    "required": true,
+                                    "allowedValues": [
+                                        {
+                                            "label": "Standard",
+                                            "value": "Standard_LRS"
+                                        },
+                                        {
+                                            "label": "Premium",
+                                            "value": "Premium_LRS"
+                                        }
+                                    ]
+                                },
+                                "visible": true
+                            },
+                            {
+                                "name": "mnNodeVMSizeHDD",
+                                "type": "Microsoft.Compute.SizeSelector",
+                                "label": "Mining node virtual machine size",
+                                "toolTip": "",
+                                "recommendedSizes": [
+                                    "Standard_D1_v2",
+                                    "Standard_D1",
+                                    "Standard_A1"
+                                ],
+                                "constraints": {
+                                    "allowedSizes": [
+                                        "Standard_A1",
+                                        "Standard_A2",
+                                        "Standard_A3",
+                                        "Standard_A4",
+                                        "Standard_A5",
+                                        "Standard_A6",
+                                        "Standard_A7",
+                                        "Standard_A8",
+                                        "Standard_A9",
+                                        "Standard_A10",
+                                        "Standard_A11",
+                                        "Standard_D1",
+                                        "Standard_D2",
+                                        "Standard_D3",
+                                        "Standard_D4",
+                                        "Standard_D11",
+                                        "Standard_D12",
+                                        "Standard_D13",
+                                        "Standard_D14",
+                                        "Standard_D1_v2",
+                                        "Standard_D2_v2",
+                                        "Standard_D3_v2",
+                                        "Standard_D4_v2",
+                                        "Standard_D5_v2",
+                                        "Standard_D11_v2",
+                                        "Standard_D12_v2",
+                                        "Standard_D13_v2",
+                                        "Standard_D14_v2",
+                                        "Standard_D15_v2",
+                                        "Standard_F1",
+                                        "Standard_F2",
+                                        "Standard_F4",
+                                        "Standard_F8",
+                                        "Standard_F16"
+                                    ]
+                                },
+                                "osPlatform": "Linux",
+                                "count": "[mul(int(steps('NetworkSize').numConsortiumMembers), int(steps('NetworkSize').mnSection.numMiningNodesPerMember))]",
+                                "visible": "[equals(steps('NetworkSize').mnSection.mnStoragePerformance, 'Standard_LRS')]"
+                            },
+                            {
+                                "name": "mnNodeVMSizeSSD",
+                                "type": "Microsoft.Compute.SizeSelector",
+                                "label": "Mining node virtual machine size",
+                                "toolTip": "",
+                                "recommendedSizes": [
+                                    "Standard_DS1_v2",
+                                    "Standard_DS1",
+                                    "Standard_F1s"
+                                ],
+                                "constraints": {
+                                    "allowedSizes": [
+                                        "Standard_DS1",
+                                        "Standard_DS2",
+                                        "Standard_DS3",
+                                        "Standard_DS4",
+                                        "Standard_DS11",
+                                        "Standard_DS12",
+                                        "Standard_DS13",
+                                        "Standard_DS14",
+                                        "Standard_DS1_v2",
+                                        "Standard_DS2_v2",
+                                        "Standard_DS3_v2",
+                                        "Standard_DS4_v2",
+                                        "Standard_DS5_v2",
+                                        "Standard_DS11_v2",
+                                        "Standard_DS12_v2",
+                                        "Standard_DS13_v2",
+                                        "Standard_DS14_v2",
+                                        "Standard_DS15_v2",
+                                        "Standard_F1s",
+                                        "Standard_F2s",
+                                        "Standard_F4s",
+                                        "Standard_F8s",
+                                        "Standard_F16s"
+                                    ]
+                                },
+                                "osPlatform": "Linux",
+                                "count": "[mul(int(steps('NetworkSize').numConsortiumMembers), int(steps('NetworkSize').mnSection.numMiningNodesPerMember))]",
+                                "visible": "[equals(steps('NetworkSize').mnSection.mnStoragePerformance, 'Premium_LRS')]"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "txSection",
+                        "type": "Microsoft.Common.Section",
+                        "label": "Transaction Nodes",
+                        "elements": [
+                            {
+                                "name": "numTXNodes",
+                                "type": "Microsoft.Common.DropDown",
+                                "label": "Number of load balanced transaction nodes",
+                                "defaultValue": "1",
+                                "toolTip": "An application or user interacts with a load balanced set of transaction nodes to submit transactions to the network.  Choose the number of nodes that meets your availability requirements.",
+                                "constraints": {
+                                    "allowedValues": [
+                                        {
+                                            "label": "1",
+                                            "value": 1
+                                        },
+                                        {
+                                            "label": "2",
+                                            "value": 2
+                                        },
+                                        {
+                                            "label": "3",
+                                            "value": 3
+                                        },
+                                        {
+                                            "label": "4",
+                                            "value": 4
+                                        },
+                                        {
+                                            "label": "5",
+                                            "value": 5
+                                        }
+                                    ]
+                                },
+                                "visible": true
+                            },
+                            {
+                                "name": "txStoragePerformance",
+                                "type": "Microsoft.Common.OptionsGroup",
+                                "label": "Transaction node storage performance",
+                                "defaultValue": "Standard",
+                                "toolTip": "Managed Disks is an abstraction of current Standard and Premium storage disk in Azure Storage. You only need to specify the type (Standard or Premium) you need, in your selected Azure region, and Azure will create and manage the Disk accordingly.",
+                                "constraints": {
+                                    "required": true,
+                                    "allowedValues": [
+                                        {
+                                            "label": "Standard",
+                                            "value": "Standard_LRS"
+                                        },
+                                        {
+                                            "label": "Premium",
+                                            "value": "Premium_LRS"
+                                        }
+                                    ]
+                                },
+                                "visible": true
+                            },
+                            {
+                                "name": "txNodeVMSizeHDD",
+                                "type": "Microsoft.Compute.SizeSelector",
+                                "label": "Transaction node virtual machine size",
+                                "toolTip": "",
+                                "recommendedSizes": [
+                                    "Standard_D1_v2",
+                                    "Standard_D1",
+                                    "Standard_A1"
+                                ],
+                                "constraints": {
+                                    "allowedSizes": [
+                                        "Standard_A1",
+                                        "Standard_A2",
+                                        "Standard_A3",
+                                        "Standard_A4",
+                                        "Standard_A5",
+                                        "Standard_A6",
+                                        "Standard_A7",
+                                        "Standard_A8",
+                                        "Standard_A9",
+                                        "Standard_A10",
+                                        "Standard_A11",
+                                        "Standard_D1",
+                                        "Standard_D2",
+                                        "Standard_D3",
+                                        "Standard_D4",
+                                        "Standard_D11",
+                                        "Standard_D12",
+                                        "Standard_D13",
+                                        "Standard_D14",
+                                        "Standard_D1_v2",
+                                        "Standard_D2_v2",
+                                        "Standard_D3_v2",
+                                        "Standard_D4_v2",
+                                        "Standard_D5_v2",
+                                        "Standard_D11_v2",
+                                        "Standard_D12_v2",
+                                        "Standard_D13_v2",
+                                        "Standard_D14_v2",
+                                        "Standard_D15_v2",
+                                        "Standard_F1",
+                                        "Standard_F2",
+                                        "Standard_F4",
+                                        "Standard_F8",
+                                        "Standard_F16"
+                                    ]
+                                },
+                                "osPlatform": "Linux",
+                                "count": "[steps('NetworkSize').txSection.numTXNodes]",
+                                "visible": "[equals(steps('NetworkSize').txSection.txStoragePerformance, 'Standard_LRS')]"
+                            },
+                            {
+                                "name": "txNodeVMSizeSSD",
+                                "type": "Microsoft.Compute.SizeSelector",
+                                "label": "Transaction node virtual machine size",
+                                "toolTip": "",
+                                "recommendedSizes": [
+                                    "Standard_DS1_v2",
+                                    "Standard_DS1",
+                                    "Standard_F1s"
+                                ],
+                                "constraints": {
+                                    "allowedSizes": [
+                                        "Standard_DS1",
+                                        "Standard_DS2",
+                                        "Standard_DS3",
+                                        "Standard_DS4",
+                                        "Standard_DS11",
+                                        "Standard_DS12",
+                                        "Standard_DS13",
+                                        "Standard_DS14",
+                                        "Standard_DS1_v2",
+                                        "Standard_DS2_v2",
+                                        "Standard_DS3_v2",
+                                        "Standard_DS4_v2",
+                                        "Standard_DS5_v2",
+                                        "Standard_DS11_v2",
+                                        "Standard_DS12_v2",
+                                        "Standard_DS13_v2",
+                                        "Standard_DS14_v2",
+                                        "Standard_DS15_v2",
+                                        "Standard_F1s",
+                                        "Standard_F2s",
+                                        "Standard_F4s",
+                                        "Standard_F8s",
+                                        "Standard_F16s"
+                                    ]
+                                },
+                                "osPlatform": "Linux",
+                                "count": "[steps('NetworkSize').txSection.numTXNodes]",
+                                "visible": "[equals(steps('NetworkSize').txSection.txStoragePerformance, 'Premium_LRS')]"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "EthereumSettings",
+                "label": "Ethereum Settings",
+                "subLabel": {
+                    "preValidation": "Configure the Ethereum nodes",
+                    "postValidation": "Done"
+                },
+                "bladeTitle": "Ethereum Settings",
+                "elements": [
+                    {
+                        "name": "ethereumNetworkID",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Network ID",
+                        "defaultValue": "10101010",
+                        "toolTip": "ID used to name the private Ethereum network created.  Only nodes that share the same ID peer with each other.",
+                        "constraints": {
+                            "required": true,
+                            "regex": "^[0-9]{1,9}$",
+                            "validationMessage": "Only numeric values up to 9 characters long allowed."
+                        },
+                        "visible": "true"
+                    },
+                    {
+                        "name": "ethereumAccountPsswd",
+                        "type": "Microsoft.Common.PasswordBox",
+                        "label": {
+                            "password": "Ethereum account password",
+                            "confirmPassword": "Confirm password"
+                        },
+                        "toolTip": "Password used to secure the default Ethereum account that will be generated.",
+                        "constraints": {
+                            "required": true,
+                            "regex": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[^\"]{12,}$",
+                            "validationMessage": "Password must be 12 characters or more with a minimum of 1 lower case, 1 upper case and one number. Double quotes are not allowed."
+                        },
+                        "options": {
+                            "hideConfirmation": false
+                        },
+                        "visible": true
+                    },
+                    {
+                        "name": "ethereumAccountPassphrase",
+                        "type": "Microsoft.Common.PasswordBox",
+                        "label": {
+                            "password": "Ethereum private key passphrase",
+                            "confirmPassword": "Confirm passphrase"
+                        },
+                        "toolTip": "Passphrase used to generate the private key associated with the default Ethereum account that is generated.  Consider a passphrase with sufficient randomness to ensure a strong private key.",
+                        "constraints": {
+                            "required": true,
+                            "regex": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[^\"]{12,}$",
+                            "validationMessage": "Password must be 12 characters or more with a minimum of 1 lower case, 1 upper case and one number. Double quotes are not allowed."
+                        },
+                        "options": {
+                            "hideConfirmation": false
+                        },
+                        "visible": true
+                    }
+                ]
+            }
+        ],
+        "outputs": {
+            "namePrefix": "[basics('namePrefix')]",
+            "authType": "[basics('adminCredentials').authenticationType]",
+            "adminUsername": "[basics('adminUsername')]",
+            "adminPassword": "[basics('adminCredentials').password]",
+            "adminSSHKey": "[basics('adminCredentials').sshPublicKey]",
+            "ethereumAccountPsswd": "[steps('EthereumSettings').ethereumAccountPsswd]",
+            "ethereumAccountPassphrase": "[steps('EthereumSettings').ethereumAccountPassphrase]",
+            "ethereumNetworkID": "[int(steps('EthereumSettings').ethereumNetworkID)]",
+            "numConsortiumMembers": "[steps('NetworkSize').numConsortiumMembers]",
+            "numMiningNodesPerMember": "[steps('NetworkSize').mnSection.numMiningNodesPerMember]",
+            "mnNodeVMSize": "[coalesce(steps('NetworkSize').mnSection.mnNodeVMSizeHDD, steps('NetworkSize').mnSection.mnNodeVMSizeSSD)]",
+            "mnStorageAccountType": "[steps('NetworkSize').mnSection.mnStoragePerformance]",
+            "numTXNodes": "[steps('NetworkSize').txSection.numTXNodes]",
+            "txNodeVMSize": "[coalesce(steps('NetworkSize').txSection.txNodeVMSizeHDD, steps('NetworkSize').txSection.txNodeVMSizeSSD)]",
+            "txStorageAccountType": "[steps('NetworkSize').txSection.txStoragePerformance]",
+            "location": "[location()]"
+        }
+    }
+}

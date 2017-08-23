@@ -1,0 +1,678 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "namePrefix": {
+            "type": "string",
+            "defaultValue": "eth",
+            "metadata": {
+                "description": "String used as a base for naming resources (4 alphanumeric characters or less).  A unique hash is prepended to the string for some resources, while resource-specific information is appended."
+            },
+            "maxLength": 4
+        },
+        "authType": {
+            "type": "string",
+            "defaultValue": "password",
+            "allowedValues": [
+                "password",
+                "sshPublicKey"
+            ],
+            "metadata": {
+                "description": "Authorization type for SSH access to VMs"
+            }
+        },
+        "adminUsername": {
+            "type": "string",
+            "defaultValue": "gethadmin",
+            "metadata": {
+                "description": "Administrator username of each deployed VM (alphanumeric characters only)"
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "defaultValue": "Ashpassword123",
+            "metadata": {
+                "description": "Administrator password for each deployed VM"
+            }
+        },
+        "adminSSHKey": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "SSH RSA public key file as a string"
+            }
+        },
+        "ethereumAccountPsswd": {
+            "type": "securestring",
+            "defaultValue": "Ashpassword123",
+            "metadata": {
+                "description": "Password used to secure the default Ethereum account that will be generated"
+            }
+        },
+        "ethereumAccountPassphrase": {
+            "type": "securestring",
+            "defaultValue": "Ashpassword123",
+            "metadata": {
+                "description": "Password used to generate the private key associated with the default Ethereum account that is generated.  Consider a password with sufficient randomness to ensure a strong private key"
+            }
+        },
+        "ethereumNetworkID": {
+            "type": "int",
+            "defaultValue": 72,
+            "metadata": {
+                "description": "Private Ethereum network ID to which to connect (max 9 digit number)"
+            },
+            "maxValue": 2147483647
+        },
+        "numConsortiumMembers": {
+            "type": "int",
+            "defaultValue": 3,
+            "metadata": {
+                "description": "Number of members within the network.  Each member's nodes live in their own subnet"
+            },
+            "minValue": 2,
+            "maxValue": 12
+        },
+        "numMiningNodesPerMember": {
+            "type": "int",
+            "defaultValue": 2,
+            "metadata": {
+                "description": "Number of mining nodes to create for each consortium member"
+            },
+            "minValue": 1,
+            "maxValue": 15
+        },
+        "mnNodeVMSize": {
+            "type": "string",
+            "defaultValue": "Standard_A1",
+            "metadata": {
+                "description": "Size of the virtual machine used for mining nodes"
+            }
+        },
+        "mnStorageAccountType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Premium_LRS"
+            ],
+            "metadata": {
+                "description": "Type of storage accounts to create"
+            }
+        },
+        "numTXNodes": {
+            "type": "int",
+            "defaultValue": 2,
+            "metadata": {
+                "description": "Number of load balanced transaction nodes"
+            },
+            "minValue": 1,
+            "maxValue": 5
+        },
+        "txNodeVMSize": {
+            "type": "string",
+            "defaultValue": "Standard_A1",
+            "metadata": {
+                "description": "Size of the virtual machine for transaction nodes"
+            }
+        },
+        "txStorageAccountType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Premium_LRS"
+            ],
+            "metadata": {
+                "description": "Type of storage accounts to create"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "East US",
+            "metadata": {
+                "description": "Select the location to deploy the solution"
+            }
+        },
+        "baseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URL for dependent assets",
+                "artifactsBaseUrl": ""
+            },
+            "defaultValue": "https://raw.githubusercontent.com/sysgain/Ethereum-consortium-blockchain/eth-consortium-dev"
+        }
+    },
+    "variables": {
+        "namingInfix": "[toLower(substring(concat(parameters('namePrefix'),'-',uniqueString(resourceGroup().id)), 0, 8))]",
+        "vmssSetupUrl": "[concat(parameters('baseUrl'), '/nested/vmss.json')]",
+        "scriptFileUris": "[concat(parameters('baseUrl'), '/scripts/configure-geth-sm.sh')]",
+        "scriptFilename": "configure-geth-sm.sh",
+        "txLbSetupUrl": "[concat(parameters('baseUrl'), '/nested/lb.json')]",
+        "txinternalDnsName": "[concat('txDns-',variables('namingInfix'))]",
+        "mninternalDnsName": "[concat('mnDns-',variables('namingInfix'))]",
+        "consortiumId": "1",
+        "apiVersionDeployments": "2017-05-10",
+        "apiVersionNetworkSecurityGroups": "2017-03-01",
+        "apiVersionPublicIPAddresses": "2017-03-01",
+        "apiVersionLoadBalancers": "2017-03-01",
+        "apiVersionVirtualNetworks": "2017-03-01",
+        "apiVersionVirtualMachineScaleSets": "2017-03-30",
+        "apiVersionCosmosDb": "2015-04-08",
+        "dbAccName": "[concat(variables('namingInfix'), '-registrar')]",
+        "dbKind": "GlobalDocumentDB",
+        "failoverRegion1": "centralus",
+        "httpPort": 80,
+        "adminSitePort": 3000,
+        "sshPort": 22,
+        "sshNATFrontEndStartingPort": 3000,
+        "sshNATFrontEndEndingPort": 3030,
+        "gethRPCPort": 8545,
+        "gethIPCPort": 30303,
+        "txNode": 0,
+        "mnNode": 1,
+        "maxPeers": 25,
+        "sshFrontEnd": 4000,
+        "txIpConfig": "txIpConfig",
+        "mnIpConfig": "mnIpConfig",
+        "txloadBalancerName": "[concat(variables('namingInfix'), '-txLB')]",
+        "loadBalancerBackendAddressPoolName": "LoadBalancerBackend",
+        "loadBalancerInboundNatRuleNamePrefix": "SSH-VM",
+        "virtualNetworkName": "[concat(variables('namingInfix'), '-vnet')]",
+        "addressPrefix": "[replace('10._.16.0/20', '_', variables('consortiumId'))]",
+        "txVMSSNamePrefix": "[concat('txVmss-',variables('namingInfix'),'-reg1')]",
+        "txNodeCount": "[parameters('numTXNodes')]",
+        "txNICPrefix": "nic-tx",
+        "txNsgName": "[concat(variables('namingInfix'), '-TXnsg')]",
+        "txSubnetName": "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-tx')]",
+        "txSubnetPrefix": "[replace('10._.17.0/24', '_', variables('consortiumId'))]",
+        "txSubnetRef": "[concat(variables('vnetID'),'/subnets/', variables('txSubnetName'))]",
+        "mnVMSSNamePrefix": "[concat('mnVMss-',variables('namingInfix'),'-reg1')]",
+        "mnNodeCount": "[parameters('numMiningNodesPerMember')]",
+        "numMNNodes": "[mul(parameters('numConsortiumMembers'), parameters('numMiningNodesPerMember'))]",
+        "mnNICPrefix": "nic-mn",
+        "mnNsgName": "[concat(variables('namingInfix'), '-MNnsg')]",
+        "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+        "numSubnets": "[add(parameters('numConsortiumMembers'), 1)]",
+        "resourceGuid": "5301cbdd-2fed-4990-8f7d-573e499e9ed3",
+        "mnSubnetNameArray": [
+            "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-mn0')]",
+            "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-mn1')]",
+            "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-mn2')]",
+            "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-mn3')]",
+            "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-mn4')]",
+            "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-mn5')]",
+            "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-mn6')]",
+            "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-mn7')]",
+            "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-mn8')]",
+            "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-mn9')]",
+            "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-mn10')]",
+            "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-mn11')]"
+        ],
+        "mnSubnetRefArray": [
+            "[concat(variables('vnetID'),'/subnets/', variables('mnSubnetNameArray')[0])]",
+            "[concat(variables('vnetID'),'/subnets/', variables('mnSubnetNameArray')[1])]",
+            "[concat(variables('vnetID'),'/subnets/', variables('mnSubnetNameArray')[2])]",
+            "[concat(variables('vnetID'),'/subnets/', variables('mnSubnetNameArray')[3])]",
+            "[concat(variables('vnetID'),'/subnets/', variables('mnSubnetNameArray')[4])]",
+            "[concat(variables('vnetID'),'/subnets/', variables('mnSubnetNameArray')[5])]",
+            "[concat(variables('vnetID'),'/subnets/', variables('mnSubnetNameArray')[6])]",
+            "[concat(variables('vnetID'),'/subnets/', variables('mnSubnetNameArray')[7])]",
+            "[concat(variables('vnetID'),'/subnets/', variables('mnSubnetNameArray')[8])]",
+            "[concat(variables('vnetID'),'/subnets/', variables('mnSubnetNameArray')[9])]",
+            "[concat(variables('vnetID'),'/subnets/', variables('mnSubnetNameArray')[10])]",
+            "[concat(variables('vnetID'),'/subnets/', variables('mnSubnetNameArray')[11])]"
+        ],
+        "mnSubnetPrefixArray": [
+            "[replace('10._.18.0/24', '_', variables('consortiumId'))]",
+            "[replace('10._.19.0/24', '_', variables('consortiumId'))]",
+            "[replace('10._.20.0/24', '_', variables('consortiumId'))]",
+            "[replace('10._.21.0/24', '_', variables('consortiumId'))]",
+            "[replace('10._.22.0/24', '_', variables('consortiumId'))]",
+            "[replace('10._.23.0/24', '_', variables('consortiumId'))]",
+            "[replace('10._.24.0/24', '_', variables('consortiumId'))]",
+            "[replace('10._.25.0/24', '_', variables('consortiumId'))]",
+            "[replace('10._.26.0/24', '_', variables('consortiumId'))]",
+            "[replace('10._.27.0/24', '_', variables('consortiumId'))]",
+            "[replace('10._.28.0/24', '_', variables('consortiumId'))]",
+            "[replace('10._.29.0/24', '_', variables('consortiumId'))]"
+        ],
+        "subnetPropertiesArray": [
+            {
+                "name": "[variables('txSubnetName')]",
+                "properties": {
+                    "addressPrefix": "[variables('txSubnetPrefix')]",
+                    "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('txNsgName'))]"
+                    }
+                }
+            },
+            {
+                "name": "[variables('mnSubnetNameArray')[0]]",
+                "properties": {
+                    "addressPrefix": "[variables('mnSubnetPrefixArray')[0]]",
+                    "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mnNsgName'))]"
+                    }
+                }
+            },
+            {
+                "name": "[variables('mnSubnetNameArray')[1]]",
+                "properties": {
+                    "addressPrefix": "[variables('mnSubnetPrefixArray')[1]]",
+                    "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mnNsgName'))]"
+                    }
+                }
+            },
+            {
+                "name": "[variables('mnSubnetNameArray')[2]]",
+                "properties": {
+                    "addressPrefix": "[variables('mnSubnetPrefixArray')[2]]",
+                    "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mnNsgName'))]"
+                    }
+                }
+            },
+            {
+                "name": "[variables('mnSubnetNameArray')[3]]",
+                "properties": {
+                    "addressPrefix": "[variables('mnSubnetPrefixArray')[3]]",
+                    "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mnNsgName'))]"
+                    }
+                }
+            },
+            {
+                "name": "[variables('mnSubnetNameArray')[4]]",
+                "properties": {
+                    "addressPrefix": "[variables('mnSubnetPrefixArray')[4]]",
+                    "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mnNsgName'))]"
+                    }
+                }
+            },
+            {
+                "name": "[variables('mnSubnetNameArray')[5]]",
+                "properties": {
+                    "addressPrefix": "[variables('mnSubnetPrefixArray')[5]]",
+                    "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mnNsgName'))]"
+                    }
+                }
+            },
+            {
+                "name": "[variables('mnSubnetNameArray')[6]]",
+                "properties": {
+                    "addressPrefix": "[variables('mnSubnetPrefixArray')[6]]",
+                    "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mnNsgName'))]"
+                    }
+                }
+            },
+            {
+                "name": "[variables('mnSubnetNameArray')[7]]",
+                "properties": {
+                    "addressPrefix": "[variables('mnSubnetPrefixArray')[7]]",
+                    "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mnNsgName'))]"
+                    }
+                }
+            },
+            {
+                "name": "[variables('mnSubnetNameArray')[8]]",
+                "properties": {
+                    "addressPrefix": "[variables('mnSubnetPrefixArray')[8]]",
+                    "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mnNsgName'))]"
+                    }
+                }
+            },
+            {
+                "name": "[variables('mnSubnetNameArray')[9]]",
+                "properties": {
+                    "addressPrefix": "[variables('mnSubnetPrefixArray')[9]]",
+                    "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mnNsgName'))]"
+                    }
+                }
+            },
+            {
+                "name": "[variables('mnSubnetNameArray')[10]]",
+                "properties": {
+                    "addressPrefix": "[variables('mnSubnetPrefixArray')[10]]",
+                    "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mnNsgName'))]"
+                    }
+                }
+            },
+            {
+                "name": "[variables('mnSubnetNameArray')[11]]",
+                "properties": {
+                    "addressPrefix": "[variables('mnSubnetPrefixArray')[11]]",
+                    "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mnNsgName'))]"
+                    }
+                }
+            }
+        ],
+        "ubuntuImage": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "16.04.0-LTS",
+            "version": "latest"
+        },
+        "txVmssSettings": {
+            "resourceGuid": "[variables('resourceGuid')]",
+            "vmssName": "[variables('txVMSSNamePrefix')]",
+            "numNodes": "[variables('txNodeCount')]",
+            "authenticationType": "[parameters('authType')]",
+            "nicName": "[variables('txNICPrefix')]",
+            "storageAccountType": "[parameters('txStorageAccountType')]",
+            "nodeVMSize": "[parameters('txNodeVMSize')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassword')]",
+            "sshPublicKey": "[parameters('adminSSHKey')]",
+            "ipConfigName": "[variables('txIpConfig')]",
+            "subnetRef": "[variables('txSubnetRef')]",
+            "loadBalancerName": "[variables('txloadBalancerName')]",
+            "loadBalancerBackendAddressPoolName": "[variables('loadBalancerBackendAddressPoolName')]",
+            "loadBalancerInboundNatRuleNamePrefix": "[variables('loadBalancerInboundNatRuleNamePrefix')]",
+            "internalDnsName": "[variables('txinternalDnsName')]",
+            "apiVersionVirtualMachineScaleSets": "[variables('apiVersionVirtualMachineScaleSets')]"
+        },
+        "mnVmssSettings": {
+            "vmssName": "[variables('mnVMSSNamePrefix')]",
+            "numNodes": "[variables('mnNodeCount')]",
+            "authenticationType": "[parameters('authType')]",
+            "nicName": "[variables('mnNICPrefix')]",
+            "storageAccountType": "[parameters('mnStorageAccountType')]",
+            "nodeVMSize": "[parameters('mnNodeVMSize')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassword')]",
+            "sshPublicKey": "[parameters('adminSSHKey')]",
+            "ipConfigName": "[variables('mnIpConfig')]",
+            "internalDnsName": "[variables('mninternalDnsName')]",
+            "apiVersionVirtualMachineScaleSets": "[variables('apiVersionVirtualMachineScaleSets')]"
+        },
+        "extensionSettings": {
+            "adminUsername": "[parameters('adminUsername')]",
+            "ethereumAccountPsswd": "[parameters('ethereumAccountPsswd')]",
+            "ethereumAccountPassphrase": "[parameters('ethereumAccountPassphrase')]",
+            "artifactsLocationURL": "[parameters('baseUrl')]",
+            "ethereumNetworkID": "[parameters('ethereumNetworkID')]",
+            "txNode": "[variables('txNode')]",
+            "mnNode": "[variables('mnNode')]",
+            "maxPeers": "[variables('maxPeers')]",
+            "gethIPCPort": "[variables('gethIPCPort')]",
+            "numBootNodes": 2,
+            "numMNNodes": "[variables('numMNNodes')]",
+            "mnVMNamePrefix": "mn",
+            "numTXNodes": "[parameters('numTXNodes')]",
+            "txVMNamePrefix": "tx",
+            "adminSitePort": "[variables('adminSitePort')]",
+            "consortiumId": "[variables('consortiumId')]",
+            "reg1": "reg1",
+            "fileUri": "[variables('scriptFileUris')]",
+            "filename": "[variables('scriptFilename')]"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "[variables('apiVersionNetworkSecurityGroups')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('mnNsgName')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "resourceGuid": "[variables('resourceGuid')]"
+            },
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "block-bootnodes",
+                        "properties": {
+                            "description": "Block Internet Bootnodes",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "30303",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "Internet",
+                            "access": "Deny",
+                            "priority": 100,
+                            "direction": "Outbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersionNetworkSecurityGroups')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('txNsgName')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "resourceGuid": "[variables('resourceGuid')]"
+            },
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "allow-ssh",
+                        "properties": {
+                            "description": "Allow SSH",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "allow-geth-rpc",
+                        "properties": {
+                            "description": "Allow geth RPC",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "8545",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 101,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "allow-etheradmin",
+                        "properties": {
+                            "description": "Allow etheradmin web service",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "3000",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 102,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "block-bootnodes",
+                        "properties": {
+                            "description": "Block Internet Bootnodes",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "30303",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "Internet",
+                            "access": "Deny",
+                            "priority": 100,
+                            "direction": "Outbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersionVirtualNetworks')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[variables('virtualNetworkName')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "resourceGuid": "[variables('resourceGuid')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('txNsgName'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('mnNsgName'))]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('addressPrefix')]"
+                    ]
+                },
+                "subnets": "[take(variables('subnetPropertiesArray'), variables('numSubnets'))]"
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersionDeployments')]",
+            "name": "txloadBalancerLinkedTemplate",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('txLbSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "loadBalancerName": {
+                        "value": "[variables('txloadBalancerName')]"
+                    },
+                    "resourceGuid": {
+                        "value": "[variables('resourceGuid')]"
+                    },
+                    "dnsHostName": {
+                        "value": "[variables('namingInfix')]"
+                    },
+                    "backendAddressPoolName": {
+                        "value": "[variables('loadBalancerBackendAddressPoolName')]"
+                    },
+                    "FrontendPort1": {
+                        "value": "[variables('httpPort')]"
+                    },
+                    "BackendPort1": {
+                        "value": "[variables('adminSitePort')]"
+                    },
+                    "FrontendPort2": {
+                        "value": "[variables('gethRPCPort')]"
+                    },
+                    "BackendPort2": {
+                        "value": "[variables('gethRPCPort')]"
+                    },
+                    "FrontendPort3": {
+                        "value": "[variables('sshFrontEnd')]"
+                    },
+                    "BackendPort3": {
+                        "value": "[variables('sshPort')]"
+                    },
+                    "apiVersionLoadBalancers": {
+                        "value": "[variables('apiVersionLoadBalancers')]"
+                    },
+                    "apiVersionPublicIPAddresses": {
+                        "value": "[variables('apiVersionPublicIPAddresses')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersionDeployments')]",
+            "name": "vmssLinkedTemplate",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+                "txloadBalancerLinkedTemplate",
+                "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('dbAccName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmssSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "txVmssSettings": {
+                        "value": "[variables('txVmssSettings')]"
+                    },
+                    "mnVmssSettings": {
+                        "value": "[variables('mnVmssSettings')]"
+                    },
+                    "numConsortiumMembers": {
+                        "value": "[parameters('numConsortiumMembers')]"
+                    },
+                    "ubuntuImage": {
+                        "value": "[variables('ubuntuImage')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "mnSubnetRefArray": {
+                        "value": "[variables('mnSubnetRefArray')]"
+                    },
+                    "extensionSettings": {
+                        "value": "[variables('extensionSettings')]"
+                    },
+                    "dbEndpoint": {
+                        "value": "[reference(concat('Microsoft.DocumentDB/databaseAccounts/',variables('dbAccName')), variables('apiVersionCosmosDb')).documentEndpoint]"
+                    },
+                    "dbPrimaryKey": {
+                        "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('dbAccName')), variables('apiVersionCosmosDb')).primaryMasterKey]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[variables('dbAccName')]",
+            "type": "Microsoft.DocumentDB/databaseAccounts",
+            "apiVersion": "[variables('apiVersionCosmosDb')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "resourceGuid": "[variables('resourceGuid')]"
+            },
+            "kind": "[variables('dbKind')]",
+            "properties": {
+                "name": "[variables('dbAccName')]",
+                "consistencyPolicy": {
+                    "defaultConsistencyLevel": "BoundedStaleness",
+                    "maxIntervalInSeconds": 5,
+                    "maxStalenessPrefix": 100
+                },
+                "locations": [
+                    {
+                        "locationName": "[variables('failoverRegion1')]",
+                        "failoverPriority": 0
+                    }
+                ],
+                "databaseAccountOfferType": "Standard",
+                "enableAutomaticFailover": true
+            }
+        }
+    ],
+    "outputs": {
+        "admin-site": {
+            "type": "string",
+            "value": "[concat('http://', reference('txloadBalancerLinkedTemplate').outputs.fqdn.value)]"
+        },
+        "ethereum-rpc-endpoint": {
+            "type": "string",
+            "value": "[concat('http://', reference('txloadBalancerLinkedTemplate').outputs.fqdn.value, ':', variables('gethRPCPort'))]"
+        },
+        "ssh_to_first_tx_node": {
+            "type": "string",
+            "value": "[concat('ssh -p ', variables('sshFrontEnd'), ' ', parameters('adminUsername'), '@', reference('txloadBalancerLinkedTemplate').outputs.fqdn.value)]"
+        }
+    }
+}
