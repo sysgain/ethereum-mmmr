@@ -219,7 +219,7 @@
                 "description": "The base URL for dependent assets",
                 "artifactsBaseUrl": ""
             },
-            "defaultValue": "https://raw.githubusercontent.com/sysgain/Ethereum-consortium-blockchain/eth-multi-dev4"
+            "defaultValue": "https://raw.githubusercontent.com/sysgain/Ethereum-dev/sm-mm-multiregion"
         }
     },
     "variables": {
