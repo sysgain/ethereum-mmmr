@@ -29,7 +29,8 @@ CONSORTIUM_MEMBER_ID=${17};         #Only supplied for NODE_TYPE=0
 PRIMARY_KEY=${18}
 DOCDB_END_POINT_URL=${19}
 REGIONID=${20}
-
+PEERINFODB=${21}
+PEERINFOCOLL=${22}
 #########################################################################
 # Globals
 #########################################################################
@@ -60,6 +61,8 @@ consortiumid=$CONSORTIUM_MEMBER_ID
 regionid=$REGIONID
 masterkey=$PRIMARY_KEY
 endpointurl=$DOCDB_END_POINT_URL
+dbname=$PEERINFODB
+collname=$PEERINFOCOLL
 cd $HOMEDIR;
 
 setup_dependencies
