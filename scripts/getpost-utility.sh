@@ -14,16 +14,15 @@ verb=$3
 requesturllength=`echo $requesturl | wc -c`
 #move to the home folder
 cd ~
-#download the nodejs code for authstring generation
-#wget https://raw.githubusercontent.com/pradeepts/testRepo/master/authGen.js
 output=`nodejs auth-token-generator.js $masterkey $requesturl $verb`
 DATE=`echo $output | cut -d "=" -f2 |cut -c2-30`
 URL=`echo $output | cut -d "=" -f3 |cut -c2-$requesturllength`
 AUTHSTRING=`echo $output | cut -d "=" -f4 |cut -c2-89`
 DATA=$4
-#echo "date:$DATE"
-#echo "url:$URL"
-#echo "authstring:$AUTHSTRING"
+echo "Registrar authentication token details"
+echo "Date:$DATE"
+echo "URL:$URL"
+echo "Authstring:$AUTHSTRING"
 #get all the documents from document db
 get()
 {
