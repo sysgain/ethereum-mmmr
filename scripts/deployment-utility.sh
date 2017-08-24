@@ -37,13 +37,14 @@ echo "masterkey:$masterkey"
 echo "endpointurl:$endpointurl"
 getalldbs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs" get`
 dbcount=`echo $getalldbs | grep "\"id\":.*"`
-data="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\"}"
-
+docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\"}"
+dbdata="{\"id\":\"${dbname}\"}"
+colldata="{\"id\":\"${collname}\"}"
 #check wheather database exists if not create testdb database
 if [ "$dbcount" == "" ]
 then
- `sh getpost-utility.sh $masterkey "${endpointurl}dbs" "post" '{"id":"testdb"}'`
- echo ".........\"testdb\" database got created......... "
+ `sh getpost-utility.sh $masterkey "${endpointurl}dbs" "post" "$dbdata"`
+ echo ".........\"$dbname\" database got created......... "
 else
  echo "database already present"
 fi
@@ -55,15 +56,15 @@ getallcolls=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/testdb/colls" g
 collscount=`echo $getallcolls | grep "\"id\":.*"`
 if [ "$collscount" == "" ]
 then
-`sh getpost-utility.sh $masterkey "${endpointurl}dbs/testdb/colls" "post" '{"id":"testcolls"}'`
- echo ".........\"testcolls\" collection got created......... "
+`sh getpost-utility.sh $masterkey "${endpointurl}dbs/testdb/colls" "post" "$colldata"`
+ echo ".........\"$colldata\" collection got created......... "
 else
 echo "collection  already present"
 fi
 getallcolls=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/testdb/colls" get`
 echo "Collection details are: $getallcolls"
 #create a document in database with the current node info
-sh getpost-utility.sh $masterkey "${endpointurl}dbs/testdb/colls/testcolls/docs" "post" "$data"
+sh getpost-utility.sh $masterkey "${endpointurl}dbs/testdb/colls/testcolls/docs" "post" "$docdata"
 
 #wait for at least 2 nodes to comeup
 while sleep 5; do
