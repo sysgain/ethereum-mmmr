@@ -648,7 +648,9 @@
             "numTXNodes": "[parameters('numTXNodesRegion')]",
             "txVMNamePrefix": "tx",
             "adminSitePort": "[variables('adminSitePort')]",
-            "consortiumId": "[parameters('consortiumId')]"
+            "consortiumId": "[parameters('consortiumId')]",
+            "peerInfoDbName": "peerInfoDb",
+            "peerInfoCollectionName":"peerInfoColl"
         },      
         "connectionSettings": {
             "resourceGuid": "[variables('resourceGuid')]",

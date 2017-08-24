@@ -54,6 +54,8 @@
         "txVMNamePrefix": "[parameters('extensionSettings').txVMNamePrefix]",
         "adminSitePort": "[parameters('extensionSettings').adminSitePort]",
         "consortiumMemberId": "[parameters('extensionSettings').consortiumId]",
+        "peerInfoDbName": "[parameters('extensionSettings').peerInfoDbName]",
+        "peerInfoCollectionName":"[parameters('extensionSettings').peerInfoCollectionName]",
         "resourceGuid": "[parameters('txVmssSettings').resourceGuid]",
         "txOsProfilepassword": {
             "computerNamePrefix": "[variables('txVmssName')]",
@@ -203,7 +205,7 @@
                                         ]
                                     },
                                     "protectedSettings": {
-                                        "commandToExecute": "[concat('/bin/bash ',parameters('scriptFileUri').filename,' \"', variables('adminUsername'), '\" \"', variables('ethereumAccountPsswd'), '\" \"', variables('ethereumAccountPassphrase'), '\" \"', variables('artifactsLocationURL'), '\" \"', variables('ethereumNetworkID'), '\" \"', variables('maxPeers'), '\" \"', variables('txNode'), '\" \"', variables('gethIPCPort'), '\" \"', variables('numBootNodes'), '\" \"', variables('numMNNodes'), '\" \"', variables('mnVMNamePrefix'), '\" \"', variables('genesisBlock'), '\" \"', variables('adminHash'), '\" \"', variables('numTXNodes'), '\" \"', variables('txVMNamePrefix'), '\" \"', variables('adminSitePort'), '\" \"', variables('consortiumMemberId'), '\" \"', parameters('dbPrimaryKey'),'\" \"', parameters('dbEndpoint'),'\" \"', parameters('suffix'),'\" \"', parameters('consortium-data'),'\"')]"
+                                        "commandToExecute": "[concat('/bin/bash ',parameters('scriptFileUri').filename,' \"', variables('adminUsername'), '\" \"', variables('ethereumAccountPsswd'), '\" \"', variables('ethereumAccountPassphrase'), '\" \"', variables('artifactsLocationURL'), '\" \"', variables('ethereumNetworkID'), '\" \"', variables('maxPeers'), '\" \"', variables('txNode'), '\" \"', variables('gethIPCPort'), '\" \"', variables('numBootNodes'), '\" \"', variables('numMNNodes'), '\" \"', variables('mnVMNamePrefix'), '\" \"', variables('genesisBlock'), '\" \"', variables('adminHash'), '\" \"', variables('numTXNodes'), '\" \"', variables('txVMNamePrefix'), '\" \"', variables('adminSitePort'), '\" \"', variables('consortiumMemberId'), '\" \"', parameters('dbPrimaryKey'),'\" \"', parameters('dbEndpoint'),'\" \"', parameters('suffix'),'\" \"', parameters('consortium-data'),'\" \"', variables('peerInfoDbName'),'\" \"', variables('peerInfoCollectionName'),'\"')]"
                                     }
                                 }
                             }
@@ -281,7 +283,7 @@
                                         ]
                                     },
                                     "protectedSettings": {
-                                        "commandToExecute": "[concat('/bin/bash ',parameters('scriptFileUri').filename,' \"', variables('adminUsername'), '\" \"', variables('ethereumAccountPsswd'), '\" \"', variables('ethereumAccountPassphrase'), '\" \"', variables('artifactsLocationURL'), '\" \"', variables('ethereumNetworkID'), '\" \"', variables('maxPeers'), '\" \"', variables('mnNode'), '\" \"', variables('gethIPCPort'), '\" \"', variables('numBootNodes'), '\" \"', variables('numMNNodes'), '\" \"', variables('mnVMNamePrefix'), '\" \"', variables('genesisBlock'), '\" \"', variables('adminHash'), '\" \"', variables('mnSeqNum'), '\" \"', variables('empty'), '\" \"', variables('empty'), '\" \"', variables('empty'), '\" \"', parameters('dbPrimaryKey'),'\" \"', parameters('dbEndpoint'),'\" \"', parameters('suffix'),'\" \"', parameters('consortium-data'),'\"')]"
+                                        "commandToExecute": "[concat('/bin/bash ',parameters('scriptFileUri').filename,' \"', variables('adminUsername'), '\" \"', variables('ethereumAccountPsswd'), '\" \"', variables('ethereumAccountPassphrase'), '\" \"', variables('artifactsLocationURL'), '\" \"', variables('ethereumNetworkID'), '\" \"', variables('maxPeers'), '\" \"', variables('mnNode'), '\" \"', variables('gethIPCPort'), '\" \"', variables('numBootNodes'), '\" \"', variables('numMNNodes'), '\" \"', variables('mnVMNamePrefix'), '\" \"', variables('genesisBlock'), '\" \"', variables('adminHash'), '\" \"', variables('mnSeqNum'), '\" \"', variables('empty'), '\" \"', variables('empty'), '\" \"', variables('empty'), '\" \"', parameters('dbPrimaryKey'),'\" \"', parameters('dbEndpoint'),'\" \"', parameters('suffix'),'\" \"', parameters('consortium-data'),'\" \"', variables('peerInfoDbName'),'\" \"', variables('peerInfoCollectionName'),'\"')]"
                                     }
                                 }
                             }
