@@ -414,7 +414,9 @@
             "consortiumId": "[variables('consortiumId')]",
             "reg1": "reg1",
             "fileUri": "[variables('scriptFileUris')]",
-            "filename": "[variables('scriptFilename')]"
+            "filename": "[variables('scriptFilename')]",
+            "peerInfoDbName": "peerInfoDb",
+            "peerInfoCollectionName":"peerInfoColl"
         }
     },
     "resources": [
