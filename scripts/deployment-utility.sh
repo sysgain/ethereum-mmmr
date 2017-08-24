@@ -52,23 +52,23 @@ getalldbs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs" get`
 echo "Database details are: $getalldbs"
 
 #check wheather collection  exists if not create testcolls collection
-getallcolls=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/testdb/colls" get`
+getallcolls=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls" get`
 collscount=`echo $getallcolls | grep "\"id\":.*"`
 if [ "$collscount" == "" ]
 then
-`sh getpost-utility.sh $masterkey "${endpointurl}dbs/testdb/colls" "post" "$colldata"`
+`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls" "post" "$colldata"`
  echo ".........\"$colldata\" collection got created......... "
 else
 echo "collection  already present"
 fi
-getallcolls=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/testdb/colls" get`
+getallcolls=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls" get`
 echo "Collection details are: $getallcolls"
 #create a document in database with the current node info
-sh getpost-utility.sh $masterkey "${endpointurl}dbs/testdb/colls/testcolls/docs" "post" "$docdata"
+sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" "post" "$docdata"
 
 #wait for at least 2 nodes to comeup
 while sleep 5; do
-        alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/testdb/colls/testcolls/docs" get`
+        alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
         hostcount=`echo $alldocs | grep -Po '"hostname":.*?",' |cut -d "," -f1 | cut -d ":" -f2 |wc -l`
         if [ $hostcount -gt 2 ]; then
                 break
