@@ -361,7 +361,7 @@
                 "numSubnets": "[variables('numSubnets')]",
                 "txNsgName": "[concat(variables('txNsgName'),'-',variables('suffixArray')[0])]",
                 "mnNsgName": "[concat(variables('mnNsgName'),'-',variables('suffixArray')[0])]",
-                "gatewayAsn": "[add(parameters('consortiumId'),65051)]",
+                "gatewayAsn": "[add(mul(parameters('consortiumId'), 10),65000)]",
                 "subnetPropertiesArray": [
                     {
                         "name": "[variables('txSubnetName')]",
@@ -399,7 +399,7 @@
                 "numSubnets": "[variables('numSubnets')]",
                 "txNsgName": "[concat(variables('txNsgName'),'-',variables('suffixArray')[1])]",
                 "mnNsgName": "[concat(variables('mnNsgName'),'-',variables('suffixArray')[1])]",
-                "gatewayAsn": "[add(parameters('consortiumId'),65052)]",
+                "gatewayAsn": "[add(mul(parameters('consortiumId'), 10),65010)]",
                 "subnetPropertiesArray": [
                     {
                         "name": "[variables('txSubnetName')]",
@@ -437,7 +437,7 @@
                 "numSubnets": "[variables('numSubnets')]",
                 "txNsgName": "[concat(variables('txNsgName'),'-',variables('suffixArray')[2])]",
                 "mnNsgName": "[concat(variables('mnNsgName'),'-',variables('suffixArray')[2])]",
-                "gatewayAsn": "[add(parameters('consortiumId'),65053)]",
+                "gatewayAsn": "[add(mul(parameters('consortiumId'), 10),65020)]",
                 "subnetPropertiesArray": [
                     {
                         "name": "[variables('txSubnetName')]",
@@ -475,7 +475,7 @@
                 "numSubnets": "[variables('numSubnets')]",
                 "txNsgName": "[concat(variables('txNsgName'),'-',variables('suffixArray')[3])]",
                 "mnNsgName": "[concat(variables('mnNsgName'),'-',variables('suffixArray')[3])]",
-                "gatewayAsn": "[add(parameters('consortiumId'),65054)]",
+                "gatewayAsn": "[add(mul(parameters('consortiumId'), 10),65030)]",
                 "subnetPropertiesArray": [
                     {
                         "name": "[variables('txSubnetName')]",
@@ -513,7 +513,7 @@
                 "numSubnets": "[variables('numSubnets')]",
                 "txNsgName": "[concat(variables('txNsgName'),'-',variables('suffixArray')[4])]",
                 "mnNsgName": "[concat(variables('mnNsgName'),'-',variables('suffixArray')[4])]",
-                "gatewayAsn": "[add(parameters('consortiumId'),65055)]",
+                "gatewayAsn": "[add(mul(parameters('consortiumId'), 10),65040)]",
                 "subnetPropertiesArray": [
                     {
                         "name": "[variables('txSubnetName')]",
