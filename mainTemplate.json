@@ -201,6 +201,7 @@
         },
         "consortiumData": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "The URL pointing to the consortium configuration data provided by another member's deployment"
             }
