@@ -199,11 +199,10 @@
                 "Single"
             ]
         },
-        "peerInfoEndpoint": {
+        "consortiumData": {
             "type": "string",
-            "defaultValue": "",
             "metadata": {
-                "description": "Peer info endPoint of Leader deployment"
+                "description": "The URL pointing to the consortium configuration data provided by another member's deployment"
             }
         },
         "genesisBlock": {
@@ -254,67 +253,83 @@
         "scriptUrlSingle":[
             {
                 "fileUri": "[variables('leaderScriptUrl')]",
-                "filename": "[variables('leaderFilename')]"
+                "filename": "[variables('leaderFilename')]",
+                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
+                
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
-                "filename": "[variables('memberFilename')]"
+                "filename": "[variables('memberFilename')]",
+                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
-                "filename": "[variables('memberFilename')]"
+                "filename": "[variables('memberFilename')]",
+                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
-                "filename": "[variables('memberFilename')]"
+                "filename": "[variables('memberFilename')]",
+                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
-                "filename": "[variables('memberFilename')]"
+                "filename": "[variables('memberFilename')]",
+                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
             }
         ],
         "scriptUrlLeader":[
             {
                 "fileUri": "[variables('leaderScriptUrl')]",
-                "filename": "[variables('leaderFilename')]"
+                "filename": "[variables('leaderFilename')]",
+                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
-                "filename": "[variables('memberFilename')]"
+                "filename": "[variables('memberFilename')]",
+                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
-                "filename": "[variables('memberFilename')]"
+                "filename": "[variables('memberFilename')]",
+                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
-                "filename": "[variables('memberFilename')]"
+                "filename": "[variables('memberFilename')]",
+                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
-                "filename": "[variables('memberFilename')]"
+                "filename": "[variables('memberFilename')]",
+                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
             }
         ],
         "scriptUrlMember":[
             {
                 "fileUri": "[variables('memberScriptUrl')]",
-                "filename": "[variables('memberFilename')]"
+                "filename": "[variables('memberFilename')]",
+                "consortiumData": "[parameters('consortiumData')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
-                "filename": "[variables('memberFilename')]"
+                "filename": "[variables('memberFilename')]",
+                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
-                "filename": "[variables('memberFilename')]"
+                "filename": "[variables('memberFilename')]",
+                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
-                "filename": "[variables('memberFilename')]"
+                "filename": "[variables('memberFilename')]",
+                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
-                "filename": "[variables('memberFilename')]"
+                "filename": "[variables('memberFilename')]",
+                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
             }
         ],
         "apis": {
@@ -782,7 +797,7 @@
                         "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('dbSettings').dbAccName), variables('apis').apiVersionDocumentDb).primaryMasterKey]"
                     },
                     "consortium-data": {
-                        "value": "[concat('http://',reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
+                        "value": "[variables(concat('scriptUrl',parameters('mode'))).consortiumData[copyIndex()]]"
                     }
                 }
             }
