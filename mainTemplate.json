@@ -101,7 +101,6 @@
         },
         "consortiumId": {
             "type": "int",
-            "defaultValue": 1,
             "minValue": 0,
             "maxValue": 255,
             "metadata": {
