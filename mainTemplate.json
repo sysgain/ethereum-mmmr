@@ -796,9 +796,6 @@
                     },
                     "dbPrimaryKey": {
                         "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('dbSettings').dbAccName), variables('apis').apiVersionDocumentDb).primaryMasterKey]"
-                    },
-                    "consortium-data": {
-                        "value": "[variables(concat('scriptUrl',parameters('mode'))).consortiumData[copyIndex()]]"
                     }
                 }
             }
