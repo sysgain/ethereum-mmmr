@@ -662,8 +662,8 @@
             "connectionMemName": "[concat('conn-to-gateway',parameters('consortiumId'))]"
         },
         "gatewayIdRegion1Single": "NA",
-        "gatewayIdRegion1Leader": "[concat('/subscriptions/',resourceGroup().id,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Network/virtualNetworkGateways/',variables('namingInfix'),'-gateway-',variables('suffixArray')[0])]",
-        "gatewayIdRegion1Member": "[concat('/subscriptions/',resourceGroup().id,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Network/virtualNetworkGateways/',variables('namingInfix'),'-gateway-',variables('suffixArray')[0])]",
+        "gatewayIdRegion1Leader": "[concat(resourceGroup().id,'/providers/Microsoft.Network/virtualNetworkGateways/',variables('namingInfix'),'-gateway-',variables('suffixArray')[0])]",
+        "gatewayIdRegion1Member": "[concat(resourceGroup().id,'/providers/Microsoft.Network/virtualNetworkGateways/',variables('namingInfix'),'-gateway-',variables('suffixArray')[0])]",
         "pairGatewayPsModuleSingle": "NA",
         "pairGatewayPsModuleLeader": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com/ConsortiumBridge.psm1')]",
         "pairGatewayPsModuleMember": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com/ConsortiumBridge.psm1')]",
