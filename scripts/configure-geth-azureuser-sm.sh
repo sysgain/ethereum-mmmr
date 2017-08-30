@@ -141,7 +141,7 @@ fi
 getallcolls=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls" get`
 echo "Collection details are: $getallcolls"
 #create a document in database with the current node info
-sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/${collname}/docs" "post" "$docdata"
+sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" "post" "$docdata"
 
 #wait for at least 2 nodes to comeup
 while sleep 5; do
