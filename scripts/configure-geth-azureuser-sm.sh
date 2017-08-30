@@ -134,7 +134,7 @@ collscount=`echo $getallcolls | grep "\"id\":.*"`
 if [ "$collscount" == "" ]
 then
 `sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls" "post" "$colldata"`
- echo ".........\"testcolls\" collection got created......... "
+ echo ".........\"$collname\" collection got created......... "
 else
 echo "collection  already present"
 fi
