@@ -16,7 +16,7 @@ requesturllength=`echo $requesturl | wc -c`
 cd ~
 #download the nodejs code for authstring generation
 #wget https://raw.githubusercontent.com/pradeepts/testRepo/master/authGen.js
-output=`nodejs authTokenGenerator.js $masterkey $requesturl $verb`
+output=`nodejs auth-token-generator.js $masterkey $requesturl $verb`
 DATE=`echo $output | cut -d "=" -f2 |cut -c2-30`
 URL=`echo $output | cut -d "=" -f3 |cut -c2-$requesturllength`
 AUTHSTRING=`echo $output | cut -d "=" -f4 |cut -c2-89`
