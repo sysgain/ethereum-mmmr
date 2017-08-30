@@ -64,7 +64,7 @@ regionid=$REGIONID
 masterkey=$PRIMARY_KEY
 endpointurl=$DOCDB_END_POINT_URL
 dbname=$PEERINFODB
-collname=$PEERINFOCOL
+collname=$PEERINFOCOLL
 ##################
 # Scale difficulty
 ##################
