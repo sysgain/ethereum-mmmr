@@ -25,11 +25,15 @@ NUM_TX_NODES=${14};         #Only supplied for NODE_TYPE=0
 TX_NODE_PREFIX=${15};       #Only supplied for NODE_TYPE=0
 ADMIN_SITE_PORT=${16};      #Only supplied for NODE_TYPE=0
 CONSORTIUM_MEMBER_ID=${17}; #Only supplied for NODE_TYPE=0
-PRIMARY_KEY=${18}
-DOCDB_END_POINT_URL=${19}
-REGIONID=${20}
-PEERINFODB=${22}
-PEERINFOCOLL=${23}
+PRIMARY_KEY=${18};
+DOCDB_END_POINT_URL=${19};
+REGIONID=${20};
+PEERINFODB=${22};
+PEERINFOCOLL=${23};
+REMOTE_DOCDB_END_POINT_URL=${24};
+REMOTE_DOCDB_PRIMARY_KEY=${25};
+REMOTE_PEERINFODB=${26};
+REMOTE_PEERINFOCOLL=${27};
 #############
 # Globals
 #############
@@ -50,21 +54,29 @@ GETH_LOG_FILE_PATH="$HOMEDIR/geth.log";
 GENESIS_FILE_PATH="$HOMEDIR/genesis.json";
 GETH_CFG_FILE_PATH="$HOMEDIR/geth.cfg";
 NODEKEY_SHARE_PATH="$GETH_HOME/nodekey";
-BOOTNODE_SHARE_PATH="$ETHERADMIN_HOME/public/bootnodes.txt"
+#BOOTNODE_SHARE_PATH="$ETHERADMIN_HOME/public/bootnodes.txt"
 NETWORKID_SHARE_PATH="$ETHERADMIN_HOME/public/networkid.txt"
 
 # Below information will be loaded from another consortium member
-REMOTE_BOOTNODE_URL="$CONSORTIUM_DATA_ROOT/bootnodes.txt";
+remotedbname=$REMOTE_PEERINFODB;
+remotecollname=$REMOTE_PEERINFOCOLL;
+remoteendpointurl=$REMOTE_DOCDB_END_POINT_URL;
+remotedocdbprimarykey=$REMOTE_DOCDB_PRIMARY_KEY;
+allremotedocs=`sh getpost-utility.sh $masterkey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
+RNODES=`echo $alldocs | grep -Po '"remoteBootNodeUrls":.*?",' | cut -d "," -f1 | cut -d ":" -f2`
+REMOTE_BOOTNODE_URL="$RNODES";
 REMOTE_GENESIS_BLOCK_URL="$CONSORTIUM_DATA_ROOT/genesis.json";
 REMOTE_NETWORK_ID_URL="$CONSORTIUM_DATA_ROOT/networkid.txt";
-hostname=`hostname`
-ipaddress=`hostname -i`
-consortiumid=$CONSORTIUM_MEMBER_ID
-regionid=$REGIONID
-masterkey=$PRIMARY_KEY
-endpointurl=$DOCDB_END_POINT_URL
-dbname=$PEERINFODB
-collname=$PEERINFOCOLL
+hostname=`hostname`;
+ipaddress=`hostname -i`;
+consortiumid=$CONSORTIUM_MEMBER_ID;
+regionid=$REGIONID;
+masterkey=$PRIMARY_KEY;
+endpointurl=$DOCDB_END_POINT_URL;
+dbname=$PEERINFODB;
+collname=$PEERINFOCOLL;
+remoteendpointurl=$REMOTE_DOCDB_END_POINT_URL;
+remotedocdbprimarykey=$REMOTE_DOCDB_PRIMARY_KEY;
 echo "CONSORTIUM_DATA_ROOT = "$CONSORTIUM_DATA_ROOT;
 
 cd $HOMEDIR;
@@ -78,10 +90,10 @@ echo $BOOTNODE_URLS
 # Download Boot Node Urls of other member and get IP to 
 # append to bootnodes.txt
 #########################################
-wget -N ${REMOTE_BOOTNODE_URL} || exit 1;
-IP_TO_PING=$(grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' bootnodes.txt | head -1)
+#wget -N ${REMOTE_BOOTNODE_URL} || exit 1;
+IP_TO_PING=$(grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' ${REMOTE_BOOTNODE_URLS} | head -1)
 echo "IP_TO_PING is: $IP_TO_PING"
-REMOTE_BOOTNODE_URLS=`cat bootnodes.txt`;
+#REMOTE_BOOTNODE_URLS=`cat bootnodes.txt`;
 BOOTNODE_URLS="${BOOTNODE_URLS} ${REMOTE_BOOTNODE_URLS}";
 
 #########################################

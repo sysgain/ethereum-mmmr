@@ -25,7 +25,7 @@ MN_NODE_SEQNUM=${14};       #Only supplied for NODE_TYPE=1
 NUM_TX_NODES=${14};         #Only supplied for NODE_TYPE=0
 TX_NODE_PREFIX=${15};       #Only supplied for NODE_TYPE=0
 ADMIN_SITE_PORT=${16};      #Only supplied for NODE_TYPE=0
-CONSORTIUM_MEMBER_ID=${17};         #Only supplied for NODE_TYPE=0
+CONSORTIUM_MEMBER_ID=${17}; #Only supplied for NODE_TYPE=0
 PRIMARY_KEY=${18}
 DOCDB_END_POINT_URL=${19}
 REGIONID=${20}
@@ -53,16 +53,16 @@ GETH_LOG_FILE_PATH="$HOMEDIR/geth.log";
 GENESIS_FILE_PATH="$HOMEDIR/genesis.json";
 GETH_CFG_FILE_PATH="$HOMEDIR/geth.cfg";
 NODEKEY_SHARE_PATH="$GETH_HOME/nodekey";
-BOOTNODE_SHARE_PATH="$ETHERADMIN_HOME/public/bootnodes.txt"
-NETWORKID_SHARE_PATH="$ETHERADMIN_HOME/public/networkid.txt"
-hostname=`hostname`
-ipaddress=`hostname -i`
-consortiumid=$CONSORTIUM_MEMBER_ID
-regionid=$REGIONID
-masterkey=$PRIMARY_KEY
-endpointurl=$DOCDB_END_POINT_URL
-dbname=$PEERINFODB
-collname=$PEERINFOCOLL
+#BOOTNODE_SHARE_PATH="$ETHERADMIN_HOME/public/bootnodes.txt";
+NETWORKID_SHARE_PATH="$ETHERADMIN_HOME/public/networkid.txt";
+hostname=`hostname`;
+ipaddress=`hostname -i`;
+consortiumid=$CONSORTIUM_MEMBER_ID;
+regionid=$REGIONID;
+masterkey=$PRIMARY_KEY;
+endpointurl=$DOCDB_END_POINT_URL;
+dbname=$PEERINFODB;
+collname=$PEERINFOCOLL;
 cd $HOMEDIR;
 
 setup_dependencies
