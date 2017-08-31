@@ -271,7 +271,7 @@
             "reg4",
             "reg5"
         ],
-        "scriptUrlSingle":[
+        "scriptReqSingle":[
             {
                 "fileUri": "[variables('leaderScriptUrl')]",
                 "filename": "[variables('leaderFilename')]",
@@ -314,7 +314,7 @@
                 "remotePeerInfoCollName": "NA"
             }
         ],
-        "scriptUrlLeader":[
+        "scriptReqLeader":[
             {
                 "fileUri": "[variables('leaderScriptUrl')]",
                 "filename": "[variables('leaderFilename')]",
@@ -356,7 +356,7 @@
                 "remotePeerInfoCollName": "NA"
             }
         ],
-        "scriptUrlMember":[
+        "scriptReqMember":[
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
@@ -844,8 +844,8 @@
                     "ubuntuImage": {
                         "value": "[variables('ubuntuImage')]"
                     },
-                    "scriptFileUri":{
-                        "value": "[variables(concat('scriptUrl',parameters('mode')))[copyIndex()]]"
+                    "scriptReq":{
+                        "value": "[variables(concat('scriptReq',parameters('mode')))[copyIndex()]]"
                     },
                     "location": {
                         "value": "[variables('locationArray')[copyIndex()]]"
