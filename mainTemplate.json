@@ -239,7 +239,7 @@
                 "description": "The base URL for dependent assets",
                 "artifactsBaseUrl": ""
             },
-            "defaultValue": "https://raw.githubusercontent.com/sysgain/Ethereum-dev/mmmr-dev"
+            "defaultValue": "https://raw.githubusercontent.com/sysgain/Ethereum-dev/mmmr-dev2"
         }
     },
     "variables": {
