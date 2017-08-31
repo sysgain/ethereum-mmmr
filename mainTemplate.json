@@ -314,22 +314,22 @@
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
-                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
+                "consortiumData": "[parameters('consortiumData')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
-                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
+                "consortiumData": "[parameters('consortiumData')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
-                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
+                "consortiumData": "[parameters('consortiumData')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
-                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]"
+                "consortiumData": "[parameters('consortiumData')]"
             }
         ],
         "apis": {
@@ -674,7 +674,7 @@
             "gatewayName": "[variables('gatewaySettings').gatewayName]",
             "connectionSharedKey": "[parameters('connectionSharedKey')]",
             "regionCount": "[parameters('regionCount')]",
-            "connectionMemName": "[concat('conn-to-gateway',parameters('consortiumId'))]"
+            "connectionMemName": "conn-to-leader-gateway"
         },
         "gatewayIdRegion1Single": "NA",
         "gatewayIdRegion1Leader": "[concat(resourceGroup().id,'/providers/Microsoft.Network/virtualNetworkGateways/',variables('namingInfix'),'-gateway-',variables('suffixArray')[0])]",
