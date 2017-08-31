@@ -244,6 +244,11 @@ function create_config
 	  printf "%s\n" "TX_NODE_PREFIX=$TX_NODE_PREFIX" >> $GETH_CFG_FILE_PATH;
 	  printf "%s\n" "NUM_TX_NODES=$NUM_TX_NODES" >> $GETH_CFG_FILE_PATH;
 	  printf "%s\n" "ADMIN_SITE_PORT=$ADMIN_SITE_PORT" >> $GETH_CFG_FILE_PATH;
+          printf "%s\n" "BOOTNODES=${BOOTNODES[*]}" >> $GETH_CFG_FILE_PATH;
+          printf "%s\n" "masterkey=$masterkey" >> $GETH_CFG_FILE_PATH;
+          printf "%s\n" "endpointurl=$endpointurl" >> $GETH_CFG_FILE_PATH;
+          printf "%s\n" "dbname=$dbname" >> $GETH_CFG_FILE_PATH;
+          printf "%s\n" "collname=$collname" >> $GETH_CFG_FILE_PATH;
 	  #printf "%s\n" "BOOTNODE_SHARE_PATH=$BOOTNODE_SHARE_PATH" >> $GETH_CFG_FILE_PATH;
 	  printf "%s\n" "CONSORTIUM_MEMBER_ID=$CONSORTIUM_MEMBER_ID" >> $GETH_CFG_FILE_PATH;
 	fi
