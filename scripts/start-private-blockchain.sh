@@ -52,7 +52,7 @@ echo "bootnode_urls are: $BOOTNODE_URLS"
 ############################################################
 # Make boot node urls available to other consortium members
 ############################################################
-bootnode_urls_data="{\"remoteBootNodeUrls\":\"${BOOTNODE_URLS}\"}"
+bootnode_urls_data="{\"id\":\"rbnodes\",\"remoteBootNodeUrls\":\"${BOOTNODE_URLS}\"}"
 if [ $NODE_TYPE -eq 0 ]; then
   sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" "post" "$bootnode_urls_data"
 fi
