@@ -20,7 +20,7 @@ if [ ! -e $GETH_CFG ]; then echo "Config file not found. Exiting"; exit 1; fi
 ETHERADMIN_LOG_FILE_PATH="$HOMEDIR/etheradmin.log";
 # Log level of geth
 VERBOSITY=4;
-
+echo "bootnodes are: ${BOOTNODES[*]}"
 ###########################################
 # Ensure that at least one bootnode is up
 # If not, wait 5 seconds then retry
@@ -48,7 +48,7 @@ done
 # Replace hostnames in config file with IP addresses
 #####################################################
 BOOTNODE_URLS=`echo $BOOTNODE_URLS | perl -pe 's/#(.*?)#/qx\/nslookup $1| egrep "Address: [0-9]"| cut -d" " -f2 | xargs echo -n\//ge'`
-
+echo "bootnode_urls are: $BOOTNODE_URLS"
 ############################################################
 # Make boot node urls available to other consortium members
 ############################################################
