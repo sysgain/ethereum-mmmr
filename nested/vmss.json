@@ -11,7 +11,7 @@
         "mnVmssSettings": {
             "type": "secureObject"
         },
-        "scriptFileUri": {
+        "scriptFileReq": {
             "type": "object"
         },
         "ubuntuImage": {
@@ -34,7 +34,11 @@
         }
     },
     "variables": {
-        "consortium-data": "[parameters('scriptFileUri').consortiumData]",
+        "remotePeerInfoEndpoint":"[parameters('scriptFileReq').remotePeerInfoEndpoint]",
+        "remotePeerInfoPrimaryKey":"[parameters('scriptFileReq').remotePeerInfoPrimaryKey]",
+        "remotePeerInfoDbName":"[parameters('scriptFileReq').remotePeerInfoDbName]",
+        "remotePeerInfoCollName": "[parameters('scriptFileReq').remotePeerInfoCollName]",
+        
         "ethereumAccountPsswd": "[parameters('extensionSettings').ethereumAccountPsswd]",
         "ethereumAccountPassphrase": "[parameters('extensionSettings').ethereumAccountPassphrase]",
         "artifactsLocationURL": "[parameters('extensionSettings').artifactsLocationURL]",
@@ -199,11 +203,11 @@
                                     "autoUpgradeMinorVersion": true,
                                     "settings": {
                                         "fileUris": [
-                                            "[parameters('scriptFileUri').fileUri]"
+                                            "[parameters('scriptFileReq').fileUri]"
                                         ]
                                     },
                                     "protectedSettings": {
-                                        "commandToExecute": "[concat('/bin/bash ',parameters('scriptFileUri').filename,' \"', variables('adminUsername'), '\" \"', variables('ethereumAccountPsswd'), '\" \"', variables('ethereumAccountPassphrase'), '\" \"', variables('artifactsLocationURL'), '\" \"', variables('ethereumNetworkID'), '\" \"', variables('maxPeers'), '\" \"', variables('txNode'), '\" \"', variables('gethIPCPort'), '\" \"', variables('numBootNodes'), '\" \"', variables('numMNNodes'), '\" \"', variables('mnVMNamePrefix'), '\" \"', variables('genesisBlock'), '\" \"', variables('adminHash'), '\" \"', variables('numTXNodes'), '\" \"', variables('txVMNamePrefix'), '\" \"', variables('adminSitePort'), '\" \"', variables('consortiumMemberId'), '\" \"', parameters('dbPrimaryKey'),'\" \"', parameters('dbEndpoint'),'\" \"', parameters('suffix'),'\" \"', variables('consortium-data'),'\" \"', variables('peerInfoDbName'),'\" \"', variables('peerInfoCollectionName'),'\"')]"
+                                        "commandToExecute": "[concat('/bin/bash ',parameters('scriptFileReq').filename,' \"', variables('adminUsername'), '\" \"', variables('ethereumAccountPsswd'), '\" \"', variables('ethereumAccountPassphrase'), '\" \"', variables('artifactsLocationURL'), '\" \"', variables('ethereumNetworkID'), '\" \"', variables('maxPeers'), '\" \"', variables('txNode'), '\" \"', variables('gethIPCPort'), '\" \"', variables('numBootNodes'), '\" \"', variables('numMNNodes'), '\" \"', variables('mnVMNamePrefix'), '\" \"', variables('genesisBlock'), '\" \"', variables('adminHash'), '\" \"', variables('numTXNodes'), '\" \"', variables('txVMNamePrefix'), '\" \"', variables('adminSitePort'), '\" \"', variables('consortiumMemberId'), '\" \"', parameters('dbPrimaryKey'),'\" \"', parameters('dbEndpoint'),'\" \"', parameters('suffix'),'\" \"', variables('empty'),'\" \"', variables('peerInfoDbName'),'\" \"', variables('peerInfoCollectionName'),'\" \"',variables('remotePeerInfoEndpoint'),'\" \"',variables('remotePeerInfoPrimaryKey'),'\" \"', variables('remotePeerInfoDbName'),'\" \"', variables('remotePeerInfoCollName'),'\"')]"
                                     }
                                 }
                             }
@@ -277,11 +281,11 @@
                                     "autoUpgradeMinorVersion": true,
                                     "settings": {
                                         "fileUris": [
-                                            "[parameters('scriptFileUri').fileUri]"
+                                            "[parameters('scriptFileReq').fileUri]"
                                         ]
                                     },
                                     "protectedSettings": {
-                                        "commandToExecute": "[concat('/bin/bash ',parameters('scriptFileUri').filename,' \"', variables('adminUsername'), '\" \"', variables('ethereumAccountPsswd'), '\" \"', variables('ethereumAccountPassphrase'), '\" \"', variables('artifactsLocationURL'), '\" \"', variables('ethereumNetworkID'), '\" \"', variables('maxPeers'), '\" \"', variables('mnNode'), '\" \"', variables('gethIPCPort'), '\" \"', variables('numBootNodes'), '\" \"', variables('numMNNodes'), '\" \"', variables('mnVMNamePrefix'), '\" \"', variables('genesisBlock'), '\" \"', variables('adminHash'), '\" \"', variables('mnSeqNum'), '\" \"', variables('empty'), '\" \"', variables('empty'), '\" \"', variables('empty'), '\" \"', parameters('dbPrimaryKey'),'\" \"', parameters('dbEndpoint'),'\" \"', parameters('suffix'),'\" \"', variables('consortium-data'),'\" \"', variables('peerInfoDbName'),'\" \"', variables('peerInfoCollectionName'),'\"')]"
+                                        "commandToExecute": "[concat('/bin/bash ',parameters('scriptFileReq').filename,' \"', variables('adminUsername'), '\" \"', variables('ethereumAccountPsswd'), '\" \"', variables('ethereumAccountPassphrase'), '\" \"', variables('artifactsLocationURL'), '\" \"', variables('ethereumNetworkID'), '\" \"', variables('maxPeers'), '\" \"', variables('mnNode'), '\" \"', variables('gethIPCPort'), '\" \"', variables('numBootNodes'), '\" \"', variables('numMNNodes'), '\" \"', variables('mnVMNamePrefix'), '\" \"', variables('genesisBlock'), '\" \"', variables('adminHash'), '\" \"', variables('mnSeqNum'), '\" \"', variables('empty'), '\" \"', variables('empty'), '\" \"', variables('empty'), '\" \"', parameters('dbPrimaryKey'),'\" \"', parameters('dbEndpoint'),'\" \"', parameters('suffix'),'\" \"', variables('empty'),'\" \"', variables('peerInfoDbName'),'\" \"', variables('peerInfoCollectionName'),'\" \"',variables('remotePeerInfoEndpoint'),'\" \"',variables('remotePeerInfoPrimaryKey'),'\" \"', variables('remotePeerInfoDbName'),'\" \"', variables('remotePeerInfoCollName'),'\"')]"
                                     }
                                 }
                             }
