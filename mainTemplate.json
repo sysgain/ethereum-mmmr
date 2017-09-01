@@ -370,6 +370,7 @@
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
+                "consortiumData":"",
                 "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
@@ -378,6 +379,7 @@
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
+                "consortiumData":"",
                 "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
@@ -386,6 +388,7 @@
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
+                "consortiumData":"",
                 "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
@@ -394,6 +397,7 @@
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
+                "consortiumData":"",
                 "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
@@ -402,6 +406,7 @@
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
+                "consortiumData":"",
                 "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
