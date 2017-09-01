@@ -198,6 +198,13 @@
                 "Single"
             ]
         },
+        "consortiumData": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The URL pointing to the consortium configuration data provided by another member's deployment"
+            }
+        },
         "peerInfoEndpoint": {
             "type": "string",
             "defaultValue": "",
@@ -370,6 +377,7 @@
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
+                "consortiumData":"[parameters('consortiumData')]",
                 "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
@@ -378,6 +386,7 @@
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
+                "consortiumData":"[parameters('consortiumData')]",
                 "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
@@ -386,6 +395,7 @@
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
+                "consortiumData":"[parameters('consortiumData')]",
                 "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
@@ -394,6 +404,7 @@
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
+                "consortiumData":"[parameters('consortiumData')]",
                 "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
@@ -402,6 +413,7 @@
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
+                "consortiumData":"[parameters('consortiumData')]",
                 "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
