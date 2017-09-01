@@ -77,7 +77,7 @@ fi
 if [ $NODE_TYPE -eq 0 ]; then
   cd $ETHERADMIN_HOME;
   echo "===== Starting admin webserver =====";
-  nohup nodejs app.js $ADMIN_SITE_PORT $GETH_HOME/geth.ipc $PREFUND_ADDRESS $PASSWD $MN_NODE_PREFIX $NUM_MN_NODES $TX_NODE_PREFIX $NUM_TX_NODES $CONSORTIUM_MEMBER_ID >> $ETHERADMIN_LOG_FILE_PATH 2>&1 &
+  nohup nodejs app.js $ADMIN_SITE_PORT $GETH_HOME/geth.ipc $PREFUND_ADDRESS $PASSWD $CONSORTIUM_MEMBER_ID $endpointurl $masterkey $dbname $collname >> $ETHERADMIN_LOG_FILE_PATH 2>&1 &
   if [ $? -ne 0 ]; then echo "Previous command failed. Exiting"; exit $?; fi
   echo "===== Started admin webserver =====";
 fi
