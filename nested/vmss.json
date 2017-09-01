@@ -38,7 +38,7 @@
         "remotePeerInfoPrimaryKey":"[parameters('scriptReq').remotePeerInfoPrimaryKey]",
         "remotePeerInfoDbName":"[parameters('scriptReq').remotePeerInfoDbName]",
         "remotePeerInfoCollName": "[parameters('scriptReq').remotePeerInfoCollName]",
-        
+        "consortium-data": "[parameters('scriptReq').consortiumData]",
         "ethereumAccountPsswd": "[parameters('extensionSettings').ethereumAccountPsswd]",
         "ethereumAccountPassphrase": "[parameters('extensionSettings').ethereumAccountPassphrase]",
         "artifactsLocationURL": "[parameters('extensionSettings').artifactsLocationURL]",
