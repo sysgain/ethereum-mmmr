@@ -1,11 +1,5 @@
 #!/bin/bash
 . deployment-utility.sh
-#installing pre-reqisites
-sudo apt-get install npm -y >/dev/null 2>&1
-#nodejs
-sudo apt-get install nodejs -y >/dev/null 2>&1
-#install the crypto-js module for nodejs
-sudo npm install crypto-js >/dev/null 2>&1
 echo "===== Initializing geth installation =====";
 date;
 
@@ -71,7 +65,7 @@ remotedocdbprimarykey=$REMOTE_DOCDB_PRIMARY_KEY;
 allremotedocs=`sh getpost-utility.sh $masterkey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
 RNODES=`echo $alldocs | grep -Po '"remoteBootNodeUrls":.*?",' | cut -d "," -f1 | cut -d '"' -f4`
 REMOTE_BOOTNODE_URL="$RNODES";
-echo "REMOTE_BOOTNODE_URL=$REMOTE_BOOTNODE_URL="
+echo "REMOTE_BOOTNODE_URL=$REMOTE_BOOTNODE_URL"
 REMOTE_GENESIS_BLOCK_URL="$CONSORTIUM_DATA_ROOT/genesis.json";
 REMOTE_NETWORK_ID_URL="$CONSORTIUM_DATA_ROOT/networkid.txt";
 hostname=`hostname`;
