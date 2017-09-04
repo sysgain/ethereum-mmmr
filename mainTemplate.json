@@ -990,13 +990,17 @@
             "type": "string",
             "value": "[concat('ssh -p ', variables('sshFrontEnd'), ' ', parameters('adminUsername'), '@', reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
         },
-        "currentDepConsortiumId": {
-            "type": "int",
-            "value": "[parameters('consortiumId')]"
-        },
         "peerInfo_Endpoint": {
             "type": "string",
             "value": "[reference(concat('Microsoft.DocumentDB/databaseAccounts/',variables('dbSettings').dbAccName),'2015-04-08').documentEndpoint]"
+        },
+        "peerInfo_DB_name": {
+            "type": "string",
+            "value": "[variables('extensionSettings').peerInfoDbName]"
+        },
+        "peerInfo_collection_Name": {
+            "type": "string",
+            "value": "[variables('extensionSettings').peerInfoCollectionName]"
         },
         "peerInfo_key": {
             "type": "string",
