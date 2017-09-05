@@ -30,6 +30,13 @@ function setup_dependencies
         # /usr/bin is in $PATH by default, we'll put our binaries there
         sudo cp geth-alltools-linux-amd64-1.5.9-a07539fb/* /usr/bin/ || exit 1;
 }
+function update
+{
+        docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\"}"
+        while sleep 10; do
+        sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${hostname}" "put" "$docdata"
+        done
+}
 
 function setup_bootnodes
 {
@@ -65,7 +72,7 @@ getallcolls=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls
 echo "Collection details are: $getallcolls"
 #create a document in database with the current node info
 sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" "post" "$docdata"
-
+update &
 #wait for at least 2 nodes to comeup
 while sleep 5; do
         alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
@@ -75,13 +82,13 @@ while sleep 5; do
         fi
 done
 
-#finding all the hostnames and storing it in an array
+#finding the available hostnames and storing it in an array
 for var in `seq 0 $(($hostcount - 1 ))`; do
 NODES[$var]=`echo $alldocs | grep -Po '"hostname":.*?",' |sed -n "$(($var + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2`
 done
 echo "Nodes: ${NODES[*]}"
 
-#finding all the IP addresses and storing it in an array
+#finding the available IP addresses and storing it in an array
 for varip in `seq 0 $(($hostcount - 1 ))`; do
 IPS[$varip]=`echo $alldocs | grep -Po '"ipaddress":.*?",' |sed -n "$(($varip + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2`
 done

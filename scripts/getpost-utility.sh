@@ -33,9 +33,16 @@ post()
 {
 curl -X POST $URL -H "Authorization: ${AUTHSTRING}" -H "x-ms-date: ${DATE}" -H 'x-ms-version: 2017-02-22' -d "$DATA" >/dev/null 2>&1
 }
+put()
+{
+curl -X PUT $URL -H "Authorization: ${AUTHSTRING}" -H "x-ms-date: ${DATE}" -H 'x-ms-version: 2017-02-22' -d "$DATA" >/dev/null 2>&1
+}
 if [ "$verb" = "get" ]
 then
 get
-else
+elif [ "$verb" = "post" ]
+then
 post
+else
+put
 fi
