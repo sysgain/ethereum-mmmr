@@ -72,7 +72,13 @@ getallcolls=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls
 echo "Collection details are: $getallcolls"
 #create a document in database with the current node info
 sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" "post" "$docdata"
+alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
+echo "created the document"
+echo "$alldocs"
 update &
+alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
+echo "Document details after Update"
+echo "$alldocs"
 #wait for at least 2 nodes to comeup
 while sleep 5; do
         alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
