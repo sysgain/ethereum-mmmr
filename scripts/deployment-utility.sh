@@ -89,6 +89,7 @@ alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${c
 echo "Document details after Update"
 echo "$alldocs"
 #wait for at least 2 nodes to comeup
+hostcount=0
 while sleep 5; do
         alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
         hostcount=`echo $alldocs | grep -Po '"hostname":.*?",' |cut -d "," -f1 | cut -d ":" -f2 |wc -l`
@@ -103,6 +104,7 @@ TS[$var]=`echo $alldocs | grep -Po '"_ts":.*?",' |sed -n "$(($var + 1 ))p" | cut
 echo "TimeStamp on present node is: ${TS[$var]}"
 presentTS=`date +%s`
 diffTS=`expr $presentTS - ${TS[$var]}`
+echo "difference in timestamps: $diffTS"
 if [ "$diffTS" -gt "$expirytime" ]
 then
 continue
@@ -134,7 +136,7 @@ for var in `seq 0 $(($hostcount - 1 ))`; do
         fi
 done
 
-BOOTNODES=( "${BOOTNODESREGONE[*]}" )
+BOOTNODES=( "${BOOTNODESREGONE[@]}" )
 echo "BootNodes: ${BOOTNODES[*]}"
 NUM_BOOT_NODES=`echo ${#BOOTNODES[*]}`
 echo "Num of Bootnodes is: $NUM_BOOT_NODES"
@@ -149,8 +151,8 @@ function setup_node_info
         # Build node keys and node IDs
         #############
         for i in `seq 0 $(($NUM_BOOT_NODES - 1))`; do
-                BOOT_NODE_HOSTNAME=$BOOTNODES[$i];
-                echo "Boot Node Host Name is: ${BOOTNODES[$i]}"
+                BOOT_NODE_HOSTNAME=`echo ${BOOTNODES[$i]}`;
+                echo "Boot Node Host Name is: ${BOOT_NODE_HOSTNAME}"
                 NODE_KEYS[$i]=`echo $BOOT_NODE_HOSTNAME | sha256sum | cut -d ' ' -f 1`;
                 echo "nodekey is:  ${NODE_KEYS[$i]}"
                 setsid geth -nodekeyhex ${NODE_KEYS[$i]} > $HOMEDIR/tempbootnodeoutput 2>&1 &
@@ -185,10 +187,11 @@ function setup_node_info
         # Generate boot node URLs
         ##########################
         for i in `seq 0 $(($NUM_BOOT_NODES - 1))`; do
-         BOOTNODE_URLS="${BOOTNODE_URLS} --bootnodes enode://${NODE_IDS[$i]}@#${BOOTNODES[$i]}#:${GETH_IPC_PORT}";
-         docdata="{\"id\":\"${BOOTNODES[$i]}${timestamp}\",\"hostname\": \"${BOOTNODES[$i]}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${BOOTNODE_URLS}\"}"
+         BOOTNODE=`echo ${BOOTNODES[$i]}`
+         BOOTNODE_URLS="${BOOTNODE_URLS} --bootnodes enode://${NODE_IDS[$i]}@#$BOOTNODE#:${GETH_IPC_PORT}";
+         docdata="{\"id\":\"${BOOTNODE}${timestamp}\",\"hostname\": \"${BOOTNODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${BOOTNODE_URLS}\"}"
          echo "docdata is: $docdata"
-         sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${BOOTNODES[$i]}" "put" "$docdata"
+         sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${BOOTNODE}" "put" "$docdata"
         done
 }
 function setup_system_ethereum_account
