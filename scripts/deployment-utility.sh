@@ -166,6 +166,8 @@ function setup_node_info
         ##########################
         for i in `seq 0 $(($NUM_BOOT_NODES - 1))`; do
          BOOTNODE_URLS="${BOOTNODE_URLS} --bootnodes enode://${NODE_IDS[$i]}@#${BOOTNODES[$i]}#:${GETH_IPC_PORT}";
+         docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\", \"bootNodeUrl\": \"${BOOTNODE_URLS}\"}"
+         sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${hostname}" "put" "$docdata"
         done
 }
 function setup_system_ethereum_account
