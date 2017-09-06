@@ -44,7 +44,11 @@ echo "masterkey:$masterkey"
 echo "endpointurl:$endpointurl"
 getalldbs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs" get`
 dbcount=`echo $getalldbs | grep "\"id\":.*"`
-docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\"}"
+if [ $NODE_TYPE -eq 1 ];then
+docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"NA\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"null\"}"
+else
+docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"null\"}"
+fi
 dbdata="{\"id\":\"${dbname}\"}"
 colldata="{\"id\":\"${collname}\"}"
 #check wheather database exists if not create testdb database
@@ -91,9 +95,10 @@ done
 #finding the available hostnames and storing it in an array
 for var in `seq 0 $(($hostcount - 1 ))`; do
 TS[$var]=`echo $alldocs | grep -Po '"_ts":.*?",' |sed -n "$(($var + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2`
+echo "TimeStamp on present node is: $TS[$var]"
 presentTS=`date +%s`
 diffTS=`expr $presentTS - $TS[$var]`
-if [ $diffTS -gt expirytime ]
+if [ $diffTS -gt $expirytime ]
 then
 continue
 else
@@ -174,7 +179,7 @@ function setup_node_info
         ##########################
         for i in `seq 0 $(($NUM_BOOT_NODES - 1))`; do
          BOOTNODE_URLS="${BOOTNODE_URLS} --bootnodes enode://${NODE_IDS[$i]}@#${BOOTNODES[$i]}#:${GETH_IPC_PORT}";
-         docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${BOOTNODE_URLS}\"}"
+         docdata="{\"id\":\"${BOOTNODES[$i]}\",\"hostname\": \"${BOOTNODES[$i]}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${BOOTNODE_URLS}\"}"
          echo "docdata is: $docdata"
          sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${hostname}" "put" "$docdata"
         done
