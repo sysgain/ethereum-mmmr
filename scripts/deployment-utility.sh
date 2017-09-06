@@ -98,6 +98,7 @@ then
 continue
 else
 NODES[$var]=`echo $alldocs | grep -Po '"hostname":.*?",' |sed -n "$(($var + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2`
+fi
 done
 echo "Nodes: ${NODES[*]}"
 
