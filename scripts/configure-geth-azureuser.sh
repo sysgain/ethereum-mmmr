@@ -63,6 +63,8 @@ masterkey=$PRIMARY_KEY;
 endpointurl=$DOCDB_END_POINT_URL;
 dbname=$PEERINFODB;
 collname=$PEERINFOCOLL;
+sleeptime=10
+expirytime=120
 cd $HOMEDIR;
 
 setup_dependencies

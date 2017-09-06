@@ -78,6 +78,8 @@ dbname=$PEERINFODB;
 collname=$PEERINFOCOLL;
 remoteendpointurl=$REMOTE_DOCDB_END_POINT_URL;
 remotedocdbprimarykey=$REMOTE_DOCDB_PRIMARY_KEY;
+sleeptime=10
+expirytime=120
 echo "CONSORTIUM_DATA_ROOT = "$CONSORTIUM_DATA_ROOT;
 
 cd $HOMEDIR;
