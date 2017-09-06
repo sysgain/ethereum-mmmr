@@ -90,6 +90,13 @@ done
 
 #finding the available hostnames and storing it in an array
 for var in `seq 0 $(($hostcount - 1 ))`; do
+TS[$var]=`echo $alldocs | grep -Po '"_ts":.*?",' |sed -n "$(($var + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2`
+presentTS=`date +%s`
+diffTS=`expr $presentTS - $TS[$var]`
+if [ $diffTS -gt expirytime ]
+then
+continue
+else
 NODES[$var]=`echo $alldocs | grep -Po '"hostname":.*?",' |sed -n "$(($var + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2`
 done
 echo "Nodes: ${NODES[*]}"
@@ -166,7 +173,8 @@ function setup_node_info
         ##########################
         for i in `seq 0 $(($NUM_BOOT_NODES - 1))`; do
          BOOTNODE_URLS="${BOOTNODE_URLS} --bootnodes enode://${NODE_IDS[$i]}@#${BOOTNODES[$i]}#:${GETH_IPC_PORT}";
-         docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\", \"bootNodeUrl\": \"${BOOTNODE_URLS}\"}"
+         docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${BOOTNODE_URLS}\"}"
+         echo "docdata is: $docdata"
          sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${hostname}" "put" "$docdata"
         done
 }
