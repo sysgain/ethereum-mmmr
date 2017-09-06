@@ -32,7 +32,12 @@ function setup_dependencies
 }
 function update
 {
-        docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\"}"
+        timestamp=`date +%s`
+        if [ $NODE_TYPE -eq 1 ];then
+        docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"NA\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"null\"}"
+        else
+        docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"null\"}"
+        fi
         while sleep $sleeptime; do
         sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${hostname}" "put" "$docdata"
         done
@@ -98,7 +103,7 @@ TS[$var]=`echo $alldocs | grep -Po '"_ts":.*?",' |sed -n "$(($var + 1 ))p" | cut
 echo "TimeStamp on present node is: $TS[$var]"
 presentTS=`date +%s`
 diffTS=`expr $presentTS - $TS[$var]`
-if [ $diffTS -gt $expirytime ]
+if [ "$diffTS" -gt "$expirytime" ]
 then
 continue
 else
@@ -139,6 +144,7 @@ function setup_node_info
 {
         declare -a NODE_IDS
         declare -a NODE_KEYS
+        timestamp=`date +%s`
         #############
         # Build node keys and node IDs
         #############
@@ -179,9 +185,9 @@ function setup_node_info
         ##########################
         for i in `seq 0 $(($NUM_BOOT_NODES - 1))`; do
          BOOTNODE_URLS="${BOOTNODE_URLS} --bootnodes enode://${NODE_IDS[$i]}@#${BOOTNODES[$i]}#:${GETH_IPC_PORT}";
-         docdata="{\"id\":\"${BOOTNODES[$i]}\",\"hostname\": \"${BOOTNODES[$i]}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${BOOTNODE_URLS}\"}"
+         docdata="{\"id\":\"${BOOTNODES[$i]}${timestamp}\",\"hostname\": \"${BOOTNODES[$i]}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${BOOTNODE_URLS}\"}"
          echo "docdata is: $docdata"
-         sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${hostname}" "put" "$docdata"
+         sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${BOOTNODES[$i]}" "put" "$docdata"
         done
 }
 function setup_system_ethereum_account
