@@ -99,8 +99,10 @@ while sleep 5; do
 done
 
 #finding the available hostnames and storing it in an array
+alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
+hostcount=`echo $alldocs | grep -Po '"hostname":.*?",' | cut -d "," -f1 | cut -d ":" -f2 | wc -l`
 for var in `seq 0 $(($hostcount - 1 ))`; do
-TS[$var]=`echo $alldocs | grep -Po '"_ts":.*?",' |sed -n "$(($var + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2 | cut -c1-10`
+TS[$var]=`echo $alldocs | grep -Po '"_ts":.*?",' | sed -n "$(($var + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2 | cut -c1-10`
 echo "TimeStamp on present node is: ${TS[$var]}"
 presentTS=`date +%s`
 diffTS=`expr $presentTS - ${TS[$var]}`
@@ -109,20 +111,20 @@ if [ "$diffTS" -gt "$expirytime" ]
 then
 continue
 else
-NODES[$var]=`echo $alldocs | grep -Po '"hostname":.*?",' |sed -n "$(($var + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2`
+NODES[$var]=`echo $alldocs | grep -Po '"hostname":.*?",' | sed -n "$(($var + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2 | tr -d "\""`
 fi
 done
 echo "Nodes: ${NODES[*]}"
 
 #finding the available IP addresses and storing it in an array
 for varip in `seq 0 $(($hostcount - 1 ))`; do
-IPS[$varip]=`echo $alldocs | grep -Po '"ipaddress":.*?",' |sed -n "$(($varip + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2`
+IPS[$varip]=`echo $alldocs | grep -Po '"ipaddress":.*?",' |sed -n "$(($varip + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2 | tr -d "\""`
 done
 echo "IP Addresses: ${IPS[*]}"
 
 #finding atleast 2 bootnodes
 count=0
-for var in `seq 0 $(($hostcount - 1 ))`; do
+for var in `seq 0 $(($NUM_BOOT_NODES - 1 ))`; do
         reg=`echo ${NODES[$var]} | grep "$regionid"`
         if [ -z $reg ]; then
             continue
@@ -138,8 +140,6 @@ done
 
 BOOTNODES=( "${BOOTNODESREGONE[@]}" )
 echo "BootNodes: ${BOOTNODES[*]}"
-NUM_BOOT_NODES=`echo ${#BOOTNODES[*]}`
-echo "Num of Bootnodes is: $NUM_BOOT_NODES"
 }
 
 function setup_node_info
