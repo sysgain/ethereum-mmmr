@@ -286,7 +286,8 @@
                 "remotePeerInfoEndpoint":"NA",
                 "remotePeerInfoPrimaryKey":"NA",
                 "remotePeerInfoDbName":"NA",
-                "remotePeerInfoCollName": "NA"
+                "remotePeerInfoCollName": "NA",
+                "mode": "[parameters('mode')]"
                 
             },
             {
@@ -296,7 +297,8 @@
                 "remotePeerInfoEndpoint":"NA",
                 "remotePeerInfoPrimaryKey":"NA",
                 "remotePeerInfoDbName":"NA",
-                "remotePeerInfoCollName": "NA"
+                "remotePeerInfoCollName": "NA",
+                "mode": "[parameters('mode')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
@@ -305,7 +307,8 @@
                 "remotePeerInfoEndpoint":"NA",
                 "remotePeerInfoPrimaryKey":"NA",
                 "remotePeerInfoDbName":"NA",
-                "remotePeerInfoCollName": "NA"
+                "remotePeerInfoCollName": "NA",
+                "mode": "[parameters('mode')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
@@ -314,7 +317,8 @@
                 "remotePeerInfoEndpoint":"NA",
                 "remotePeerInfoPrimaryKey":"NA",
                 "remotePeerInfoDbName":"NA",
-                "remotePeerInfoCollName": "NA"
+                "remotePeerInfoCollName": "NA",
+                "mode": "[parameters('mode')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
@@ -323,7 +327,8 @@
                 "remotePeerInfoEndpoint":"NA",
                 "remotePeerInfoPrimaryKey":"NA",
                 "remotePeerInfoDbName":"NA",
-                "remotePeerInfoCollName": "NA"
+                "remotePeerInfoCollName": "NA",
+                "mode": "[parameters('mode')]"
             }
         ],
         "scriptReqLeader":[
@@ -334,7 +339,8 @@
                 "remotePeerInfoEndpoint":"NA",
                 "remotePeerInfoPrimaryKey":"NA",
                 "remotePeerInfoDbName":"NA",
-                "remotePeerInfoCollName": "NA"
+                "remotePeerInfoCollName": "NA",
+                "mode": "[parameters('mode')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
@@ -343,7 +349,8 @@
                 "remotePeerInfoEndpoint":"NA",
                 "remotePeerInfoPrimaryKey":"NA",
                 "remotePeerInfoDbName":"NA",
-                "remotePeerInfoCollName": "NA"
+                "remotePeerInfoCollName": "NA",
+                "mode": "[parameters('mode')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
@@ -352,7 +359,8 @@
                 "remotePeerInfoEndpoint":"NA",
                 "remotePeerInfoPrimaryKey":"NA",
                 "remotePeerInfoDbName":"NA",
-                "remotePeerInfoCollName": "NA"
+                "remotePeerInfoCollName": "NA",
+                "mode": "[parameters('mode')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
@@ -361,7 +369,8 @@
                 "remotePeerInfoEndpoint":"NA",
                 "remotePeerInfoPrimaryKey":"NA",
                 "remotePeerInfoDbName":"NA",
-                "remotePeerInfoCollName": "NA"
+                "remotePeerInfoCollName": "NA",
+                "mode": "[parameters('mode')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
@@ -370,7 +379,8 @@
                 "remotePeerInfoEndpoint":"NA",
                 "remotePeerInfoPrimaryKey":"NA",
                 "remotePeerInfoDbName":"NA",
-                "remotePeerInfoCollName": "NA"
+                "remotePeerInfoCollName": "NA",
+                "mode": "[parameters('mode')]"
             }
         ],
         "scriptReqMember":[
@@ -381,7 +391,8 @@
                 "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
-                "remotePeerInfoCollName": "[parameters('peerInfoCollName')]"
+                "remotePeerInfoCollName": "[parameters('peerInfoCollName')]",
+                "mode": "[parameters('mode')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
@@ -390,7 +401,8 @@
                 "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
-                "remotePeerInfoCollName": "[parameters('peerInfoCollName')]"
+                "remotePeerInfoCollName": "[parameters('peerInfoCollName')]",
+                "mode": "[parameters('mode')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
@@ -399,7 +411,8 @@
                 "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
-                "remotePeerInfoCollName": "[parameters('peerInfoCollName')]"
+                "remotePeerInfoCollName": "[parameters('peerInfoCollName')]",
+                "mode": "[parameters('mode')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
@@ -408,7 +421,8 @@
                 "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
-                "remotePeerInfoCollName": "[parameters('peerInfoCollName')]"
+                "remotePeerInfoCollName": "[parameters('peerInfoCollName')]",
+                "mode": "[parameters('mode')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
@@ -417,7 +431,8 @@
                 "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
-                "remotePeerInfoCollName": "[parameters('peerInfoCollName')]"
+                "remotePeerInfoCollName": "[parameters('peerInfoCollName')]",
+                "mode": "[parameters('mode')]"
             }
         ],
         "apis": {
