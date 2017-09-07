@@ -74,7 +74,8 @@ remotedocdbprimarykey=$REMOTE_DOCDB_PRIMARY_KEY;
 fi
 
 allremotedocs=`sh getpost-utility.sh $masterkey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
-RNODES=`echo $allremotedocs | grep -Po '"remoteBootNodeUrls":.*?",' | cut -d "," -f1 | cut -d '"' -f4`
+#RNODES=`echo $allremotedocs | grep -Po '"remoteBootNodeUrls":.*?",' | cut -d "," -f1 | cut -d '"' -f4`
+RNODES=`echo $allremotedocs | grep -Po '"bootNodeUrl":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | sed '/null/d' | grep "reg1"`
 REMOTE_BOOTNODE_URL="$RNODES";
 echo "REMOTE_BOOTNODE_URL=$REMOTE_BOOTNODE_URL"
 REMOTE_GENESIS_BLOCK_URL="$CONSORTIUM_DATA_ROOT/genesis.json";
@@ -103,7 +104,7 @@ echo $BOOTNODE_URLS
 # append to bootnodes.txt
 #########################################
 #wget -N ${REMOTE_BOOTNODE_URL} || exit 1;
-IP_TO_PING=$(grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' ${REMOTE_BOOTNODE_URLS} | head -1)
+IP_TO_PING= `echo "${REMOTE_BOOTNODE_URLS}" | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | head -1`
 echo "IP_TO_PING is: $IP_TO_PING"
 #REMOTE_BOOTNODE_URLS=`cat bootnodes.txt`;
 BOOTNODE_URLS="${BOOTNODE_URLS} ${REMOTE_BOOTNODE_URLS}";

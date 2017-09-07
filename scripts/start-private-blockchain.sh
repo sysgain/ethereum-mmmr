@@ -32,18 +32,18 @@ BOOTNODES[1]=`echo $BOOTNODES | cut -d " " -f2`
 FOUND_BOOTNODE=false
 while sleep 5; do
 	for i in `seq 0 $(($NUM_BOOT_NODES - 1))`; do
-		if [ `hostname` = "${BOOTNODES[$i]}" ]; then
+		if [ "`hostname`" == "${BOOTNODES[$i]}" ]; then
 			continue
 		fi
 
 		LOOKUP=`nslookup "${BOOTNODES[$i]}" | grep "can't find"`
-		if [ -z $LOOKUP ]; then
+		if [ "$LOOKUP" == "" ]; then
 			FOUND_BOOTNODE=true
 			break
 		fi
 	done
 
-	if [ "$FOUND_BOOTNODE" = true ]; then
+	if [ "$FOUND_BOOTNODE" == "true" ]; then
 		break
 	fi
 done
