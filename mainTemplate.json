@@ -1002,13 +1002,13 @@
             "type": "string",
             "value": "[concat('ssh -p ', variables('sshFrontEnd'), ' ', parameters('adminUsername'), '@', reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
         },
-        "consortium_member_gateway_Id_Region1": {
-            "type": "string",
-            "value": "[variables(concat('gatewayIdRegion1',parameters('mode')))]"
-        },
         "consortium-data": {
             "type": "string",
             "value": "[concat('http://',reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
+        },
+        "consortium_member_gateway_Id_Region1": {
+            "type": "string",
+            "value": "[variables(concat('gatewayIdRegion1',parameters('mode')))]"
         },
         "peerInfo_Endpoint": {
             "type": "string",
