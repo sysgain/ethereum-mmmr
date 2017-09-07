@@ -41,7 +41,7 @@ DEPLOYMENT_MODE=${28}
 declare -a NODE_KEYS
 PREFUND_ADDRESS=""
 BOOTNODE_URLS="";
-
+declare -a BOOTNODES
 #############
 # Constants
 #############

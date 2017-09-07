@@ -189,7 +189,8 @@ function setup_node_info
         for i in `seq 0 $(($NUM_BOOT_NODES - 1))`; do
          BOOTNODE=`echo ${BOOTNODES[$i]}`
          BOOTNODE_URLS="${BOOTNODE_URLS} --bootnodes enode://${NODE_IDS[$i]}@#$BOOTNODE#:${GETH_IPC_PORT}";
-         docdata="{\"id\":\"${BOOTNODE}${timestamp}\",\"hostname\": \"${BOOTNODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${BOOTNODE_URLS}\"}"
+         bootnodeurlpernode=" --bootnodes enode://${NODE_IDS[$i]}@#$BOOTNODE#:${GETH_IPC_PORT}";
+         docdata="{\"id\":\"${BOOTNODE}${timestamp}\",\"hostname\": \"${BOOTNODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${bootnodeurlpernode}\"}"
          echo "docdata is: $docdata"
          sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${BOOTNODE}" "put" "$docdata"
         done
