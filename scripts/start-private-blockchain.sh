@@ -20,7 +20,10 @@ if [ ! -e $GETH_CFG ]; then echo "Config file not found. Exiting"; exit 1; fi
 ETHERADMIN_LOG_FILE_PATH="$HOMEDIR/etheradmin.log";
 # Log level of geth
 VERBOSITY=4;
-echo "bootnodes are: ${BOOTNODES[*]}"
+
+echo "bootnodes are: $BOOTNODES"
+declare -a BOOTNODES
+
 ###########################################
 # Ensure that at least one bootnode is up
 # If not, wait 5 seconds then retry

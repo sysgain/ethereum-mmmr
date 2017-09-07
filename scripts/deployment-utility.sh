@@ -124,7 +124,7 @@ echo "IP Addresses: ${IPS[*]}"
 
 #finding atleast 2 bootnodes
 count=0
-for var in `seq 0 $(($NUM_BOOT_NODES - 1 ))`; do
+for var in `seq 0 $(($hostcount - 1 ))`; do
         reg=`echo ${NODES[$var]} | grep "$regionid"`
         if [ -z $reg ]; then
             continue
@@ -284,7 +284,7 @@ function create_config
 	  printf "%s\n" "TX_NODE_PREFIX=$TX_NODE_PREFIX" >> $GETH_CFG_FILE_PATH;
 	  printf "%s\n" "NUM_TX_NODES=$NUM_TX_NODES" >> $GETH_CFG_FILE_PATH;
 	  printf "%s\n" "ADMIN_SITE_PORT=$ADMIN_SITE_PORT" >> $GETH_CFG_FILE_PATH;
-          printf "%s\n" "BOOTNODES=${BOOTNODES[*]}" >> $GETH_CFG_FILE_PATH;
+          printf "%s\n" "BOOTNODES=\"${BOOTNODES[*]}\"" >> $GETH_CFG_FILE_PATH;
           printf "%s\n" "masterkey=$masterkey" >> $GETH_CFG_FILE_PATH;
           printf "%s\n" "endpointurl=$endpointurl" >> $GETH_CFG_FILE_PATH;
           printf "%s\n" "dbname=$dbname" >> $GETH_CFG_FILE_PATH;
