@@ -23,7 +23,8 @@ VERBOSITY=4;
 
 echo "bootnodes are: $BOOTNODES"
 declare -a BOOTNODES
-
+BOOTNODES[0]=`echo $BOOTNODES | cut -d " " -f1`
+BOOTNODES[1]=`echo $BOOTNODES | cut -d " " -f2`
 ###########################################
 # Ensure that at least one bootnode is up
 # If not, wait 5 seconds then retry
