@@ -278,25 +278,14 @@
             "reg4",
             "reg5"
         ],
-        "scriptReqSingle":[
+        "scriptReqSingle": [
             {
                 "fileUri": "[variables('leaderScriptUrl')]",
                 "filename": "[variables('leaderFilename')]",
                 "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]",
-                "remotePeerInfoEndpoint":"NA",
-                "remotePeerInfoPrimaryKey":"NA",
-                "remotePeerInfoDbName":"NA",
-                "remotePeerInfoCollName": "NA",
-                "mode": "[parameters('mode')]"
-                
-            },
-            {
-                "fileUri": "[variables('memberScriptUrl')]",
-                "filename": "[variables('memberFilename')]",
-                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]",
-                "remotePeerInfoEndpoint":"NA",
-                "remotePeerInfoPrimaryKey":"NA",
-                "remotePeerInfoDbName":"NA",
+                "remotePeerInfoEndpoint": "NA",
+                "remotePeerInfoPrimaryKey": "NA",
+                "remotePeerInfoDbName": "NA",
                 "remotePeerInfoCollName": "NA",
                 "mode": "[parameters('mode')]"
             },
@@ -304,9 +293,9 @@
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
                 "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]",
-                "remotePeerInfoEndpoint":"NA",
-                "remotePeerInfoPrimaryKey":"NA",
-                "remotePeerInfoDbName":"NA",
+                "remotePeerInfoEndpoint": "NA",
+                "remotePeerInfoPrimaryKey": "NA",
+                "remotePeerInfoDbName": "NA",
                 "remotePeerInfoCollName": "NA",
                 "mode": "[parameters('mode')]"
             },
@@ -314,9 +303,9 @@
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
                 "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]",
-                "remotePeerInfoEndpoint":"NA",
-                "remotePeerInfoPrimaryKey":"NA",
-                "remotePeerInfoDbName":"NA",
+                "remotePeerInfoEndpoint": "NA",
+                "remotePeerInfoPrimaryKey": "NA",
+                "remotePeerInfoDbName": "NA",
                 "remotePeerInfoCollName": "NA",
                 "mode": "[parameters('mode')]"
             },
@@ -324,21 +313,31 @@
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
                 "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]",
-                "remotePeerInfoEndpoint":"NA",
-                "remotePeerInfoPrimaryKey":"NA",
-                "remotePeerInfoDbName":"NA",
+                "remotePeerInfoEndpoint": "NA",
+                "remotePeerInfoPrimaryKey": "NA",
+                "remotePeerInfoDbName": "NA",
+                "remotePeerInfoCollName": "NA",
+                "mode": "[parameters('mode')]"
+            },
+            {
+                "fileUri": "[variables('memberScriptUrl')]",
+                "filename": "[variables('memberFilename')]",
+                "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]",
+                "remotePeerInfoEndpoint": "NA",
+                "remotePeerInfoPrimaryKey": "NA",
+                "remotePeerInfoDbName": "NA",
                 "remotePeerInfoCollName": "NA",
                 "mode": "[parameters('mode')]"
             }
         ],
-        "scriptReqLeader":[
+        "scriptReqLeader": [
             {
                 "fileUri": "[variables('leaderScriptUrl')]",
                 "filename": "[variables('leaderFilename')]",
                 "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]",
-                "remotePeerInfoEndpoint":"NA",
-                "remotePeerInfoPrimaryKey":"NA",
-                "remotePeerInfoDbName":"NA",
+                "remotePeerInfoEndpoint": "NA",
+                "remotePeerInfoPrimaryKey": "NA",
+                "remotePeerInfoDbName": "NA",
                 "remotePeerInfoCollName": "NA",
                 "mode": "[parameters('mode')]"
             },
@@ -346,9 +345,9 @@
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
                 "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]",
-                "remotePeerInfoEndpoint":"NA",
-                "remotePeerInfoPrimaryKey":"NA",
-                "remotePeerInfoDbName":"NA",
+                "remotePeerInfoEndpoint": "NA",
+                "remotePeerInfoPrimaryKey": "NA",
+                "remotePeerInfoDbName": "NA",
                 "remotePeerInfoCollName": "NA",
                 "mode": "[parameters('mode')]"
             },
@@ -356,9 +355,9 @@
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
                 "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]",
-                "remotePeerInfoEndpoint":"NA",
-                "remotePeerInfoPrimaryKey":"NA",
-                "remotePeerInfoDbName":"NA",
+                "remotePeerInfoEndpoint": "NA",
+                "remotePeerInfoPrimaryKey": "NA",
+                "remotePeerInfoDbName": "NA",
                 "remotePeerInfoCollName": "NA",
                 "mode": "[parameters('mode')]"
             },
@@ -366,9 +365,9 @@
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
                 "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]",
-                "remotePeerInfoEndpoint":"NA",
-                "remotePeerInfoPrimaryKey":"NA",
-                "remotePeerInfoDbName":"NA",
+                "remotePeerInfoEndpoint": "NA",
+                "remotePeerInfoPrimaryKey": "NA",
+                "remotePeerInfoDbName": "NA",
                 "remotePeerInfoCollName": "NA",
                 "mode": "[parameters('mode')]"
             },
@@ -376,61 +375,61 @@
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
                 "consortiumData": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com')]",
-                "remotePeerInfoEndpoint":"NA",
-                "remotePeerInfoPrimaryKey":"NA",
-                "remotePeerInfoDbName":"NA",
+                "remotePeerInfoEndpoint": "NA",
+                "remotePeerInfoPrimaryKey": "NA",
+                "remotePeerInfoDbName": "NA",
                 "remotePeerInfoCollName": "NA",
                 "mode": "[parameters('mode')]"
             }
         ],
-        "scriptReqMember":[
+        "scriptReqMember": [
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
-                "consortiumData":"[parameters('consortiumData')]",
-                "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
-                "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
-                "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
+                "consortiumData": "[parameters('consortiumData')]",
+                "remotePeerInfoEndpoint": "[parameters('peerInfoEndpoint')]",
+                "remotePeerInfoPrimaryKey": "[parameters('peerInfoPrimaryKey')]",
+                "remotePeerInfoDbName": "[parameters('peerInfoDbName')]",
                 "remotePeerInfoCollName": "[parameters('peerInfoCollName')]",
                 "mode": "[parameters('mode')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
-                "consortiumData":"[parameters('consortiumData')]",
-                "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
-                "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
-                "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
+                "consortiumData": "[parameters('consortiumData')]",
+                "remotePeerInfoEndpoint": "[parameters('peerInfoEndpoint')]",
+                "remotePeerInfoPrimaryKey": "[parameters('peerInfoPrimaryKey')]",
+                "remotePeerInfoDbName": "[parameters('peerInfoDbName')]",
                 "remotePeerInfoCollName": "[parameters('peerInfoCollName')]",
                 "mode": "[parameters('mode')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
-                "consortiumData":"[parameters('consortiumData')]",
-                "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
-                "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
-                "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
+                "consortiumData": "[parameters('consortiumData')]",
+                "remotePeerInfoEndpoint": "[parameters('peerInfoEndpoint')]",
+                "remotePeerInfoPrimaryKey": "[parameters('peerInfoPrimaryKey')]",
+                "remotePeerInfoDbName": "[parameters('peerInfoDbName')]",
                 "remotePeerInfoCollName": "[parameters('peerInfoCollName')]",
                 "mode": "[parameters('mode')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
-                "consortiumData":"[parameters('consortiumData')]",
-                "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
-                "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
-                "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
+                "consortiumData": "[parameters('consortiumData')]",
+                "remotePeerInfoEndpoint": "[parameters('peerInfoEndpoint')]",
+                "remotePeerInfoPrimaryKey": "[parameters('peerInfoPrimaryKey')]",
+                "remotePeerInfoDbName": "[parameters('peerInfoDbName')]",
                 "remotePeerInfoCollName": "[parameters('peerInfoCollName')]",
                 "mode": "[parameters('mode')]"
             },
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
-                "consortiumData":"[parameters('consortiumData')]",
-                "remotePeerInfoEndpoint":"[parameters('peerInfoEndpoint')]",
-                "remotePeerInfoPrimaryKey":"[parameters('peerInfoPrimaryKey')]",
-                "remotePeerInfoDbName":"[parameters('peerInfoDbName')]",
+                "consortiumData": "[parameters('consortiumData')]",
+                "remotePeerInfoEndpoint": "[parameters('peerInfoEndpoint')]",
+                "remotePeerInfoPrimaryKey": "[parameters('peerInfoPrimaryKey')]",
+                "remotePeerInfoDbName": "[parameters('peerInfoDbName')]",
                 "remotePeerInfoCollName": "[parameters('peerInfoCollName')]",
                 "mode": "[parameters('mode')]"
             }
@@ -713,7 +712,7 @@
             "resourceGuid": "[variables('resourceGuid')]",
             "vmssName": "[concat('txVmss-', variables('namingInfix'))]",
             "txCapacity": "[parameters('numTXNodesRegion')]",
-            "authenticationType": "[parameters('authType')]",     
+            "authenticationType": "[parameters('authType')]",
             "nicName": "tx-nic",
             "storageAccountType": "[parameters('txStorageAccountType')]",
             "nodeVMSize": "[parameters('txNodeVMSize')]",
@@ -768,8 +767,8 @@
             "adminSitePort": "[variables('adminSitePort')]",
             "consortiumId": "[parameters('consortiumId')]",
             "peerInfoDbName": "peerInfoDb",
-            "peerInfoCollectionName":"peerInfoColl"
-        },      
+            "peerInfoCollectionName": "peerInfoColl"
+        },
         "connectionSettings": {
             "resourceGuid": "[variables('resourceGuid')]",
             "apiVersionConnections": "[variables('apis').apiVersionConnections]",
@@ -872,7 +871,7 @@
                     "txVmssSettings": {
                         "value": "[variables('txVmssSettings')]"
                     },
-                    "extensionSettings":{
+                    "extensionSettings": {
                         "value": "[variables('extensionSettings')]"
                     },
                     "mnVmssSettings": {
@@ -881,7 +880,7 @@
                     "ubuntuImage": {
                         "value": "[variables('ubuntuImage')]"
                     },
-                    "scriptReq":{
+                    "scriptReq": {
                         "value": "[variables(concat('scriptReq',parameters('mode')))[copyIndex()]]"
                     },
                     "location": {
@@ -989,7 +988,6 @@
         }
     ],
     "outputs": {
-        
         "admin_site_Region1": {
             "type": "string",
             "value": "[concat('http://',reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
