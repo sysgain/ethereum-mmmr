@@ -34,6 +34,7 @@ REMOTE_DOCDB_END_POINT_URL=${24};
 REMOTE_DOCDB_PRIMARY_KEY=${25};
 REMOTE_PEERINFODB=${26};
 REMOTE_PEERINFOCOLL=${27};
+DEPLOYMENT_MODE=${28}
 #############
 # Globals
 #############
@@ -58,10 +59,20 @@ NODEKEY_SHARE_PATH="$GETH_HOME/nodekey";
 NETWORKID_SHARE_PATH="$ETHERADMIN_HOME/public/networkid.txt"
 
 # Below information will be loaded from another consortium member
+mode=$DEPLOYMENT_MODE
+if [ "$mode" == "Single" -o "$mode" == "Leader"]
+then
+remotedbname=$PEERINFODB;
+remotecollname=$PEERINFOCOLL;
+remoteendpointurl=$DOCDB_END_POINT_URL;
+remotedocdbprimarykey=$DOCDB_PRIMARY_KEY;
+else
 remotedbname=$REMOTE_PEERINFODB;
 remotecollname=$REMOTE_PEERINFOCOLL;
 remoteendpointurl=$REMOTE_DOCDB_END_POINT_URL;
 remotedocdbprimarykey=$REMOTE_DOCDB_PRIMARY_KEY;
+fi
+
 allremotedocs=`sh getpost-utility.sh $masterkey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
 RNODES=`echo $allremotedocs | grep -Po '"remoteBootNodeUrls":.*?",' | cut -d "," -f1 | cut -d '"' -f4`
 REMOTE_BOOTNODE_URL="$RNODES";
@@ -76,8 +87,6 @@ masterkey=$PRIMARY_KEY;
 endpointurl=$DOCDB_END_POINT_URL;
 dbname=$PEERINFODB;
 collname=$PEERINFOCOLL;
-remoteendpointurl=$REMOTE_DOCDB_END_POINT_URL;
-remotedocdbprimarykey=$REMOTE_DOCDB_PRIMARY_KEY;
 sleeptime=10
 expirytime=120
 echo "CONSORTIUM_DATA_ROOT = "$CONSORTIUM_DATA_ROOT;
