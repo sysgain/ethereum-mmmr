@@ -710,7 +710,7 @@
         },
         "txVmssSettings": {
             "resourceGuid": "[variables('resourceGuid')]",
-            "vmssName": "[concat('txVmss-', variables('namingInfix'))]",
+            "vmssName": "[concat('tx-', variables('namingInfix'))]",
             "txCapacity": "[parameters('numTXNodesRegion')]",
             "authenticationType": "[parameters('authType')]",
             "nicName": "tx-nic",
@@ -729,7 +729,7 @@
         },
         "mnVmssSettings": {
             "resourceGuid": "[variables('resourceGuid')]",
-            "vmssName": "[concat('mnVmss-',variables('namingInfix'))]",
+            "vmssName": "[concat('mn-',variables('namingInfix'))]",
             "mnCapacity": "[parameters('numMiningNodesRegion')]",
             "authenticationType": "[parameters('authType')]",
             "nicName": "mn-nic",
@@ -988,15 +988,15 @@
         }
     ],
     "outputs": {
-        "admin_site_Region1": {
+        "admin_site": {
             "type": "string",
             "value": "[concat('http://',reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
         },
-        "ethereum_rpc_endpoint_Region1": {
+        "ethereum_rpc_endpoint": {
             "type": "string",
             "value": "[concat('http://',reference('network-resources-deploy').outputs.lbFqdnReg1.value, ':', variables('gethRPCPort'))]"
         },
-        "ssh_to_first_tx_node_Region1": {
+        "ssh_to_first_tx_node_region1": {
             "type": "string",
             "value": "[concat('ssh -p ', variables('sshFrontEnd'), ' ', parameters('adminUsername'), '@', reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
         },
@@ -1004,7 +1004,7 @@
             "type": "string",
             "value": "[concat('http://',reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
         },
-        "consortium_member_gateway_Id_Region1": {
+        "consortium_member_gateway_id_region1": {
             "type": "string",
             "value": "[variables(concat('gatewayIdRegion1',parameters('mode')))]"
         },
