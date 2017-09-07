@@ -867,9 +867,9 @@
               {
                 "name": "numTXNodes",
                 "type": "Microsoft.Common.DropDown",
-                "label": "Number of mining nodes",
+                "label": "Number of load balanced transaction nodes",
                 "defaultValue": "2",
-                "toolTip": "Mining nodes record transactions within a blockchain network.  Choose the number of nodes that meet your availability and security requirements.",
+                "toolTip": "An application or user interacts with a load balanced set of transaction nodes to submit transactions to the network.  Choose the number of nodes that meets your availability requirements.",
                 "constraints": {
                   "allowedValues": [
                     {
