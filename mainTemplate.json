@@ -710,7 +710,7 @@
         },
         "txVmssSettings": {
             "resourceGuid": "[variables('resourceGuid')]",
-            "vmssName": "[concat('txVmss-', variables('namingInfix'))]",
+            "vmssName": "[concat('tx-', variables('namingInfix'))]",
             "txCapacity": "[parameters('numTXNodesRegion')]",
             "authenticationType": "[parameters('authType')]",
             "nicName": "tx-nic",
@@ -729,7 +729,7 @@
         },
         "mnVmssSettings": {
             "resourceGuid": "[variables('resourceGuid')]",
-            "vmssName": "[concat('mnVmss-',variables('namingInfix'))]",
+            "vmssName": "[concat('mn-',variables('namingInfix'))]",
             "mnCapacity": "[parameters('numMiningNodesRegion')]",
             "authenticationType": "[parameters('authType')]",
             "nicName": "mn-nic",
