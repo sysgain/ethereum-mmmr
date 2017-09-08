@@ -7,7 +7,6 @@ date;
 #######################################################################
 # Validate that all arguments are supplied
 if [ $# -lt 14 ]; then echo "Insufficient parameters supplied. Exiting"; exit 1; fi
-
 AZUREUSER=$1;
 PASSWD=$2;
 PASSPHRASE=$3;
@@ -64,8 +63,8 @@ masterkey=$PRIMARY_KEY;
 endpointurl=$DOCDB_END_POINT_URL;
 dbname=$PEERINFODB;
 collname=$PEERINFOCOLL;
-sleeptime=10
-expirytime=120
+sleeptime=${29}
+expirytime=${30}
 cd $HOMEDIR;
 
 setup_dependencies

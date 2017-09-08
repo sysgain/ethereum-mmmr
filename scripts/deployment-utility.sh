@@ -38,7 +38,7 @@ function setup_node_info
         getalldbs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs" get`
         dbcount=`echo $getalldbs | grep "\"id\":.*"`
         dbdata="{\"id\":\"${dbname}\"}"
-        colldata="{\"id\":\"${collname}\",\"ttl\": 120}"
+        colldata="{\"id\":\"${collname}\",\"ttl\": $expirytime}"
         #check wheather database exists if not create testdb database
         if [ "$dbcount" == "" ]
         then
@@ -119,12 +119,12 @@ function setup_node_info
 
 function setup_bootnodes
 {
-        #wait for at least 2 nodes to comeup
+        #wait for at least 5 nodes to comeup
         hostcount=0
         while sleep 5; do
                 alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
                 hostcount=`echo $alldocs | grep -Po '"hostname":.*?",' |cut -d "," -f1 | cut -d ":" -f2 |wc -l`
-                if [ $hostcount -gt 2 ]; then
+                if [ $hostcount -gt 5 ]; then
                         break
                 fi
         done
