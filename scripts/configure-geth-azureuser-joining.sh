@@ -76,7 +76,7 @@ fi
 
 allremotedocs=`sh getpost-utility.sh $masterkey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
 #RNODES=`echo $allremotedocs | grep -Po '"remoteBootNodeUrls":.*?",' | cut -d "," -f1 | cut -d '"' -f4`
-RNODES=`echo $allremotedocs | grep -Po '"bootNodeUrl":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | grep "^mn.*reg1.*"`
+RNODES=`echo $allremotedocs | grep -Po '"bootNodeUrlNode":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | grep "^mn.*reg1.*"`
 REMOTE_BOOTNODE_URL="$RNODES";
 echo "REMOTE_BOOTNODE_URL=$REMOTE_BOOTNODE_URL"
 REMOTE_GENESIS_BLOCK_URL="$CONSORTIUM_DATA_ROOT/genesis.json";
