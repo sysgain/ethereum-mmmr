@@ -190,7 +190,8 @@ function setup_node_info
          BOOTNODE=`echo ${BOOTNODES[$i]}`
          BOOTNODE_URLS="${BOOTNODE_URLS} --bootnodes enode://${NODE_IDS[$i]}@#$BOOTNODE#:${GETH_IPC_PORT}";
          bootnodeurlpernode=" --bootnodes enode://${NODE_IDS[$i]}@#$BOOTNODE#:${GETH_IPC_PORT}";
-         docdata="{\"id\":\"${BOOTNODE}${timestamp}\",\"hostname\": \"${BOOTNODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${bootnodeurlpernode}\"}"
+         bootnodeurlwithip=`echo $bootnodeurlpernode | perl -pe 's/#(.*?)#/qx\/nslookup $1| egrep "Address: [0-9]"| cut -d" " -f2 | xargs echo -n\//ge'`
+         docdata="{\"id\":\"${BOOTNODE}${timestamp}\",\"hostname\": \"${BOOTNODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${bootnodeurlwithip}\"}"
          echo "docdata is: $docdata"
          sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${BOOTNODE}" "put" "$docdata"
         done
