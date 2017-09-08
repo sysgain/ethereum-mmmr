@@ -69,8 +69,9 @@ expirytime=120
 cd $HOMEDIR;
 
 setup_dependencies
-setup_bootnodes
 setup_node_info
+setup_bootnodes
+
 echo "BootNode URLs are:$BOOTNODE_URLS"
 
 ##########################################################################

@@ -76,7 +76,7 @@ fi
 
 allremotedocs=`sh getpost-utility.sh $masterkey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
 #RNODES=`echo $allremotedocs | grep -Po '"remoteBootNodeUrls":.*?",' | cut -d "," -f1 | cut -d '"' -f4`
-RNODES=`echo $allremotedocs | grep -Po '"bootNodeUrl":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | sed '/null/d' | grep "reg1"`
+RNODES=`echo $allremotedocs | grep -Po '"bootNodeUrl":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | grep "^mn.*reg1.*"`
 REMOTE_BOOTNODE_URL="$RNODES";
 echo "REMOTE_BOOTNODE_URL=$REMOTE_BOOTNODE_URL"
 REMOTE_GENESIS_BLOCK_URL="$CONSORTIUM_DATA_ROOT/genesis.json";
@@ -96,8 +96,8 @@ echo "CONSORTIUM_DATA_ROOT = "$CONSORTIUM_DATA_ROOT;
 cd $HOMEDIR;
 
 setup_dependencies
-setup_bootnodes
 setup_node_info
+setup_bootnodes
 echo $BOOTNODE_URLS
 
 #########################################

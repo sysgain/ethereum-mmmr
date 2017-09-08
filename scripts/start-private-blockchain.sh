@@ -51,7 +51,7 @@ done
 #####################################################
 # Replace hostnames in config file with IP addresses
 #####################################################
-BOOTNODE_URLS=`echo $BOOTNODE_URLS | perl -pe 's/#(.*?)#/qx\/nslookup $1| egrep "Address: [0-9]"| cut -d" " -f2 | xargs echo -n\//ge'`
+#BOOTNODE_URLS=`echo $BOOTNODE_URLS | perl -pe 's/#(.*?)#/qx\/nslookup $1| egrep "Address: [0-9]"| cut -d" " -f2 | xargs echo -n\//ge'`
 echo "bootnode_urls are: $BOOTNODE_URLS"
 ############################################################
 # Make boot node urls available to other consortium members

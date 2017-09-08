@@ -116,7 +116,8 @@ function setup_node_info
                 sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${hostname}" "put" "$docdata"
         done &
 }
-function setup_bootnode
+
+function setup_bootnodes
 {
         #wait for at least 2 nodes to comeup
         hostcount=0
