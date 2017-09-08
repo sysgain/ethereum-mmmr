@@ -450,6 +450,8 @@
         "mnSubnetName": "[concat(uniqueString(resourceGroup().id, variables('namingInfix')), '-snet-mn')]",
         "txNsgName": "[concat(variables('namingInfix'), '-TXnsg')]",
         "mnNsgName": "[concat(variables('namingInfix'), '-MNnsg')]",
+        "sleepTime": 10,
+        "expiryTime": 120,
         "Single1": "0",
         "Single2": "1",
         "Single3": "1",
@@ -767,7 +769,9 @@
             "adminSitePort": "[variables('adminSitePort')]",
             "consortiumId": "[parameters('consortiumId')]",
             "peerInfoDbName": "peerInfoDb",
-            "peerInfoCollectionName": "peerInfoColl"
+            "peerInfoCollectionName": "peerInfoColl",
+            "sleepTime": "[variables('sleepTime')]",
+            "expiryTime": "[variables('expiryTime')]"
         },
         "connectionSettings": {
             "resourceGuid": "[variables('resourceGuid')]",
