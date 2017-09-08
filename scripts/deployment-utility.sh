@@ -30,18 +30,6 @@ function setup_dependencies
         # /usr/bin is in $PATH by default, we'll put our binaries there
         sudo cp geth-alltools-linux-amd64-1.5.9-a07539fb/* /usr/bin/ || exit 1;
 }
-function update
-{
-        timestamp=`date +%s`
-        if [ $NODE_TYPE -eq 1 ];then
-        docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"NA\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"null\"}"
-        else
-        docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"null\"}"
-        fi
-        while sleep $sleeptime; do
-        sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${hostname}" "put" "$docdata"
-        done
-}
 
 function setup_bootnodes
 {
@@ -55,7 +43,7 @@ else
 docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"null\"}"
 fi
 dbdata="{\"id\":\"${dbname}\"}"
-colldata="{\"id\":\"${collname}\"}"
+colldata="{\"id\":\"${collname}\",\"ttl\": 120}"
 #check wheather database exists if not create testdb database
 if [ "$dbcount" == "" ]
 then
@@ -102,17 +90,7 @@ done
 alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
 hostcount=`echo $alldocs | grep -Po '"hostname":.*?",' | cut -d "," -f1 | cut -d ":" -f2 | wc -l`
 for var in `seq 0 $(($hostcount - 1 ))`; do
-TS[$var]=`echo $alldocs | grep -Po '"_ts":.*?",' | sed -n "$(($var + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2 | cut -c1-10`
-echo "TimeStamp on present node is: ${TS[$var]}"
-presentTS=`date +%s`
-diffTS=`expr $presentTS - ${TS[$var]}`
-echo "difference in timestamps: $diffTS"
-if [ "$diffTS" -gt "$expirytime" ]
-then
-continue
-else
 NODES[$var]=`echo $alldocs | grep -Po '"hostname":.*?",' | sed -n "$(($var + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2 | tr -d "\""`
-fi
 done
 echo "Nodes: ${NODES[*]}"
 
@@ -125,11 +103,11 @@ echo "IP Addresses: ${IPS[*]}"
 #finding atleast 2 bootnodes
 count=0
 for var in `seq 0 $(($hostcount - 1 ))`; do
-        reg=`echo ${NODES[$var]} | grep "$regionid"`
+        reg=`echo ${NODES[$var]} | grep "^mn.*$regionid.*"`
         if [ -z $reg ]; then
             continue
         else
-            BOOTNODESREGONE[$count]=$reg
+            BOOTNODES[$count]=$reg
             count=$(($count + 1 ))
             if [ $count -eq 2 ]; then
                 break
@@ -137,8 +115,6 @@ for var in `seq 0 $(($hostcount - 1 ))`; do
 
         fi
 done
-
-BOOTNODES=( "${BOOTNODESREGONE[@]}" )
 echo "BootNodes: ${BOOTNODES[*]}"
 }
 
@@ -194,6 +170,20 @@ function setup_node_info
          docdata="{\"id\":\"${BOOTNODE}${timestamp}\",\"hostname\": \"${BOOTNODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${bootnodeurlwithip}\"}"
          echo "docdata is: $docdata"
          sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${BOOTNODE}" "put" "$docdata"
+        done
+}
+function update
+{
+        timestamp=`date +%s`
+        alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
+
+        if [ $NODE_TYPE -eq 1 ];then
+        docdata="{\"id\":\"${hostname}${timestamp}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"NA\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"null\"}"
+        else
+        docdata="{\"id\":\"${hostname}${timestamp}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"null\"}"
+        fi
+        while sleep $sleeptime; do
+        sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${hostname}" "put" "$docdata"
         done
 }
 function setup_system_ethereum_account
