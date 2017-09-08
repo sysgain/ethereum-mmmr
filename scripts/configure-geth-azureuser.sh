@@ -71,7 +71,7 @@ cd $HOMEDIR;
 setup_dependencies
 setup_bootnodes
 setup_node_info
-echo $BOOTNODE_URLS
+echo "BootNode URLs are:$BOOTNODE_URLS"
 
 ##########################################################################
 # Did we get a genesis file specified?  if so decode the base64

@@ -60,6 +60,7 @@ NETWORKID_SHARE_PATH="$ETHERADMIN_HOME/public/networkid.txt"
 
 # Below information will be loaded from another consortium member
 mode=$DEPLOYMENT_MODE
+#if the deployment mode is Single or Leader remote bootnodes are refered from the same document db 
 if [ "$mode" == "Single" -o "$mode" == "Leader" ]
 then
 remotedbname=$PEERINFODB;

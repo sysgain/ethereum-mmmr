@@ -31,161 +31,137 @@ function setup_dependencies
         sudo cp geth-alltools-linux-amd64-1.5.9-a07539fb/* /usr/bin/ || exit 1;
 }
 
-function setup_bootnodes
-{
-echo "masterkey:$masterkey"
-echo "endpointurl:$endpointurl"
-getalldbs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs" get`
-dbcount=`echo $getalldbs | grep "\"id\":.*"`
-if [ $NODE_TYPE -eq 1 ];then
-docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"NA\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"null\"}"
-else
-docdata="{\"id\":\"${hostname}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"null\"}"
-fi
-dbdata="{\"id\":\"${dbname}\"}"
-colldata="{\"id\":\"${collname}\",\"ttl\": 120}"
-#check wheather database exists if not create testdb database
-if [ "$dbcount" == "" ]
-then
- `sh getpost-utility.sh $masterkey "${endpointurl}dbs" "post" "$dbdata"`
- echo ".........\"$dbname\" database got created......... "
-else
- echo "database already present"
-fi
-getalldbs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs" get`
-echo "Database details are: $getalldbs"
-
-#check wheather collection  exists if not create testcolls collection
-getallcolls=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls" get`
-collscount=`echo $getallcolls | grep "\"id\":.*"`
-if [ "$collscount" == "" ]
-then
-`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls" "post" "$colldata"`
- echo ".........\"$colldata\" collection got created......... "
-else
-echo "collection  already present"
-fi
-getallcolls=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls" get`
-echo "Collection details are: $getallcolls"
-#create a document in database with the current node info
-sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" "post" "$docdata"
-alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
-echo "created the document"
-echo "$alldocs"
-update &
-alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
-echo "Document details after Update"
-echo "$alldocs"
-#wait for at least 2 nodes to comeup
-hostcount=0
-while sleep 5; do
-        alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
-        hostcount=`echo $alldocs | grep -Po '"hostname":.*?",' |cut -d "," -f1 | cut -d ":" -f2 |wc -l`
-        if [ $hostcount -gt 2 ]; then
-                break
-        fi
-done
-
-#finding the available hostnames and storing it in an array
-alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
-hostcount=`echo $alldocs | grep -Po '"hostname":.*?",' | cut -d "," -f1 | cut -d ":" -f2 | wc -l`
-for var in `seq 0 $(($hostcount - 1 ))`; do
-NODES[$var]=`echo $alldocs | grep -Po '"hostname":.*?",' | sed -n "$(($var + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2 | tr -d "\""`
-done
-echo "Nodes: ${NODES[*]}"
-
-#finding the available IP addresses and storing it in an array
-for varip in `seq 0 $(($hostcount - 1 ))`; do
-IPS[$varip]=`echo $alldocs | grep -Po '"ipaddress":.*?",' |sed -n "$(($varip + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2 | tr -d "\""`
-done
-echo "IP Addresses: ${IPS[*]}"
-
-#finding atleast 2 bootnodes
-count=0
-for var in `seq 0 $(($hostcount - 1 ))`; do
-        reg=`echo ${NODES[$var]} | grep "^mn.*$regionid.*"`
-        if [ -z $reg ]; then
-            continue
-        else
-            BOOTNODES[$count]=$reg
-            count=$(($count + 1 ))
-            if [ $count -eq 2 ]; then
-                break
-            fi
-
-        fi
-done
-echo "BootNodes: ${BOOTNODES[*]}"
-}
-
 function setup_node_info
 {
-        declare -a NODE_IDS
-        declare -a NODE_KEYS
+        echo "masterkey:$masterkey"
+        echo "endpointurl:$endpointurl"
+        getalldbs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs" get`
+        dbcount=`echo $getalldbs | grep "\"id\":.*"`
+        dbdata="{\"id\":\"${dbname}\"}"
+        colldata="{\"id\":\"${collname}\",\"ttl\": 120}"
+        #check wheather database exists if not create testdb database
+        if [ "$dbcount" == "" ]
+        then
+        `sh getpost-utility.sh $masterkey "${endpointurl}dbs" "post" "$dbdata"`
+        echo ".........\"$dbname\" database got created......... "
+        else
+        echo "database already present"
+        fi
+        getalldbs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs" get`
+        echo "Database details are: $getalldbs"
+
+        #check wheather collection  exists if not create testcolls collection
+        getallcolls=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls" get`
+        collscount=`echo $getallcolls | grep "\"id\":.*"`
+        if [ "$collscount" == "" ]
+        then
+        `sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls" "post" "$colldata"`
+        echo ".........\"$colldata\" collection got created......... "
+        else
+        echo "collection  already present"
+        fi
+        getallcolls=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls" get`
+        echo "Collection details are: $getallcolls"
         timestamp=`date +%s`
-        #############
+        
         # Build node keys and node IDs
-        #############
-        for i in `seq 0 $(($NUM_BOOT_NODES - 1))`; do
-                BOOT_NODE_HOSTNAME=`echo ${BOOTNODES[$i]}`;
-                echo "Boot Node Host Name is: ${BOOT_NODE_HOSTNAME}"
-                NODE_KEYS[$i]=`echo $BOOT_NODE_HOSTNAME | sha256sum | cut -d ' ' -f 1`;
-                echo "nodekey is:  ${NODE_KEYS[$i]}"
-                setsid geth -nodekeyhex ${NODE_KEYS[$i]} > $HOMEDIR/tempbootnodeoutput 2>&1 &
-                while sleep 10; do
-                 if [ -s $HOMEDIR/tempbootnodeoutput ]; then
+         NODE_HOSTNAME=`echo ${hostname}`;
+         echo "Boot Node Host Name is: ${NODE_HOSTNAME}"
+         NODE_KEY=`echo $NODE_HOSTNAME | sha256sum | cut -d ' ' -f 1`;
+         echo "nodekey is:  ${NODE_KEY}"
+         setsid geth -nodekeyhex ${NODE_KEY} > $HOMEDIR/tempbootnodeoutput 2>&1 &
+         while sleep 10; do
+                if [ -s $HOMEDIR/tempbootnodeoutput ]; then
                                 killall geth;
-                                NODE_IDS[$i]=`grep -Po '(?<=\/\/).*(?=@)' $HOMEDIR/tempbootnodeoutput`;
+                                NODE_ID=`grep -Po '(?<=\/\/).*(?=@)' $HOMEDIR/tempbootnodeoutput`;
                                 rm $HOMEDIR/tempbootnodeoutput;
                                 if [ $? -ne 0 ]; then
                                         exit 1;
                                 fi
                                 break;
-                        fi
-                done
+                fi
         done
-
         ##################################
         # Check for empty node keys or IDs
         ##################################
-        for nodekey in "${NODE_KEYS[@]}"; do
-                if [ -z $nodekey ]; then
-                        exit 1;
-                fi
-        done
-        for nodeid in "${NODE_IDS[@]}"; do
-                if [ -z $nodeid ]; then
-                        exit 1;
-                fi
-        done
-
+        if [ -z $NODE_KEY ]; then
+                exit 1;
+        fi
+     
+        if [ -z $NODE_ID ]; then
+                exit 1;
+        fi
+        
         ##########################
         # Generate boot node URLs
         ##########################
-        for i in `seq 0 $(($NUM_BOOT_NODES - 1))`; do
-         BOOTNODE=`echo ${BOOTNODES[$i]}`
-         BOOTNODE_URLS="${BOOTNODE_URLS} --bootnodes enode://${NODE_IDS[$i]}@#$BOOTNODE#:${GETH_IPC_PORT}";
-         bootnodeurlpernode=" --bootnodes enode://${NODE_IDS[$i]}@#$BOOTNODE#:${GETH_IPC_PORT}";
+         NODE=`echo ${hostname}`
+         #BOOTNODE_URLS="${BOOTNODE_URLS} --bootnodes enode://${NODE_ID}@#$NODE#:${GETH_IPC_PORT}";
+         bootnodeurlpernode=" --bootnodes enode://${NODE_ID}@#$NODE#:${GETH_IPC_PORT}";
          bootnodeurlwithip=`echo $bootnodeurlpernode | perl -pe 's/#(.*?)#/qx\/nslookup $1| egrep "Address: [0-9]"| cut -d" " -f2 | xargs echo -n\//ge'`
-         docdata="{\"id\":\"${BOOTNODE}${timestamp}\",\"hostname\": \"${BOOTNODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${bootnodeurlwithip}\"}"
-         echo "docdata is: $docdata"
-         sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${BOOTNODE}" "put" "$docdata"
-        done
-}
-function update
-{
-        timestamp=`date +%s`
-        alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
-
+        #preparing document details
+         if [ $NODE_TYPE -eq 1 ];then
+         docdata="{\"id\":\"${NODE}\",\"hostname\": \"${NODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"NA\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${bootnodeurlwithip}\"}"
+         else
+         docdata="{\"id\":\"${NODE}\",\"hostname\": \"${NODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${bootnodeurlwithip}\"}"
+         fi
+        #create a document in database with the current node info
+         sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" "post" "$docdata"
         if [ $NODE_TYPE -eq 1 ];then
-        docdata="{\"id\":\"${hostname}${timestamp}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"NA\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"null\"}"
-        else
-        docdata="{\"id\":\"${hostname}${timestamp}\",\"hostname\": \"${hostname}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"null\"}"
-        fi
+                 docdata="{\"id\":\"${NODE}${timestamp}\",\"hostname\": \"${NODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"NA\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${bootnodeurlwithip}\"}"
+         else
+                docdata="{\"id\":\"${NODE}${timestamp}\",\"hostname\": \"${NODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${bootnodeurlwithip}\"}"
+         fi
         while sleep $sleeptime; do
-        sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${hostname}" "put" "$docdata"
-        done
+                sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${hostname}" "put" "$docdata"
+        done &
 }
+function setup_bootnode
+{
+        #wait for at least 2 nodes to comeup
+        hostcount=0
+        while sleep 5; do
+                alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
+                hostcount=`echo $alldocs | grep -Po '"hostname":.*?",' |cut -d "," -f1 | cut -d ":" -f2 |wc -l`
+                if [ $hostcount -gt 2 ]; then
+                        break
+                fi
+        done
+        #finding the available hostnames and storing it in an array
+        alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
+        NODESURLS=`echo $allremotedocs | grep -Po '"bootNodeUrl":.*?",' | cut -d "," -f1 | cut -d '"' -f4`
+        hostcount=`echo $alldocs | grep -Po '"hostname":.*?",' | cut -d "," -f1 | cut -d ":" -f2 | wc -l`
+        for var in `seq 0 $(($hostcount - 1 ))`; do
+                NODES[$var]=`echo $alldocs | grep -Po '"hostname":.*?",' | sed -n "$(($var + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2 | tr -d "\""`
+        done
+        echo "Nodes: ${NODES[*]}"
+
+        #finding the available IP addresses and storing it in an array
+        #for varip in `seq 0 $(($hostcount - 1 ))`; do
+        #IPS[$varip]=`echo $alldocs | grep -Po '"ipaddress":.*?",' |sed -n "$(($varip + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2 | tr -d "\""`
+        #done
+        #echo "IP Addresses: ${IPS[*]}"
+
+        #finding atleast 2 bootnodes
+        count=0
+        for var in `seq 0 $(($hostcount - 1 ))`; do
+                reg=`echo ${NODES[$var]} | grep "^mn.*$regionid.*"`
+                if [ -z $reg ]; then
+                        continue
+                else
+                        BOOTNODES[$count]=$reg
+                        count=$(($count + 1 ))
+                        if [ $count -eq 2 ]; then
+                         break
+                        fi
+
+                fi
+        done
+        echo "BootNodes: ${BOOTNODES[*]}"
+        BOOTNODE_URLS="${BOOTNODE_URLS}${NODESURLS}";
+        echo "BOOTNODE_URLS=${BOOTNODE_URLS}"
+}
+
 function setup_system_ethereum_account
 {
 	PASSWD_FILE="$GETH_HOME/passwd.info";
@@ -204,7 +180,7 @@ function initialize_geth
 	# Initialize geth for private network
 	####################
 	if [ $NODE_TYPE -eq 1 ] && [ $MN_NODE_SEQNUM -lt $NUM_BOOT_NODES ]; then #Boot node logic
-		printf %s ${NODE_KEYS[$MN_NODE_SEQNUM]} > $NODEKEY_SHARE_PATH;
+		printf %s ${NODE_KEY} > $NODEKEY_SHARE_PATH;
 	fi
 
 	#################
