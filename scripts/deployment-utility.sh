@@ -101,16 +101,16 @@ function setup_node_info
          bootnodeurlwithip=" --bootnodes enode://${NODE_ID}@#$NODE#${ipaddress}:${GETH_IPC_PORT}"
         #preparing document details
          if [ $NODE_TYPE -eq 1 ];then
-         docdata="{\"id\":\"${NODE}\",\"hostname\": \"${NODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"NA\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${bootnodeurlwithip}\",\"bootNodeUrlNode\": \"${bootnodeurlpernode}\"}"
+         docdata="{\"id\":\"${NODE}\",\"hostname\": \"${NODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"NA\",\"regionId\": \"${regionid}\",\"bootNodeUrlNode\": \"${bootnodeurlwithip}\",\"bootNodeUrl\": \"${bootnodeurlpernode}\"}"
          else
-         docdata="{\"id\":\"${NODE}\",\"hostname\": \"${NODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${bootnodeurlwithip}\",\"bootNodeUrlNode\": \"${bootnodeurlpernode}\"}"
+         docdata="{\"id\":\"${NODE}\",\"hostname\": \"${NODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrlNode\": \"${bootnodeurlwithip}\",\"bootNodeUrl\": \"${bootnodeurlpernode}\"}"
          fi
         #create a document in database with the current node info
          sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" "post" "$docdata"
         if [ $NODE_TYPE -eq 1 ];then
-                 docdata="{\"id\":\"${NODE}${timestamp}\",\"hostname\": \"${NODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"NA\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${bootnodeurlwithip}\",\"bootNodeUrlNode\": \"${bootnodeurlpernode}\"}"
+                 docdata="{\"id\":\"${NODE}${timestamp}\",\"hostname\": \"${NODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"NA\",\"regionId\": \"${regionid}\",\"bootNodeUrlNode\": \"${bootnodeurlwithip}\",\"bootNodeUrl\": \"${bootnodeurlpernode}\"}"
          else
-                docdata="{\"id\":\"${NODE}${timestamp}\",\"hostname\": \"${NODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrl\": \"${bootnodeurlwithip}\",\"bootNodeUrlNode\": \"${bootnodeurlpernode}\"}"
+                docdata="{\"id\":\"${NODE}${timestamp}\",\"hostname\": \"${NODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrlNode\": \"${bootnodeurlwithip}\",\"bootNodeUrl\": \"${bootnodeurlpernode}\"}"
          fi
         while sleep $sleeptime; do
                 sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${hostname}" "put" "$docdata"
@@ -130,7 +130,7 @@ function setup_bootnodes
         done
         #finding the available hostnames and storing it in an array
         alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
-        NODESURLS=`echo $alldocs | grep -Po '"bootNodeUrlNode":.*?",' | cut -d "," -f1 | cut -d '"' -f4`
+        NODESURLS=`echo $alldocs | grep -Po '"bootNodeUrl":.*?",' | cut -d "," -f1 | cut -d '"' -f4`
         hostcount=`echo $alldocs | grep -Po '"hostname":.*?",' | cut -d "," -f1 | cut -d ":" -f2 | wc -l`
         for var in `seq 0 $(($hostcount - 1 ))`; do
                 NODES[$var]=`echo $alldocs | grep -Po '"hostname":.*?",' | sed -n "$(($var + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2 | tr -d "\""`
