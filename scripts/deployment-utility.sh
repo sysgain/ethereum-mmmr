@@ -130,10 +130,10 @@ function setup_bootnodes
         done
         #finding the available hostnames and storing it in an array
         alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
-        NODESURLS=`echo $alldocs | grep -Po '"bootNodeUrl":.*?",' | cut -d "," -f1 | cut -d '"' -f4`
         hostcount=`echo $alldocs | grep -Po '"hostname":.*?",' | cut -d "," -f1 | cut -d ":" -f2 | wc -l`
         for var in `seq 0 $(($hostcount - 1 ))`; do
                 NODES[$var]=`echo $alldocs | grep -Po '"hostname":.*?",' | sed -n "$(($var + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2 | tr -d "\""`
+                NODESURLS[$var]=`echo $alldocs | grep -Po '"bootNodeUrl":.*?",'| cut -d "," -f1 | cut -d '"' -f4 | sed -n "$(($var + 1 ))p"`
         done
         echo "Nodes: ${NODES[*]}"
 
@@ -147,10 +147,12 @@ function setup_bootnodes
         count=0
         for var in `seq 0 $(($hostcount - 1 ))`; do
                 reg=`echo ${NODES[$var]} | grep "^mn.*$regionid.*"`
+                bnurl=`echo ${NODESURLS[$var]} | grep "^mn.*$regionid.*"`
                 if [ -z $reg ]; then
                         continue
                 else
                         BOOTNODES[$count]=$reg
+                        BOOTNODE_URLS[$count]=$bnurl
                         count=$(($count + 1 ))
                         if [ $count -eq 2 ]; then
                          break
@@ -159,8 +161,7 @@ function setup_bootnodes
                 fi
         done
         echo "BootNodes: ${BOOTNODES[*]}"
-        BOOTNODE_URLS="${BOOTNODE_URLS}${NODESURLS}";
-        echo "BOOTNODE_URLS=${BOOTNODE_URLS}"
+        echo "BOOTNODE_URLS=${BOOTNODE_URLS[*]}"
 }
 
 function setup_system_ethereum_account
