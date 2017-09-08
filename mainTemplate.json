@@ -123,7 +123,7 @@
         },
         "numMiningNodesRegion": {
             "type": "int",
-            "defaultValue": 2,
+            "defaultValue": 3,
             "metadata": {
                 "description": "Number of mining nodes to create for each consortium member."
             },
@@ -263,7 +263,7 @@
         "leaderFilename": "configure-geth.sh",
         "memberScriptUrl": "[concat(variables('baseUrl'),'/scripts/configure-geth-joining.sh')]",
         "memberFilename": "configure-geth-joining.sh",
-        "namingInfix": "[toLower(substring(concat(parameters('namePrefix'),'-',uniqueString(resourceGroup().id)), 0, 8))]",
+        "namingInfix": "[toLower(substring(concat(parameters('namePrefix'),'-',uniqueString(resourceGroup().id)), 0, 5))]",
         "locationArray": [
             "[parameters('location_1')]",
             "[parameters('location_2')]",

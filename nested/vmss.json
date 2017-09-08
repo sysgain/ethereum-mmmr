@@ -149,7 +149,7 @@
             },
             "properties": {
                 "singlePlacementGroup": true,
-                "overprovision": true,
+                "overprovision": false,
                 "upgradePolicy": {
                     "mode": "Manual"
                 },
@@ -232,7 +232,7 @@
             },
             "properties": {
                 "singlePlacementGroup": true,
-                "overprovision": true,
+                "overprovision": false,
                 "upgradePolicy": {
                     "mode": "Manual"
                 },
