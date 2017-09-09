@@ -38,7 +38,8 @@ function setup_node_info
         getalldbs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs" get`
         dbcount=`echo $getalldbs | grep "\"id\":.*"`
         dbdata="{\"id\":\"${dbname}\"}"
-        colldata="{\"id\":\"${collname}\",\"defaultTtl\": $expirytime}"
+        colldata="{\"id\":\"${collname}\"}"
+        #colldata="{\"id\":\"${collname}\",\"defaultTtl\": $expirytime}"
         #check wheather database exists if not create testdb database
         if [ "$dbcount" == "" ]
         then
@@ -148,7 +149,7 @@ function setup_bootnodes
         for var in `seq 0 $(($hostcount - 1 ))`; do
                 reg=`echo ${NODES[$var]} | grep "^mn.*$regionid.*"`
                 echo "reg is :$reg"
-                bnurl=`echo ${NODESURLS[$var]} | grep "^mn.*$regionid.*"`
+                bnurl=`echo ${NODESURLS[$var]} | grep "mn.*$regionid.*"`
                 echo "basenodeurl is: $bnurl"
                 if [ -z $reg ]; then
                         continue
