@@ -150,7 +150,7 @@ function setup_bootnodes
                 reg=`echo ${NODES[$var]} | grep "^mn.*$regionid.*"`
                 echo "reg is :$reg"
                 bnurl=`echo ${NODESURLS[$var]} | grep "mn.*$regionid.*"`
-                echo "basenodeurl is: $bnurl"
+                echo "bootnodeurl is: $bnurl"
                 if [ -z $reg ]; then
                         continue
                 else
