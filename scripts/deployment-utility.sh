@@ -136,7 +136,7 @@ function setup_bootnodes
                 NODESURLS[$var]=`echo $alldocs | grep -Po '"bootNodeUrl":.*?",'| cut -d "," -f1 | cut -d '"' -f4 | sed -n "$(($var + 1 ))p"`
         done
         echo "Nodes: ${NODES[*]}"
-
+        echo "Node URLS are: ${NODESURLS[*]}"
         #finding the available IP addresses and storing it in an array
         #for varip in `seq 0 $(($hostcount - 1 ))`; do
         #IPS[$varip]=`echo $alldocs | grep -Po '"ipaddress":.*?",' |sed -n "$(($varip + 1 ))p" | cut -d "," -f1 | cut -d ":" -f2 | tr -d "\""`
@@ -147,7 +147,9 @@ function setup_bootnodes
         count=0
         for var in `seq 0 $(($hostcount - 1 ))`; do
                 reg=`echo ${NODES[$var]} | grep "^mn.*$regionid.*"`
+                echo "reg is :$reg"
                 bnurl=`echo ${NODESURLS[$var]} | grep "^mn.*$regionid.*"`
+                echo "basenodeurl is: $bnurl"
                 if [ -z $reg ]; then
                         continue
                 else
