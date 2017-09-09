@@ -121,10 +121,10 @@ function setup_bootnodes
 {
         #wait for at least 5 nodes to comeup
         hostcount=0
-        while sleep 5; do
+        while sleep 10; do
                 alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
                 hostcount=`echo $alldocs | grep -Po '"hostname":.*?",' |cut -d "," -f1 | cut -d ":" -f2 |wc -l`
-                if [ $hostcount -gt 5 ]; then
+                if [ $hostcount -gt 2 ]; then
                         break
                 fi
         done
