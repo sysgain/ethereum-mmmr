@@ -42,6 +42,7 @@ declare -a NODE_KEYS
 PREFUND_ADDRESS=""
 BOOTNODE_URLS="";
 declare -a BOOTNODES
+declare -a RNODES
 #############
 # Constants
 #############
@@ -78,18 +79,19 @@ allremotedocs=`sh getpost-utility.sh $masterkey "${remoteendpointurl}dbs/${remot
 hostcount=`echo $allremotedocs | grep -Po '"bootNodeUrlNode":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | wc -l`
 #RNODES=`echo $allremotedocs | grep -Po '"remoteBootNodeUrls":.*?",' | cut -d "," -f1 | cut -d '"' -f4`
 for var in `seq 0 $(($hostcount - 1 ))`; do
-RNODES[$var]=`echo $allremotedocs | grep -Po '"bootNodeUrlNode":.*?",' | cut -d "," -f1 | cut -d '"' -f4 |  sed -n "$(($var + 1 ))p"`
+RNODES[$var]=`echo $allremotedocs | grep -Po '"bootNodeUrlNode":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | sed -n "$(( $var + 1 ))p"`
 done
 echo "RNodes: ${RNODES[*]}"
         count=0
         for var in `seq 0 $(($hostcount - 1 ))`; do
                 rbnurl=`echo ${RNODES[$var]} | grep "mn.*$reg1.*"`
+                echo "rbnurl:$rbnurl"
                 if [ -z $reg ]; then
                         continue
                 else
                         
                         REMOTE_BOOTNODE_URL[$count]=$rbnurl
-                        count=$(($count + 1 ))
+                        count=$(( $count + 1 ))
                         if [ $count -eq 2 ]; then
                          break
                         fi
