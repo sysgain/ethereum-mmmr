@@ -68,7 +68,7 @@ then
 remotedbname=$PEERINFODB;
 remotecollname=$PEERINFOCOLL;
 remoteendpointurl=$DOCDB_END_POINT_URL;
-remotedocdbprimarykey=$DOCDB_PRIMARY_KEY;
+remotedocdbprimarykey=$PRIMARY_KEY;
 else
 remotedbname=$REMOTE_PEERINFODB;
 remotecollname=$REMOTE_PEERINFOCOLL;
@@ -78,8 +78,8 @@ fi
 echo "remotedbname=${remotedbname}"
 echo "remotecollname=${remotecollname}"
 echo "remoteendpointurl=${remoteendpointurl}"
-echo "remotepkey=$masterkey"
-allremotedocs=`sh getpost-utility.sh $masterkey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
+echo "remotepkey=$remotedocdbprimarykey"
+allremotedocs=`sh getpost-utility.sh $remotedocdbprimarykey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
 hostcount=`echo $allremotedocs | grep -Po '"bootNodeUrlNode":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | wc -l`
 #RNODES=`echo $allremotedocs | grep -Po '"remoteBootNodeUrls":.*?",' | cut -d "," -f1 | cut -d '"' -f4`
 echo "hostcount=$hostcount"
@@ -113,10 +113,10 @@ hostname=`hostname`;
 ipaddress=`hostname -i`;
 consortiumid=$CONSORTIUM_MEMBER_ID;
 regionid=$REGIONID;
-masterkey=$PRIMARY_KEY;
-endpointurl=$DOCDB_END_POINT_URL;
-dbname=$PEERINFODB;
-collname=$PEERINFOCOLL;
+masterkey=$remotedocdbprimarykey;
+endpointurl=${remoteendpointurl};
+dbname=${remotedbname};
+collname=${remotecollname};
 sleeptime=${29}
 expirytime=${30}
 echo "CONSORTIUM_DATA_ROOT = "$CONSORTIUM_DATA_ROOT;
