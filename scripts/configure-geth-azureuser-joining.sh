@@ -61,6 +61,7 @@ NETWORKID_SHARE_PATH="$ETHERADMIN_HOME/public/networkid.txt"
 
 # Below information will be loaded from another consortium member
 mode=$DEPLOYMENT_MODE
+echo "mode is: $mode"
 #if the deployment mode is Single or Leader remote bootnodes are refered from the same document db 
 if [ "$mode" == "Single" -o "$mode" == "Leader" ]
 then
@@ -74,10 +75,14 @@ remotecollname=$REMOTE_PEERINFOCOLL;
 remoteendpointurl=$REMOTE_DOCDB_END_POINT_URL;
 remotedocdbprimarykey=$REMOTE_DOCDB_PRIMARY_KEY;
 fi
-
+echo "remotedbname=${remotedbname}"
+echo "remotecollname=${remotecollname}"
+echo "remoteendpointurl=${remoteendpointurl}"
+echo "remotepkey=$masterkey"
 allremotedocs=`sh getpost-utility.sh $masterkey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
 hostcount=`echo $allremotedocs | grep -Po '"bootNodeUrlNode":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | wc -l`
 #RNODES=`echo $allremotedocs | grep -Po '"remoteBootNodeUrls":.*?",' | cut -d "," -f1 | cut -d '"' -f4`
+echo "hostcount=$hostcount"
 for var in `seq 0 $(($hostcount - 1 ))`; do
 RNODES[$var]=`echo $allremotedocs | grep -Po '"bootNodeUrlNode":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | sed -n "$(( $var + 1 ))p"`
 done
@@ -90,7 +95,7 @@ echo "RNodes: ${RNODES[*]}"
                         continue
                 else
                         
-                        REMOTE_BOOTNODE_URL[$count]=$rbnurl
+                        REMOTE_BOOTNODE_URL_TEMP[$count]=$rbnurl
                         count=$(( $count + 1 ))
                         if [ $count -eq 2 ]; then
                          break
@@ -98,7 +103,9 @@ echo "RNodes: ${RNODES[*]}"
 
                 fi
         done
-
+for var in `seq 0 1`; do
+REMOTE_BOOTNODE_URL[$var]=`echo ${REMOTE_BOOTNODE_URL_TEMP[$var]} | cut -d "#" -f1,3 | tr -d "#"`
+done
 echo "REMOTE_BOOTNODE_URL=${REMOTE_BOOTNODE_URL[*]}"
 REMOTE_GENESIS_BLOCK_URL="$CONSORTIUM_DATA_ROOT/genesis.json";
 REMOTE_NETWORK_ID_URL="$CONSORTIUM_DATA_ROOT/networkid.txt";
