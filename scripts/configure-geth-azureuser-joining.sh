@@ -79,7 +79,8 @@ echo "remotedbname=${remotedbname}"
 echo "remotecollname=${remotecollname}"
 echo "remoteendpointurl=${remoteendpointurl}"
 echo "remotepkey=$remotedocdbprimarykey"
-allremotedocs=`sh getpost-utility.sh "$remotedocdbprimarykey" "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" "get"`
+cd $HOMEDIR;
+allremotedocs=`sh getpost-utility.sh $remotedocdbprimarykey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
 echo "allRemotedocs: $allremotedocs"
 hostcount=`echo $allremotedocs | grep -Po '"bootNodeUrlNode":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | wc -l`
 #RNODES=`echo $allremotedocs | grep -Po '"remoteBootNodeUrls":.*?",' | cut -d "," -f1 | cut -d '"' -f4`
@@ -129,7 +130,7 @@ setup_node_info
 setup_bootnodes
 echo "Boot Node urls:${BOOTNODE_URLS[*]}"
 BOOTNODE_URLS=`echo "${BOOTNODE_URLS[*]}"`
-
+echo "bootnode urls:${BOOTNODE_URLS}"
 #########################################
 # Download Boot Node Urls of other member and get IP to 
 # append to bootnodes.txt
