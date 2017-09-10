@@ -71,7 +71,7 @@ setup_dependencies
 setup_node_info
 setup_bootnodes
 
-echo "BootNode URLs are:$BOOTNODE_URLS"
+echo "BootNode URLs are:${BOOTNODE_URLS[*]}"
 
 ##########################################################################
 # Did we get a genesis file specified?  if so decode the base64

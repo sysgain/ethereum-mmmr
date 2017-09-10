@@ -79,7 +79,8 @@ echo "remotedbname=${remotedbname}"
 echo "remotecollname=${remotecollname}"
 echo "remoteendpointurl=${remoteendpointurl}"
 echo "remotepkey=$remotedocdbprimarykey"
-allremotedocs=`sh getpost-utility.sh $remotedocdbprimarykey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
+allremotedocs=`sh getpost-utility.sh "$remotedocdbprimarykey" "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" "get"`
+echo "allRemotedocs: $allremotedocs"
 hostcount=`echo $allremotedocs | grep -Po '"bootNodeUrlNode":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | wc -l`
 #RNODES=`echo $allremotedocs | grep -Po '"remoteBootNodeUrls":.*?",' | cut -d "," -f1 | cut -d '"' -f4`
 echo "hostcount=$hostcount"
@@ -106,17 +107,17 @@ echo "RNodes: ${RNODES[*]}"
 for var in `seq 0 1`; do
 REMOTE_BOOTNODE_URL[$var]=`echo ${REMOTE_BOOTNODE_URL_TEMP[$var]} | cut -d "#" -f1,3 | tr -d "#"`
 done
-echo "REMOTE_BOOTNODE_URL=${REMOTE_BOOTNODE_URL[*]}"
+REMOTE_BOOTNODE_URL=`echo "${REMOTE_BOOTNODE_URL[*]}"`
 REMOTE_GENESIS_BLOCK_URL="$CONSORTIUM_DATA_ROOT/genesis.json";
 REMOTE_NETWORK_ID_URL="$CONSORTIUM_DATA_ROOT/networkid.txt";
 hostname=`hostname`;
 ipaddress=`hostname -i`;
 consortiumid=$CONSORTIUM_MEMBER_ID;
 regionid=$REGIONID;
-masterkey=$remotedocdbprimarykey;
-endpointurl=${remoteendpointurl};
-dbname=${remotedbname};
-collname=${remotecollname};
+masterkey=$PRIMARY_KEY;
+endpointurl=$DOCDB_END_POINT_URL;
+dbname=$PEERINFODB;
+collname=$PEERINFOCOLL;
 sleeptime=${29}
 expirytime=${30}
 echo "CONSORTIUM_DATA_ROOT = "$CONSORTIUM_DATA_ROOT;
@@ -126,17 +127,18 @@ cd $HOMEDIR;
 setup_dependencies
 setup_node_info
 setup_bootnodes
-echo "Boot Node urls: $BOOTNODE_URLS"
+echo "Boot Node urls:${BOOTNODE_URLS[*]}"
+BOOTNODE_URLS=`echo "${BOOTNODE_URLS[*]}"`
 
 #########################################
 # Download Boot Node Urls of other member and get IP to 
 # append to bootnodes.txt
 #########################################
 #wget -N ${REMOTE_BOOTNODE_URL} || exit 1;
-IP_TO_PING= `echo "${REMOTE_BOOTNODE_URLS[0]}" | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | head -1`
+IP_TO_PING= `echo "${REMOTE_BOOTNODE_URLS}" | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | head -1`
 echo "IP_TO_PING is: $IP_TO_PING"
 #REMOTE_BOOTNODE_URLS=`cat bootnodes.txt`;
-BOOTNODE_URLS="${BOOTNODE_URLS} ${REMOTE_BOOTNODE_URLS[*]}";
+BOOTNODE_URLS="${BOOTNODE_URLS} ${REMOTE_BOOTNODE_URLS}";
 
 #########################################
 # Setup ethereum account for the system
