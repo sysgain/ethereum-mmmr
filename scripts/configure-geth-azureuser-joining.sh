@@ -61,6 +61,8 @@ NETWORKID_SHARE_PATH="$ETHERADMIN_HOME/public/networkid.txt"
 
 # Below information will be loaded from another consortium member
 mode=$DEPLOYMENT_MODE
+nodecount=`expr $NUM_MN_NODES + $NUM_TX_NODES`
+echo "node_count is: $nodecount"
 echo "mode is: $mode"
 #if the deployment mode is Single or Leader remote bootnodes are refered from the same document db 
 if [ "$mode" == "Single" -o "$mode" == "Leader" ]
@@ -80,9 +82,15 @@ echo "remotecollname=${remotecollname}"
 echo "remoteendpointurl=${remoteendpointurl}"
 echo "remotepkey=$remotedocdbprimarykey"
 cd $HOMEDIR;
-allremotedocs=`sh getpost-utility.sh $remotedocdbprimarykey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
-echo "allRemotedocs: $allremotedocs"
-hostcount=`echo $allremotedocs | grep -Po '"bootNodeUrlNode":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | wc -l`
+hostcount=0
+while sleep 10; do
+        allremotedocs=`sh getpost-utility.sh $remotedocdbprimarykey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
+        echo "allRemotedocs: $allremotedocs"
+        hostcount=`echo $allremotedocs | grep -Po '"bootNodeUrlNode":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | wc -l`
+        if [ $hostcount -gt $nodecount ]; then
+           break
+        fi
+done
 #RNODES=`echo $allremotedocs | grep -Po '"remoteBootNodeUrls":.*?",' | cut -d "," -f1 | cut -d '"' -f4`
 echo "hostcount=$hostcount"
 for var in `seq 0 $(($hostcount - 1 ))`; do

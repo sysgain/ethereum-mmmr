@@ -92,6 +92,7 @@ echo "===== Completed $0 =====";
 ############
 # Spin until connection has been established
 ############
+echo "IP to ping before starting geth:${IP_TO_PING}"
 while [ ${#IP_TO_PING} -gt 0 ]
 do
 	ping -c 1 $IP_TO_PING > /dev/null
