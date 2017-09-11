@@ -77,6 +77,7 @@ collname=$PEERINFOCOLL;
 # Below information will be loaded from another consortium member
 mode=$DEPLOYMENT_MODE
 nodecount=`expr $NUM_MN_NODES + $NUM_TX_NODES`
+node_count=`expr $node_count - 1`
 echo "node_count is: $nodecount"
 echo "mode is: $mode"
 cd $HOMEDIR;
