@@ -119,7 +119,7 @@ echo "RNodes: ${RNODES[*]}"
         for var in `seq 0 $(($hostcount - 1 ))`; do
                 rbnurl=`echo ${RNODES[$var]} | grep "mn.*$reg1.*"`
                 echo "rbnurl:$rbnurl"
-                if [ -z $reg ]; then
+                if [ -z $rbnurl ]; then
                         continue
                 else
                         
