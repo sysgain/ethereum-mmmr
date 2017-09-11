@@ -68,6 +68,7 @@ expirytime=${30}
 cd $HOMEDIR;
 
 setup_dependencies
+sleep 180
 setup_node_info
 setup_bootnodes
 
