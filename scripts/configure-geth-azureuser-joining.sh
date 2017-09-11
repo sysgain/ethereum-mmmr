@@ -35,6 +35,8 @@ REMOTE_DOCDB_PRIMARY_KEY=${25};
 REMOTE_PEERINFODB=${26};
 REMOTE_PEERINFOCOLL=${27};
 DEPLOYMENT_MODE=${28}
+sleeptime=${29}
+expirytime=${30}
 #############
 # Globals
 #############
@@ -62,12 +64,23 @@ GETH_CFG_FILE_PATH="$HOMEDIR/geth.cfg";
 NODEKEY_SHARE_PATH="$GETH_HOME/nodekey";
 #BOOTNODE_SHARE_PATH="$ETHERADMIN_HOME/public/bootnodes.txt"
 NETWORKID_SHARE_PATH="$ETHERADMIN_HOME/public/networkid.txt"
-
+REMOTE_GENESIS_BLOCK_URL="$CONSORTIUM_DATA_ROOT/genesis.json";
+REMOTE_NETWORK_ID_URL="$CONSORTIUM_DATA_ROOT/networkid.txt";
+hostname=`hostname`;
+ipaddress=`hostname -i`;
+consortiumid=$CONSORTIUM_MEMBER_ID;
+regionid=$REGIONID;
+masterkey=$PRIMARY_KEY;
+endpointurl=$DOCDB_END_POINT_URL;
+dbname=$PEERINFODB;
+collname=$PEERINFOCOLL;
 # Below information will be loaded from another consortium member
 mode=$DEPLOYMENT_MODE
 nodecount=`expr $NUM_MN_NODES + $NUM_TX_NODES`
 echo "node_count is: $nodecount"
 echo "mode is: $mode"
+cd $HOMEDIR;
+setup_dependencies
 #if the deployment mode is Single or Leader remote bootnodes are refered from the same document db 
 if [ "$mode" == "Single" -o "$mode" == "Leader" ]
 then
@@ -122,23 +135,8 @@ for var in `seq 0 1`; do
 REMOTE_BOOTNODE_URL[$var]=`echo ${REMOTE_BOOTNODE_URL_TEMP[$var]} | cut -d "#" -f1,3 | tr -d "#"`
 done
 REMOTE_BOOTNODE_URL=`echo "${REMOTE_BOOTNODE_URL[*]}"`
-REMOTE_GENESIS_BLOCK_URL="$CONSORTIUM_DATA_ROOT/genesis.json";
-REMOTE_NETWORK_ID_URL="$CONSORTIUM_DATA_ROOT/networkid.txt";
-hostname=`hostname`;
-ipaddress=`hostname -i`;
-consortiumid=$CONSORTIUM_MEMBER_ID;
-regionid=$REGIONID;
-masterkey=$PRIMARY_KEY;
-endpointurl=$DOCDB_END_POINT_URL;
-dbname=$PEERINFODB;
-collname=$PEERINFOCOLL;
-sleeptime=${29}
-expirytime=${30}
 echo "CONSORTIUM_DATA_ROOT = "$CONSORTIUM_DATA_ROOT;
 
-cd $HOMEDIR;
-
-setup_dependencies
 setup_node_info
 setup_bootnodes
 echo "Boot Node urls:${BOOTNODE_URLS[*]}"
