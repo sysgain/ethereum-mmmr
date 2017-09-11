@@ -43,6 +43,10 @@ PREFUND_ADDRESS=""
 BOOTNODE_URLS="";
 declare -a BOOTNODES
 declare -a RNODES
+remotedbname="";
+remotecollname="";
+remoteendpointurl="";
+remotedocdbprimarykey="";
 #############
 # Constants
 #############
@@ -83,7 +87,8 @@ echo "remoteendpointurl=${remoteendpointurl}"
 echo "remotepkey=$remotedocdbprimarykey"
 cd $HOMEDIR;
 hostcount=0
-while sleep 10; do
+allremotedocs=""
+while sleep 5; do
         allremotedocs=`sh getpost-utility.sh $remotedocdbprimarykey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
         echo "allRemotedocs: $allremotedocs"
         hostcount=`echo $allremotedocs | grep -Po '"bootNodeUrlNode":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | wc -l`
