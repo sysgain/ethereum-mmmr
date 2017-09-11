@@ -134,7 +134,7 @@ echo "RNodes: ${RNODES[*]}"
 for var in `seq 0 1`; do
 REMOTE_BOOTNODE_URL[$var]=`echo ${REMOTE_BOOTNODE_URL_TEMP[$var]} | cut -d "#" -f1,3 | tr -d "#"`
 done
-REMOTE_BOOTNODE_URL=`echo "${REMOTE_BOOTNODE_URL[*]}"`
+REMOTE_BOOTNODE_URLS=`echo "${REMOTE_BOOTNODE_URL[*]}"`
 echo "CONSORTIUM_DATA_ROOT = "$CONSORTIUM_DATA_ROOT;
 
 setup_node_info
@@ -142,6 +142,7 @@ setup_bootnodes
 echo "Boot Node urls:${BOOTNODE_URLS[*]}"
 BOOTNODE_URLS=`echo "${BOOTNODE_URLS[*]}"`
 echo "bootnode urls:${BOOTNODE_URLS}"
+echo "Remote bootnode urls:${REMOTE_BOOTNODE_URLS}"
 #########################################
 # Download Boot Node Urls of other member and get IP to 
 # append to bootnodes.txt
