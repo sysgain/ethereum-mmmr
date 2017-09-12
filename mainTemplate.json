@@ -857,7 +857,8 @@
             "type": "Microsoft.Resources/deployments",
             "dependsOn": [
                 "network-resources-deploy",
-                "[variables('dbSettings').dbAccName]"
+                "[variables('dbSettings').dbAccName]",
+                "connections-deploy"
             ],
             "copy": {
                 "name": "loop",
