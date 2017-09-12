@@ -148,7 +148,7 @@ echo "Remote bootnode urls:${REMOTE_BOOTNODE_URLS}"
 # append to bootnodes.txt
 #########################################
 #wget -N ${REMOTE_BOOTNODE_URL} || exit 1;
-IP_TO_PING= `echo "${REMOTE_BOOTNODE_URLS}" | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | head -1`
+IP_TO_PING=`echo "${REMOTE_BOOTNODE_URLS}" | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | head -1`
 echo "IP_TO_PING is: $IP_TO_PING"
 #REMOTE_BOOTNODE_URLS=`cat bootnodes.txt`;
 BOOTNODE_URLS="${BOOTNODE_URLS} ${REMOTE_BOOTNODE_URLS}";
