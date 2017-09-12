@@ -38,8 +38,8 @@ function setup_node_info
         getalldbs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs" get`
         dbcount=`echo $getalldbs | grep "\"id\":.*"`
         dbdata="{\"id\":\"${dbname}\"}"
-        #colldata="{\"id\":\"${collname}\"}"
-        colldata="{\"id\":\"${collname}\",\"defaultTtl\": $expirytime}"
+        colldata="{\"id\":\"${collname}\"}"
+        #colldata="{\"id\":\"${collname}\",\"defaultTtl\": $expirytime}"
         #check wheather database exists if not create testdb database
         if [ "$dbcount" == "" ]
         then
