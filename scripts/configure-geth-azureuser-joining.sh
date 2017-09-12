@@ -151,8 +151,8 @@ echo "Remote bootnode urls:${REMOTE_BOOTNODE_URLS}"
 IP_TO_PING=`echo "${REMOTE_BOOTNODE_URLS}" | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | head -1`
 echo "IP_TO_PING is: $IP_TO_PING"
 #REMOTE_BOOTNODE_URLS=`cat bootnodes.txt`;
-BOOTNODE_URLS="${BOOTNODE_URLS} ${REMOTE_BOOTNODE_URLS}";
-
+BOOTNODE_URLS="$BOOTNODE_URLS $REMOTE_BOOTNODE_URLS";
+echo "Total Boot Nodes: $BOOTNODE_URLS"
 #########################################
 # Setup ethereum account for the system
 #########################################
