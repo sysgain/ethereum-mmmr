@@ -474,7 +474,7 @@
         "txNsgName": "[concat(variables('namingInfix'), '-TXnsg')]",
         "mnNsgName": "[concat(variables('namingInfix'), '-MNnsg')]",
         "sleepTime": 10,
-        "expiryTime": 86400,
+        "expiryTime": 300,
         "Single1": "0",
         "Single2": "1",
         "Single3": "1",
