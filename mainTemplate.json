@@ -127,6 +127,22 @@
             "metadata": {
                 "description": "Number of mining nodes to create for each consortium member."
             },
+            "allowedValues": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+            ],
             "minValue": 2,
             "maxValue": 15
         },
@@ -154,6 +170,13 @@
             "metadata": {
                 "description": "Number of load balanced transaction nodes"
             },
+            "allowedValues": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
             "minValue": 1,
             "maxValue": 5
         },
