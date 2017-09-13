@@ -178,7 +178,7 @@
         "sshNATRuleNamePrefix": "SSH-txVM",
         "txloadBalancerName": "[concat(variables('namingInfix'), '-txLB')]",
         "loadBalancerBackendAddressPoolName": "LoadBalancerBackend",
-        "loadBalancerInboundNatRuleNamePrefix": "SSH-VM",
+        
         "virtualNetworkName": "[concat(variables('namingInfix'), '-vnet')]",
         "addressPrefix": "[replace('10._.16.0/20', '_', variables('consortiumId'))]",
         "txVMSSNamePrefix": "[concat('tx-',variables('namingInfix'),'-reg1')]",
@@ -378,7 +378,7 @@
             "subnetRef": "[variables('txSubnetRef')]",
             "loadBalancerName": "[variables('txloadBalancerName')]",
             "loadBalancerBackendAddressPoolName": "[variables('loadBalancerBackendAddressPoolName')]",
-            "loadBalancerInboundNatRuleNamePrefix": "[variables('loadBalancerInboundNatRuleNamePrefix')]",
+            "loadBalancerInboundNatRuleNamePrefix": "[variables('sshNATRuleNamePrefix')]",
             "internalDnsName": "[variables('txinternalDnsName')]",
             "apiVersionVirtualMachineScaleSets": "[variables('apiVersionVirtualMachineScaleSets')]"
         },
