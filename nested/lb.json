@@ -26,10 +26,16 @@
         "BackendPort2": {
             "type": "int"
         },
-        "FrontendPort3": {
+        "sshNATRuleNamePrefix":{
+            "type": "string"
+        },
+        "sshNATFrontEndStartingPort": {
             "type": "int"
         },
-        "BackendPort3": {
+        "sshNATFrontEndEndingPort": {
+            "type": "int"
+        },
+        "natBackendPort": {
             "type": "int"
         },
         "apiVersionPublicIPAddresses": {
@@ -129,23 +135,19 @@
                                 "id": "[concat(variables('lbID'),'/probes/lbProbe2')]"
                             }
                         }
-                    },
+                    }
+                ],
+                "inboundNatPools": [
                     {
-                        "name": "LB-Rule3",
+                        "name": "[parameters('sshNATRuleNamePrefix')]",
                         "properties": {
                             "frontendIPConfiguration": {
-                                "id": "[variables('lbFrontEndIPConfigID')]"
-                            },
-                            "backendAddressPool": {
-                                "id": "[variables('lbBackendAddressPoolID')]"
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancerName')),'/frontendIPConfigurations/',variables('lbFrontEndIpConfigName'))]"
                             },
                             "protocol": "Tcp",
-                            "frontendPort": "[parameters('FrontendPort3')]",
-                            "backendPort": "[parameters('BackendPort3')]",
-                            "idleTimeoutInMinutes": 5,
-                            "probe": {
-                                "id": "[concat(variables('lbID'),'/probes/lbProbe3')]"
-                            }
+                            "frontendPortRangeStart": "[parameters('sshNATFrontEndStartingPort')]",
+                            "frontendPortRangeEnd": "[parameters('sshNATFrontEndEndingPort')]",
+                            "backendPort": "[parameters('natBackendPort')]"
                         }
                     }
                 ],
@@ -164,15 +166,6 @@
                         "properties": {
                             "protocol": "Tcp",
                             "port": "[parameters('BackendPort2')]",
-                            "intervalInSeconds": 5,
-                            "numberOfProbes": 2
-                        }
-                    },
-                    {
-                        "name": "lbProbe3",
-                        "properties": {
-                            "protocol": "Tcp",
-                            "port": "[parameters('BackendPort3')]",
                             "intervalInSeconds": 5,
                             "numberOfProbes": 2
                         }

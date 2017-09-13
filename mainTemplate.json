@@ -165,8 +165,8 @@
         "httpPort": 80,
         "adminSitePort": 3000,
         "sshPort": 22,
-        "sshNATFrontEndStartingPort": 3000,
-        "sshNATFrontEndEndingPort": 3030,
+        "sshNATFrontEndStartingPort": 4000,
+        "sshNATFrontEndEndingPort": 4050,
         "gethRPCPort": 8545,
         "gethIPCPort": 30303,
         "txNode": 0,
@@ -175,6 +175,7 @@
         "sshFrontEnd": 4000,
         "txIpConfig": "txIpConfig",
         "mnIpConfig": "mnIpConfig",
+        "sshNATRuleNamePrefix": "SSH-txVM",
         "txloadBalancerName": "[concat(variables('namingInfix'), '-txLB')]",
         "loadBalancerBackendAddressPoolName": "LoadBalancerBackend",
         "loadBalancerInboundNatRuleNamePrefix": "SSH-VM",
@@ -572,10 +573,16 @@
                     "BackendPort2": {
                         "value": "[variables('gethRPCPort')]"
                     },
-                    "FrontendPort3": {
-                        "value": "[variables('sshFrontEnd')]"
+                    "sshNATRuleNamePrefix":{
+                        "value": "[variables('sshNATRuleNamePrefix')]"
                     },
-                    "BackendPort3": {
+                    "sshNATFrontEndStartingPort": {
+                        "value": "[variables('sshNATFrontEndStartingPort')]"
+                    },
+                    "sshNATFrontEndEndingPort": {
+                        "value": "[variables('sshNATFrontEndEndingPort')]"
+                    },
+                    "natBackendPort": {
                         "value": "[variables('sshPort')]"
                     },
                     "apiVersionLoadBalancers": {
