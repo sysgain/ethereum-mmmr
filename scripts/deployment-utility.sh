@@ -114,8 +114,14 @@ function setup_node_info
          else
                 docdata="{\"id\":\"${uniqid}\",\"hostname\": \"${NODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"${consortiumid}\",\"regionId\": \"${regionid}\",\"bootNodeUrlNode\": \"${bootnodeurlwithip}\",\"bootNodeUrl\": \"${bootnodeurlpernode}\"}"
          fi
+         isfirst="true"
         while sleep $sleeptime; do
-                sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" "post" "$docdata"
+             if [ "$isfirst" == "true"];then
+                             sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${NODE}" "put" "$docdata"
+                             else
+                             sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${uniqid}" "put" "$docdata"
+                             isfirst="false"
+             fi                 
         done &
 }
 
