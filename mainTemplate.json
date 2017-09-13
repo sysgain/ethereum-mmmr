@@ -664,9 +664,8 @@
         "httpPort": 80,
         "adminSitePort": 3000,
         "sshPort": 22,
-        "sshFrontEnd": 4000,
-        "sshNATFrontEndStartingPort": 3000,
-        "sshNATFrontEndEndingPort": 3030,
+        "sshNATFrontEndStartingPort": 4000,
+        "sshNATFrontEndEndingPort": 4050,
         "gethRPCPort": 8545,
         "gethIPCPort": 30303,
         "lbSettings": {
@@ -683,8 +682,6 @@
             "BackendPort1": "[variables('adminSitePort')]",
             "FrontendPort2": "[variables('gethRPCPort')]",
             "BackendPort2": "[variables('gethRPCPort')]",
-            "FrontendPort3": "[variables('sshFrontEnd')]",
-            "BackendPort3": "[variables('sshPort')]",
             "inboundNATRuleNamePrefix": "SSH-txVM",
             "inboundNATRuleFrontendStartingPort": "[variables('sshNATFrontEndStartingPort')]",
             "inboundNATRuleFrontendEndingPort": "[variables('sshNATFrontEndEndingPort')]",
@@ -1011,7 +1008,7 @@
         },
         "ssh_to_first_tx_node_region1": {
             "type": "string",
-            "value": "[concat('ssh -p ', variables('sshFrontEnd'), ' ', parameters('adminUsername'), '@', reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
+            "value": "[concat('ssh -p ', variables('sshNATFrontEndStartingPort'), ' ', parameters('adminUsername'), '@', reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
         },
         "consortium-data": {
             "type": "string",

@@ -39,17 +39,11 @@
         "BackendPort1": "[parameters('lbSettings').BackendPort1]",
         "FrontendPort2": "[parameters('lbSettings').FrontendPort2]",
         "BackendPort2": "[parameters('lbSettings').BackendPort2]",
-        "FrontendPort3": "[parameters('lbSettings').FrontendPort3]",
-        "BackendPort3": "[parameters('lbSettings').BackendPort3]",
         "gatewayPublicIPName": "[parameters('gatewaySettings').gatewayPublicIPName]",
         "inboundNATRuleNamePrefix": "[parameters('lbSettings').inboundNATRuleNamePrefix]",
         "inboundNATRuleFrontendStartingPort": "[parameters('lbSettings').inboundNATRuleFrontendStartingPort]",
         "inboundNATRuleFrontendEndingPort": "[parameters('lbSettings').inboundNATRuleFrontendEndingPort]",
-        "inboundNATRuleBackendPort": "[parameters('lbSettings').inboundNATRuleBackendPort]",
-        "apiVersionVirtualNetworkGateways": "[parameters('gatewaySettings').apiVersionVirtualNetworkGateways]",
-        "gatewayName": "[parameters('gatewaySettings').gatewayName]",
-        "gatewaySubnetName": "[parameters('gatewaySettings').gatewaySubnetName]",
-        "gatewaySku": "[parameters('gatewaySettings').gatewaySku]"
+        "inboundNATRuleBackendPort": "[parameters('lbSettings').inboundNATRuleBackendPort]"
     },
     "resources": [
         {
@@ -267,24 +261,6 @@
                                 "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(variables('loadBalancerName'),'-',parameters('suffixArray')[copyIndex()])),'/probes/lbProbe2')]"
                             }
                         }
-                    },
-                    {
-                        "name": "LB-Rule3",
-                        "properties": {
-                            "frontendIPConfiguration": {
-                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(variables('loadBalancerName'),'-',parameters('suffixArray')[copyIndex()])),'/frontendIPConfigurations/',variables('lbFrontEndIpConfigName'))]"
-                            },
-                            "backendAddressPool": {
-                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(variables('loadBalancerName'),'-',parameters('suffixArray')[copyIndex()])),'/backendAddressPools/', variables('backendAddressPoolName'))]"
-                            },
-                            "protocol": "Tcp",
-                            "frontendPort": "[variables('FrontendPort3')]",
-                            "backendPort": "[variables('BackendPort3')]",
-                            "idleTimeoutInMinutes": 5,
-                            "probe": {
-                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(variables('loadBalancerName'),'-',parameters('suffixArray')[copyIndex()])),'/probes/lbProbe3')]"
-                            }
-                        }
                     }
                 ],
                 "probes": [
@@ -305,14 +281,19 @@
                             "intervalInSeconds": 5,
                             "numberOfProbes": 2
                         }
-                    },
+                    }
+                ],
+                "inboundNatPools": [
                     {
-                        "name": "lbProbe3",
+                        "name": "[variables('inboundNATRuleNamePrefix')]",
                         "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(variables('loadBalancerName'),'-',parameters('suffixArray')[copyIndex()])),'/frontendIPConfigurations/',variables('lbFrontEndIpConfigName'))]"
+                            },
                             "protocol": "Tcp",
-                            "port": "[variables('BackendPort3')]",
-                            "intervalInSeconds": 5,
-                            "numberOfProbes": 2
+                            "frontendPortRangeStart": "[variables('inboundNATRuleFrontendStartingPort')]",
+                            "frontendPortRangeEnd": "[variables('inboundNATRuleFrontendEndingPort')]",
+                            "backendPort": "[variables('inboundNATRuleBackendPort')]"
                         }
                     }
                 ]
