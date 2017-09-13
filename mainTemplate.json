@@ -172,7 +172,6 @@
         "txNode": 0,
         "mnNode": 1,
         "maxPeers": 25,
-        "sshFrontEnd": 4000,
         "txIpConfig": "txIpConfig",
         "mnIpConfig": "mnIpConfig",
         "sshNATRuleNamePrefix": "SSH-txVM",
@@ -681,7 +680,7 @@
         },
         "ssh_to_first_tx_node": {
             "type": "string",
-            "value": "[concat('ssh -p ', variables('sshFrontEnd'), ' ', parameters('adminUsername'), '@', reference('txloadBalancerLinkedTemplate').outputs.fqdn.value)]"
+            "value": "[concat('ssh -p ', variables('sshNATFrontEndStartingPort'), ' ', parameters('adminUsername'), '@', reference('txloadBalancerLinkedTemplate').outputs.fqdn.value)]"
         }
     }
 }
