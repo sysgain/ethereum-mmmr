@@ -221,14 +221,14 @@
         },
         "peerInfoDbName": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "peerInfoDb",
             "metadata": {
                 "description": "Peer info database name provided by another member's deployment"
             }
         },
         "peerInfoCollName": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "peerInfoColl",
             "metadata": {
                 "description": "Peer info collection name provided by another member's deployment"
             }

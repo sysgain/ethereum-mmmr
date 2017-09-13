@@ -36,7 +36,6 @@ curl -X POST $URL -H "Authorization: ${AUTHSTRING}" -H "x-ms-date: ${DATE}" -H '
 put()
 {
 curl -X PUT $URL -H "Authorization: ${AUTHSTRING}" -H "x-ms-date: ${DATE}" -H 'x-ms-version: 2017-02-22' -d "$DATA"
-echo "after put"
 }
 if [ "$verb" = "get" ]
 then
