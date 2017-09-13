@@ -790,7 +790,16 @@
         "pairGatewayPsModuleMember": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com/ConsortiumBridge.psm1')]",
         "pairGatewayAzureCliScriptSingle": "NA",
         "pairGatewayAzureCliScriptLeader": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com/ConsortiumBridge.sh')]",
-        "pairGatewayAzureCliScriptMember": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com/ConsortiumBridge.sh')]"
+        "pairGatewayAzureCliScriptMember": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com/ConsortiumBridge.sh')]",
+        "peerInfo_DB_nameSingle": "NA",
+        "peerInfo_DB_nameLeader": "[variables('extensionSettings').peerInfoDbName]",
+        "peerInfo_DB_nameMember": "[variables('extensionSettings').peerInfoDbName]",
+        "peerInfo_collection_NameSingle": "NA",
+        "peerInfo_collection_NameLeader": "[variables('extensionSettings').peerInfoCollectionName]",
+        "peerInfo_collection_NameMember": "[variables('extensionSettings').peerInfoCollectionName]",
+        "peerInfo_keySingle": "NA",
+        "peerInfo_keyLeader": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('dbSettings').dbAccName), variables('apis').apiVersionDocumentDb).primaryMasterKey]",
+        "peerInfo_keyMember": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('dbSettings').dbAccName), variables('apis').apiVersionDocumentDb).primaryMasterKey]"
     },
     "resources": [
         {
@@ -1018,15 +1027,15 @@
         },
         "peerInfo_DB_name": {
             "type": "string",
-            "value": "[variables('extensionSettings').peerInfoDbName]"
+            "value": "[variables(concat('peerInfo_DB_name',parameters('mode')))]"
         },
         "peerInfo_collection_Name": {
             "type": "string",
-            "value": "[variables('extensionSettings').peerInfoCollectionName]"
+            "value": "[variables(concat('peerInfo_collection_Name',parameters('mode')))]"
         },
         "peerInfo_key": {
             "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('dbSettings').dbAccName), variables('apis').apiVersionDocumentDb).primaryMasterKey]"
+            "value": "[variables(concat('peerInfo_key',parameters('mode')))]"
         },
         "pair-Gateway-PS-Module": {
             "type": "string",
