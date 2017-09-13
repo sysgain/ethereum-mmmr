@@ -119,9 +119,10 @@ function setup_node_info
         while sleep $sleeptime; do
              if [ "$isfirst" == "true" ];then
                              sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${NODE}" "put" "$docdata"
+                             isfirst="false"
                              else
                              sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${previousuniqid}" "put" "$docdata"
-                             isfirst="false"
+                             
              fi                 
         done &
 }
