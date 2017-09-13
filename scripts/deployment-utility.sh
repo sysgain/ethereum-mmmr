@@ -109,6 +109,7 @@ function setup_node_info
         #create a document in database with the current node info
          sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" "post" "$docdata"
          uniqid=${NODE}${timestamp}
+         previousuniqid=$uniqid
         if [ $NODE_TYPE -eq 1 ];then
                  docdata="{\"id\":\"${uniqid}\",\"hostname\": \"${NODE}\",\"ipaddress\": \"${ipaddress}\",\"consortiumID\": \"NA\",\"regionId\": \"${regionid}\",\"bootNodeUrlNode\": \"${bootnodeurlwithip}\",\"bootNodeUrl\": \"${bootnodeurlpernode}\"}"
          else
@@ -116,10 +117,10 @@ function setup_node_info
          fi
          isfirst="true"
         while sleep $sleeptime; do
-             if [ "$isfirst" == "true"];then
+             if [ "$isfirst" == "true" ];then
                              sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${NODE}" "put" "$docdata"
                              else
-                             sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${uniqid}" "put" "$docdata"
+                             sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs/${previousuniqid}" "put" "$docdata"
                              isfirst="false"
              fi                 
         done &
