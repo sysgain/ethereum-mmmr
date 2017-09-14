@@ -76,7 +76,7 @@ dbname=$PEERINFODB;
 collname=$PEERINFOCOLL;
 # Below information will be loaded from another consortium member
 mode=$DEPLOYMENT_MODE
-nodecount=`expr $NUM_MN_NODES + $NUM_TX_NODES`
+nodecount=`expr $NUM_MN_NODES + 1`
 echo "node_count is: $nodecount"
 echo "mode is: $mode"
 cd $HOMEDIR;
@@ -105,7 +105,7 @@ while sleep 5; do
         allremotedocs=`sh getpost-utility.sh $remotedocdbprimarykey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
         echo "allRemotedocs: $allremotedocs"
         hostcount=`echo $allremotedocs | grep -Po '"bootNodeUrlNode":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | wc -l`
-        if [ $hostcount -gt $NUM_MN_NODES ]; then
+        if [ $hostcount -gt $nodecount ]; then
            break
         fi
 done
