@@ -766,7 +766,7 @@
             "apiVersionVirtualMachineScaleSets": "[variables('apis').apiVersionVirtualMachineScaleSets]"
         },
         "adminHash": "[uniqueString(parameters('adminPassword'))]",
-        "maxPeers": 25,
+        "maxPeers": 150,
         "txNode": 0,
         "mnNode": 1,
         "extensionSettings": {
