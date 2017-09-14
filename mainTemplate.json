@@ -1026,7 +1026,7 @@
             "type": "string",
             "value": "[concat('http://',reference('network-resources-deploy').outputs.lbFqdnReg1.value, ':', variables('gethRPCPort'))]"
         },
-        "ssh_to_first_tx_node_region1": {
+        "ssh_to_a_tx_node_region1": {
             "type": "string",
             "value": "[concat('ssh -p ', variables('sshNATFrontEndStartingPort'), ' ', parameters('adminUsername'), '@', reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
         },
