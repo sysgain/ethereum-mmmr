@@ -62,7 +62,7 @@
                         "type": "Microsoft.Common.DropDown",
                         "label": "Number of region(s)",
                         "toolTip": "Select the number of region(s) to deploy virtual machines into.",
-                        "defaultValue": "1",
+                        "defaultValue": "2",
                         "constraints": {
                             "allowedValues": [
                                 {
@@ -868,7 +868,7 @@
                                 "name": "numTXNodes",
                                 "type": "Microsoft.Common.DropDown",
                                 "label": "Number of load balanced transaction nodes",
-                                "defaultValue": "2",
+                                "defaultValue": "1",
                                 "toolTip": "An application or user interacts with a load balanced set of transaction nodes to submit transactions to the network.  Choose the number of nodes that meets your availability requirements.",
                                 "constraints": {
                                     "allowedValues": [
