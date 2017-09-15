@@ -47,7 +47,8 @@
         "numTXNodes": "[parameters('extensionSettings').numTXNodes]",
         "txVMNamePrefix": "[parameters('extensionSettings').txVMNamePrefix]",
         "adminSitePort": "[parameters('extensionSettings').adminSitePort]",
-        "consortiumId": "[parameters('extensionSettings').consortiumId]",
+        "sleepTime": "[parameters('extensionSettings').sleepTime]",
+        "expiryTime": "[parameters('extensionSettings').expiryTime]",
         "reg1": "[parameters('extensionSettings').reg1]",
         "empty": " ",
         "mnSeqNum": 1,
@@ -181,7 +182,7 @@
                                         ]
                                     },
                                     "protectedSettings": {
-                                        "commandToExecute": "[concat('/bin/bash ',variables('filename'),' \"', variables('adminUsername'), '\" \"', variables('ethereumAccountPsswd'), '\" \"', variables('ethereumAccountPassphrase'), '\" \"', variables('artifactsLocationURL'), '\" \"', variables('ethereumNetworkID'), '\" \"', variables('maxPeers'), '\" \"', variables('txNode'), '\" \"', variables('gethIPCPort'), '\" \"', variables('numBootNodes'), '\" \"', variables('numMNNodes'), '\" \"', variables('mnVMNamePrefix'), '\" \"', variables('numTXNodes'), '\" \"', variables('txVMNamePrefix'), '\" \"', variables('adminSitePort'), '\" \"', parameters('dbPrimaryKey'), '\" \"', parameters('dbEndpoint'), '\" \"', variables('reg1'),'\" \"', variables('peerInfoDbName'),'\" \"', variables('peerInfoCollectionName'),'\"')]"
+                                        "commandToExecute": "[concat('/bin/bash ',variables('filename'),' \"', variables('adminUsername'), '\" \"', variables('ethereumAccountPsswd'), '\" \"', variables('ethereumAccountPassphrase'), '\" \"', variables('artifactsLocationURL'), '\" \"', variables('ethereumNetworkID'), '\" \"', variables('maxPeers'), '\" \"', variables('txNode'), '\" \"', variables('gethIPCPort'), '\" \"', variables('numBootNodes'), '\" \"', variables('numMNNodes'), '\" \"', variables('mnVMNamePrefix'), '\" \"', variables('numTXNodes'), '\" \"', variables('txVMNamePrefix'), '\" \"', variables('adminSitePort'), '\" \"', parameters('dbPrimaryKey'), '\" \"', parameters('dbEndpoint'), '\" \"', variables('reg1'),'\" \"', variables('peerInfoDbName'),'\" \"', variables('peerInfoCollectionName'),'\" \"', variables('sleepTime'),'\" \"', variables('expiryTime'),'\"')]"
                                     }
                                 }
                             }
@@ -268,7 +269,7 @@
                                         ]
                                     },
                                     "protectedSettings": {
-                                        "commandToExecute": "[concat('/bin/bash ',variables('filename'),' \"', variables('adminUsername'), '\" \"', variables('ethereumAccountPsswd'), '\" \"', variables('ethereumAccountPassphrase'), '\" \"', variables('artifactsLocationURL'), '\" \"', variables('ethereumNetworkID'), '\" \"', variables('maxPeers'), '\" \"', variables('mnNode'), '\" \"', variables('gethIPCPort'), '\" \"', variables('numBootNodes'), '\" \"', variables('numMNNodes'), '\" \"', variables('mnVMNamePrefix'), '\" \"', variables('mnSeqNum'), '\" \"', variables('empty'), '\" \"', variables('empty'), '\" \"', parameters('dbPrimaryKey'), '\" \"', parameters('dbEndpoint'), '\" \"', variables('reg1'),'\" \"', variables('peerInfoDbName'),'\" \"', variables('peerInfoCollectionName'),'\"')]"
+                                        "commandToExecute": "[concat('/bin/bash ',variables('filename'),' \"', variables('adminUsername'), '\" \"', variables('ethereumAccountPsswd'), '\" \"', variables('ethereumAccountPassphrase'), '\" \"', variables('artifactsLocationURL'), '\" \"', variables('ethereumNetworkID'), '\" \"', variables('maxPeers'), '\" \"', variables('mnNode'), '\" \"', variables('gethIPCPort'), '\" \"', variables('numBootNodes'), '\" \"', variables('numMNNodes'), '\" \"', variables('mnVMNamePrefix'), '\" \"', variables('mnSeqNum'), '\" \"', variables('empty'), '\" \"', variables('empty'), '\" \"', parameters('dbPrimaryKey'), '\" \"', parameters('dbEndpoint'), '\" \"', variables('reg1'),'\" \"', variables('peerInfoDbName'),'\" \"', variables('peerInfoCollectionName'),'\" \"', variables('sleepTime'),'\" \"', variables('expiryTime'),'\"')]"
                                     }
                                 }
                             }
@@ -366,7 +367,7 @@
                                         ]
                                     },
                                     "protectedSettings": {
-                                        "commandToExecute": "[concat('/bin/bash ',variables('filename'),' \"', variables('adminUsername'), '\" \"', variables('ethereumAccountPsswd'), '\" \"', variables('ethereumAccountPassphrase'), '\" \"', variables('artifactsLocationURL'), '\" \"', variables('ethereumNetworkID'), '\" \"', variables('maxPeers'), '\" \"', variables('mnNode'), '\" \"', variables('gethIPCPort'), '\" \"', variables('numBootNodes'), '\" \"', variables('numMNNodes'), '\" \"', variables('mnVMNamePrefix'), '\" \"', variables('mnSeqNum'), '\" \"', variables('empty'), '\" \"', variables('empty'), '\" \"', parameters('dbPrimaryKey'), '\" \"', parameters('dbEndpoint'), '\" \"', variables('reg1'),'\" \"', variables('peerInfoDbName'),'\" \"', variables('peerInfoCollectionName'),'\"')]"
+                                        "commandToExecute": "[concat('/bin/bash ',variables('filename'),' \"', variables('adminUsername'), '\" \"', variables('ethereumAccountPsswd'), '\" \"', variables('ethereumAccountPassphrase'), '\" \"', variables('artifactsLocationURL'), '\" \"', variables('ethereumNetworkID'), '\" \"', variables('maxPeers'), '\" \"', variables('mnNode'), '\" \"', variables('gethIPCPort'), '\" \"', variables('numBootNodes'), '\" \"', variables('numMNNodes'), '\" \"', variables('mnVMNamePrefix'), '\" \"', variables('mnSeqNum'), '\" \"', variables('empty'), '\" \"', variables('empty'), '\" \"', parameters('dbPrimaryKey'), '\" \"', parameters('dbEndpoint'), '\" \"', variables('reg1'),'\" \"', variables('peerInfoDbName'),'\" \"', variables('peerInfoCollectionName'),'\" \"', variables('sleepTime'),'\" \"', variables('expiryTime'),'\"')]"
                                     }
                                 }
                             }

@@ -97,7 +97,7 @@
                 "Premium_LRS"
             ],
             "metadata": {
-                "description": "Type of storage accounts to create"
+                "description": "Type of managed disk to create"
             }
         },
         "numTXNodes": {
@@ -124,7 +124,7 @@
                 "Premium_LRS"
             ],
             "metadata": {
-                "description": "Type of storage accounts to create"
+                "description": "Type of managed disk to create"
             }
         },
         "location": {
@@ -151,7 +151,9 @@
         "txLbSetupUrl": "[concat(parameters('baseUrl'), '/nested/lb.json')]",
         "txinternalDnsName": "[concat('txDns-',variables('namingInfix'))]",
         "mninternalDnsName": "[concat('mnDns-',variables('namingInfix'))]",
-        "consortiumId": "1",
+        "peerInfoDbName": "peer-registrar",
+        "peerInfoCollectionName": "data-collection",
+        "consortiumId": "0",
         "apiVersionDeployments": "2017-05-10",
         "apiVersionNetworkSecurityGroups": "2017-03-01",
         "apiVersionPublicIPAddresses": "2017-03-01",
@@ -194,7 +196,9 @@
         "mnNsgName": "[concat(variables('namingInfix'), '-MNnsg')]",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
         "numSubnets": "[add(parameters('numConsortiumMembers'), 1)]",
-        "resourceGuid": "5301cbdd-2fed-4990-8f7d-573e499e9ed3",
+        "sleepTime": 10,
+        "expiryTime": 300,
+        "resourceGuid": "[concat(substring(uniqueString(resourceGroup().id),0,8),'-',substring(uniqueString(resourceGroup().id),9,4),'-',substring(uniqueString(resourceGroup().id),5,4),'-',substring(uniqueString(resourceGroup().id),8,4),'-',substring(uniqueString(resourceGroup().id),0,12))]",
         "mnSubnetNameArray": [
             "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-mn0')]",
             "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-mn1')]",
@@ -415,8 +419,10 @@
             "reg1": "reg1",
             "fileUri": "[variables('scriptFileUris')]",
             "filename": "[variables('scriptFilename')]",
-            "peerInfoDbName": "peerInfoDb",
-            "peerInfoCollectionName":"peerInfoColl"
+            "peerInfoDbName": "[variables('peerInfoDbName')]",
+            "peerInfoCollectionName":"[variables('peerInfoCollectionName')]",
+            "sleepTime": "[variables('sleepTime')]",
+            "expiryTime": "[variables('expiryTime')]"
         }
     },
     "resources": [
