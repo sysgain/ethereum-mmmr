@@ -132,7 +132,7 @@ function setup_bootnodes
         while sleep 10; do
                 alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
                 hostcount=`echo $alldocs | grep -Po '"hostname":.*?",' | cut -d "," -f1 | cut -d ":" -f2 | wc -l`
-                if [ $hostcount -gt $nodecount ]; then
+                if [ $hostcount -ge $nodecount ]; then
                         break
                 fi
         done
