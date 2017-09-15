@@ -7,6 +7,7 @@ MyGatewayResourceId=$1
 OtherGatewayResourceId=$2
 ConnectionName=$3
 SharedKey=$4
+Location=$5
 
 # MyGatewayResourceId tells me what subscription I am in, what ResourceGroup and the VNetGatewayName
 IFS='/'
@@ -16,4 +17,4 @@ MyResourceGroup=`echo "${arr[4]}"`
 IFS=''
 
 az account set --subscription $MySubscriptionId
-az network vpn-connection create --name $ConnectionName --resource-group $MyResourceGroup --vnet-gateway1 $MyGatewayResourceId --shared-key $SharedKey --vnet-gateway2 $OtherGatewayResourceId --enable-bgp
+az network vpn-connection create --name $ConnectionName --resource-group $MyResourceGroup --vnet-gateway1 $MyGatewayResourceId --shared-key $SharedKey --vnet-gateway2 $OtherGatewayResourceId --location $Location --enable-bgp
