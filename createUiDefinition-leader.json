@@ -12,7 +12,7 @@
                 "constraints": {
                     "required": true,
                     "regex": "^[a-z][a-z0-9-]{1,4}$",
-                    "validationMessage": "Resource prefix must be between 2 and 6 characters long, must begin with a lowercase letter, and can contain only numbers and lowercase letters."
+                    "validationMessage": "Resource prefix must be between 2 and 4 characters long, must begin with a lowercase letter, and can contain only numbers and lowercase letters."
                 }
             },
             {
