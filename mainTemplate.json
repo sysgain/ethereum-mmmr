@@ -799,13 +799,7 @@
         "pairGatewayPsModuleMember": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com/ConsortiumBridge.psm1')]",
         "pairGatewayAzureCliScriptSingle": "NA",
         "pairGatewayAzureCliScriptLeader": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com/ConsortiumBridge.sh')]",
-        "pairGatewayAzureCliScriptMember": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com/ConsortiumBridge.sh')]",
-        "peerInfo_DB_nameSingle": "NA",
-        "peerInfo_DB_nameLeader": "[variables('extensionSettings').peerInfoDbName]",
-        "peerInfo_DB_nameMember": "[variables('extensionSettings').peerInfoDbName]",
-        "peerInfo_collection_NameSingle": "NA",
-        "peerInfo_collection_NameLeader": "[variables('extensionSettings').peerInfoCollectionName]",
-        "peerInfo_collection_NameMember": "[variables('extensionSettings').peerInfoCollectionName]"
+        "pairGatewayAzureCliScriptMember": "[concat('http://',variables('namingInfix'), '-dns-',variables('suffixArray')[0],'.',variables('locationArray')[0],'.cloudapp.azure.com/ConsortiumBridge.sh')]"
     },
     "resources": [
         {
