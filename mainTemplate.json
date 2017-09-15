@@ -1027,21 +1027,13 @@
             "type": "string",
             "value": "[variables(concat('gatewayIdRegion1',parameters('mode')))]"
         },
-        "peerInfo_Endpoint": {
+        "peer_info_endpoint": {
             "type": "string",
             "value": "[reference(concat('Microsoft.DocumentDB/databaseAccounts/',variables('dbSettings').dbAccName),'2015-04-08').documentEndpoint]"
         },
-        "peerInfo_key": {
+        "peer_info_primary_key": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('dbSettings').dbAccName), variables('apis').apiVersionDocumentDb).primaryMasterKey]"
-        },
-        "peerInfo_DB_name": {
-            "type": "string",
-            "value": "[variables(concat('peerInfo_DB_name',parameters('mode')))]"
-        },
-        "peerInfo_collection_Name": {
-            "type": "string",
-            "value": "[variables(concat('peerInfo_collection_Name',parameters('mode')))]"
         },
         "pair-Gateway-PS-Module": {
             "type": "string",
