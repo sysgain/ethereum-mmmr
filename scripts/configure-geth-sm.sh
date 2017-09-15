@@ -21,7 +21,7 @@ CONFIG_LOG_FILE_PATH="$HOMEDIR/config.log";
 cd "/home/$AZUREUSER";
 
 sudo -u $AZUREUSER /bin/bash -c "wget -N ${ARTIFACTS_URL_PREFIX}/scripts/configure-geth-azureuser-sm.sh";
-#sudo -u $AZUREUSER /bin/bash -c "wget -N ${ARTIFACTS_URL_PREFIX}/scripts/deployment-utility.sh";
+sudo -u $AZUREUSER /bin/bash -c "wget -N ${ARTIFACTS_URL_PREFIX}/scripts/deployment-utility.sh";
 sudo -u $AZUREUSER /bin/bash -c "wget -N ${ARTIFACTS_URL_PREFIX}/scripts/getpost-utility.sh";
 sudo -u $AZUREUSER /bin/bash -c "wget -N ${ARTIFACTS_URL_PREFIX}/scripts/auth-token-generator.js";
 
