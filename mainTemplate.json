@@ -113,7 +113,6 @@
         },
         "consortiumMemberId": {
             "type": "int",
-            "defaultValue": 0,
             "minValue": 0,
             "maxValue": 255,
             "metadata": {
