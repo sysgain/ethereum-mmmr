@@ -17,7 +17,10 @@
                 "Leader",
                 "Member",
                 "Single"
-            ]
+            ],
+            "metadata": {
+                "description": "Mode of deployment of Ethereum consortium deployment"
+            },
         },
         "regionCount": {
             "type": "int",
@@ -171,7 +174,7 @@
                 "Premium_LRS"
             ],
             "metadata": {
-                "description": "Type of storage accounts to create"
+                "description": "Type of managed disks to create"
             }
         },
         "numTXNodesRegion": {
@@ -205,7 +208,7 @@
                 "Premium_LRS"
             ],
             "metadata": {
-                "description": "Type of storage accounts to create"
+                "description": "Type of managed disks to create"
             }
         },
         "connectionSharedKey": {
