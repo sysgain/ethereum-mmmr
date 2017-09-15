@@ -97,7 +97,7 @@
                 "Premium_LRS"
             ],
             "metadata": {
-                "description": "Type of storage accounts to create"
+                "description": "Type of managed disk to create"
             }
         },
         "numTXNodes": {
@@ -124,7 +124,7 @@
                 "Premium_LRS"
             ],
             "metadata": {
-                "description": "Type of storage accounts to create"
+                "description": "Type of managed disk to create"
             }
         },
         "location": {
