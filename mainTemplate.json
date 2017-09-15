@@ -198,7 +198,7 @@
         "numSubnets": "[add(parameters('numConsortiumMembers'), 1)]",
         "sleepTime": 10,
         "expiryTime": 300,
-        "resourceGuid": "[concat(substring(uniqueString(resourceGroup().id),0,8),'-',substring(uniqueString(resourceGroup().id),9,4),'-',substring(uniqueString(resourceGroup().id),5,4),'-',substring(uniqueString(resourceGroup().id),8,4),'-',substring(uniqueString(resourceGroup().id),0,12))]",
+        "resourceGuid": "Ethereum-Consortium-simulated",
         "mnSubnetNameArray": [
             "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-mn0')]",
             "[concat(substring(uniqueString(resourceGroup().id, variables('namingInfix')), 0, 4), '-snet-mn1')]",
