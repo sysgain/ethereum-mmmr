@@ -5,6 +5,9 @@
         "namePrefix": {
             "value": "eth"
         },
+        "mode": {
+            "value": "Leader"
+        },
         "regionCount": {
             "value": 2
         },
@@ -39,7 +42,7 @@
             "value": 10101010
         },
         "consortiumId": {
-            "value": 1
+            "value": 0
         },
         "ethereumAccountPsswd": {
             "value": "Ashpassword123"
@@ -65,23 +68,26 @@
         "txStorageAccountType": {
             "value": "Standard_LRS"
         },
-        "consortiumMemberGatewayId": {
-            "value": ""
-        },
         "connectionSharedKey": {
             "value": "Ashpassword123"
         },
-        "mode": {
-            "value": "Single"
+        "consortiumMemberGatewayId": {
+            "value": ""
+        },
+        "consortiumData": {
+            "value": ""
         },
         "peerInfoEndpoint": {
+            "value": ""
+        },
+        "peerInfoPrimaryKey": {
             "value": ""
         },
         "genesisBlock": {
             "value": ""
         },
         "baseUrl": {
-            "value": "https://raw.githubusercontent.com/sysgain/Ethereum-consortium-blockchain/eth-multi-dev4"
+            "value": "https://raw.githubusercontent.com/sysgain/Ethereum-dev/mmmr-dev3"
         }
     }
 }

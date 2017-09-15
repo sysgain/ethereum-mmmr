@@ -10,6 +10,15 @@
             },
             "maxLength": 4
         },
+        "mode": {
+            "type": "string",
+            "defaultValue": "Leader",
+            "allowedValues": [
+                "Leader",
+                "Member",
+                "Single"
+            ]
+        },
         "regionCount": {
             "type": "int",
             "defaultValue": 2,
@@ -99,8 +108,9 @@
             },
             "maxValue": 2147483647
         },
-        "consortiumId": {
+        "consortiumMemberId": {
             "type": "int",
+            "defaultValue": 0,
             "minValue": 0,
             "maxValue": 255,
             "metadata": {
@@ -123,7 +133,7 @@
         },
         "numMiningNodesRegion": {
             "type": "int",
-            "defaultValue": 3,
+            "defaultValue": 2,
             "metadata": {
                 "description": "Number of mining nodes to create for each consortium member."
             },
@@ -166,7 +176,7 @@
         },
         "numTXNodesRegion": {
             "type": "int",
-            "defaultValue": 2,
+            "defaultValue": 1,
             "metadata": {
                 "description": "Number of load balanced transaction nodes"
             },
@@ -198,13 +208,6 @@
                 "description": "Type of storage accounts to create"
             }
         },
-        "consortiumMemberGatewayId": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "The ResourceId of the Consortium Member VNet Gateawy to which to connect to"
-            }
-        },
         "connectionSharedKey": {
             "type": "string",
             "defaultValue": "Ashpassword123",
@@ -212,14 +215,12 @@
                 "description": "Shared Key for the Gateway Connection"
             }
         },
-        "mode": {
+        "consortiumMemberGatewayId": {
             "type": "string",
-            "defaultValue": "Single",
-            "allowedValues": [
-                "Leader",
-                "Member",
-                "Single"
-            ]
+            "defaultValue": "",
+            "metadata": {
+                "description": "The ResourceId of the Consortium Member VNet Gateawy to which to connect to"
+            }
         },
         "consortiumData": {
             "type": "string",
@@ -242,20 +243,6 @@
                 "description": "Peer info primary key provided by another member's deployment"
             }
         },
-        "peerInfoDbName": {
-            "type": "string",
-            "defaultValue": "peerInfoDb",
-            "metadata": {
-                "description": "Peer info database name provided by another member's deployment"
-            }
-        },
-        "peerInfoCollName": {
-            "type": "string",
-            "defaultValue": "peerInfoColl",
-            "metadata": {
-                "description": "Peer info collection name provided by another member's deployment"
-            }
-        },
         "genesisBlock": {
             "type": "string",
             "defaultValue": "",
@@ -275,6 +262,23 @@
     "variables": {
         "baseUrl": "[parameters('baseUrl')]",
         "resourceGuid": "[concat(substring(uniqueString(resourceGroup().id),0,8),'-',substring(uniqueString(resourceGroup().id),9,4),'-',substring(uniqueString(resourceGroup().id),5,4),'-',substring(uniqueString(resourceGroup().id),8,4),'-',substring(uniqueString(resourceGroup().id),0,12))]",
+        "leaderScriptUrl": "[concat(variables('baseUrl'),'/scripts/configure-geth.sh')]",
+        "leaderFilename": "configure-geth.sh",
+        "memberScriptUrl": "[concat(variables('baseUrl'),'/scripts/configure-geth-joining.sh')]",
+        "memberFilename": "configure-geth-joining.sh",
+        "namingInfix": "[toLower(substring(concat(parameters('namePrefix'),uniqueString(resourceGroup().id)), 0, 5))]",
+        "maxPeers": 200,
+        "txNode": 0,
+        "mnNode": 1,
+        "httpPort": 80,
+        "adminSitePort": 3000,
+        "sshPort": 22,
+        "sshNATFrontEndStartingPort": 4000,
+        "sshNATFrontEndEndingPort": 4050,
+        "gethRPCPort": 8545,
+        "gethIPCPort": 30303,
+        "peerInfoDbName": "peer-registrar",
+        "peerInfoCollectionName": "data-collection",
         "linkedUrls": {
             "vmssSetupUrl": "[concat(variables('baseUrl'),'/nested/vmss.json')]",
             "connectionsSetupUrl": "[concat(variables('baseUrl'),'/nested/connections.json')]",
@@ -282,11 +286,326 @@
             "networkResourcesUrl": "[concat(variables('baseUrl'),'/nested/network-resources.json')]",
             "vnetgatewayUrl": "[concat(variables('baseUrl'),'/nested/vnet-gateway.json')]"
         },
-        "leaderScriptUrl": "[concat(variables('baseUrl'),'/scripts/configure-geth.sh')]",
-        "leaderFilename": "configure-geth.sh",
-        "memberScriptUrl": "[concat(variables('baseUrl'),'/scripts/configure-geth-joining.sh')]",
-        "memberFilename": "configure-geth-joining.sh",
-        "namingInfix": "[toLower(substring(concat(parameters('namePrefix'),uniqueString(resourceGroup().id)), 0, 5))]",
+        "apis": {
+            "apiVersionDeployments": "2017-05-10",
+            "apiVersionNetworkSecurityGroups": "2017-04-01",
+            "apiVersionPublicIPAddresses": "2017-04-01",
+            "apiVersionLoadBalancers": "2017-04-01",
+            "apiVersionVirtualNetworks": "2017-04-01",
+            "apiVersionVirtualNetworkGateways": "2017-04-01",
+            "apiVersionVirtualMachineScaleSets": "2017-03-30",
+            "apiVersionConnections": "2017-04-01",
+            "apiVersionDocumentDb": "2016-03-31"
+        },
+        "vnetName": "[concat(variables('namingInfix'), '-vnet')]",
+        "txSubnetName": "[concat(uniqueString(resourceGroup().id, variables('namingInfix')), '-snet-tx')]",
+        "mnSubnetName": "[concat(uniqueString(resourceGroup().id, variables('namingInfix')), '-snet-mn')]",
+        "txNsgName": "[concat(variables('namingInfix'), '-TXnsg')]",
+        "mnNsgName": "[concat(variables('namingInfix'), '-MNnsg')]",
+        "sleepTime": 10,
+        "expiryTime": 300,
+        "flag": "[variables(concat(parameters('mode'),parameters('regionCount')))]",
+        "numSubnets": "[add(int(variables('flag')),2)]",
+        "adminHash": "[uniqueString(parameters('adminPassword'))]",
+        "lbSettings": {
+            "resourceGuid": "[variables('resourceGuid')]",
+            "apiVersionPublicIPAddresses": "[variables('apis').apiVersionPublicIPAddresses]",
+            "lbPublicIPAddressName": "[concat(variables('namingInfix'), '-lbpip-',parameters('consortiumMemberId'))]",
+            "publicIPAllocationMethod": "Dynamic",
+            "dnsHostName": "[concat(variables('namingInfix'), '-dns')]",
+            "apiVersionLoadBalancers": "[variables('apis').apiVersionLoadBalancers]",
+            "loadBalancerName": "[concat(variables('namingInfix'), '-txLB')]",
+            "lbFrontEndIpConfigName": "txIpConfig",
+            "backendAddressPoolName": "lbBackendPool",
+            "FrontendPort1": "[variables('httpPort')]",
+            "BackendPort1": "[variables('adminSitePort')]",
+            "FrontendPort2": "[variables('gethRPCPort')]",
+            "BackendPort2": "[variables('gethRPCPort')]",
+            "inboundNATRuleNamePrefix": "SSH-txVM",
+            "inboundNATRuleFrontendStartingPort": "[variables('sshNATFrontEndStartingPort')]",
+            "inboundNATRuleFrontendEndingPort": "[variables('sshNATFrontEndEndingPort')]",
+            "inboundNATRuleBackendPort": "[variables('sshPort')]"
+        },
+        "gatewaySettings": {
+            "resourceGuid": "[variables('resourceGuid')]",
+            "apiVersionVirtualNetworkGateways": "[variables('apis').apiVersionVirtualNetworkGateways]",
+            "gatewayPublicIPName": "[concat(variables('namingInfix'), '-gate-pip')]",
+            "gatewayName": "[concat(variables('namingInfix'),'-gateway')]",
+            "gatewaySubnetName": "GatewaySubnet",
+            "gatewaySku": "Standard",
+            "flag": "[variables('flag')]"
+        },
+        "ubuntuImage": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "16.04.0-LTS",
+            "version": "latest"
+        },
+        "dbSettings": {
+            "dbAccName": "[concat(variables('namingInfix'), '-registrar')]",
+            "dbKind": "GlobalDocumentDB",
+            "failoverRegion1": "[resourceGroup().location]"
+        },
+        "txVmssSettings": {
+            "resourceGuid": "[variables('resourceGuid')]",
+            "vmssName": "[concat('tx-', variables('namingInfix'))]",
+            "txCapacity": "[parameters('numTXNodesRegion')]",
+            "authenticationType": "[parameters('authType')]",
+            "nicName": "tx-nic",
+            "storageAccountType": "[parameters('txStorageAccountType')]",
+            "nodeVMSize": "[parameters('txNodeVMSize')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassword')]",
+            "sshPublicKey": "[parameters('adminSSHKey')]",
+            "ipConfigName": "tx-ipcnf",
+            "subnetName": "[variables('txSubnetName')]",
+            "internalDnsName": "[concat('tx-idns-',variables('namingInfix'))]",
+            "loadBalancerName": "[variables('lbSettings').loadBalancerName]",
+            "loadBalancerBackendAddressPoolName": "[variables('lbSettings').backendAddressPoolName]",
+            "loadBalancerInboundNatRuleNamePrefix": "[variables('lbSettings').inboundNATRuleNamePrefix]",
+            "apiVersionVirtualMachineScaleSets": "[variables('apis').apiVersionVirtualMachineScaleSets]"
+        },
+        "mnVmssSettings": {
+            "resourceGuid": "[variables('resourceGuid')]",
+            "vmssName": "[concat('mn-',variables('namingInfix'))]",
+            "mnCapacity": "[parameters('numMiningNodesRegion')]",
+            "authenticationType": "[parameters('authType')]",
+            "nicName": "mn-nic",
+            "storageAccountType": "[parameters('mnStorageAccountType')]",
+            "nodeVMSize": "[parameters('mnNodeVMSize')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassword')]",
+            "sshPublicKey": "[parameters('adminSSHKey')]",
+            "ipConfigName": "mn-ipcnf",
+            "subnetName": "[variables('mnSubnetName')]",
+            "internalDnsName": "[concat('mn-idns-',variables('namingInfix'))]",
+            "apiVersionVirtualMachineScaleSets": "[variables('apis').apiVersionVirtualMachineScaleSets]"
+        },
+        "extensionSettings": {
+            "adminUsername": "[parameters('adminUsername')]",
+            "ethereumAccountPsswd": "[parameters('ethereumAccountPsswd')]",
+            "ethereumAccountPassphrase": "[parameters('ethereumAccountPassphrase')]",
+            "artifactsLocationURL": "[variables('baseUrl')]",
+            "ethereumNetworkID": "[parameters('ethereumNetworkID')]",
+            "txNode": "[variables('txNode')]",
+            "mnNode": "[variables('mnNode')]",
+            "maxPeers": "[variables('maxPeers')]",
+            "gethIPCPort": "[variables('gethIPCPort')]",
+            "numBootNodes": 2,
+            "numMNNodes": "[parameters('numMiningNodesRegion')]",
+            "mnVMNamePrefix": "mn",
+            "genesisBlock": "[base64(parameters('genesisBlock'))]",
+            "adminHash": "[uniqueString(string(parameters('consortiumMemberId')), variables('adminHash'))]",
+            "numTXNodes": "[parameters('numTXNodesRegion')]",
+            "txVMNamePrefix": "tx",
+            "adminSitePort": "[variables('adminSitePort')]",
+            "consortiumId": "[parameters('consortiumMemberId')]",
+            "peerInfoDbName": "[variables('peerInfoDbName')]",
+            "peerInfoCollectionName": "[variables('peerInfoCollectionName')]",
+            "sleepTime": "[variables('sleepTime')]",
+            "expiryTime": "[variables('expiryTime')]"
+        },
+        "connectionSettings": {
+            "resourceGuid": "[variables('resourceGuid')]",
+            "apiVersionConnections": "[variables('apis').apiVersionConnections]",
+            "connectionName": "conn",
+            "gatewayName": "[variables('gatewaySettings').gatewayName]",
+            "connectionSharedKey": "[parameters('connectionSharedKey')]",
+            "regionCount": "[parameters('regionCount')]",
+            "connectionMemName": "conn-to-other-gateway"
+        },
+        "vnetSettings": [
+            {
+                "apiVersionVirtualNetworks": "[variables('apis').apiVersionVirtualNetworks]",
+                "apiVersionNetworkSecurityGroups": "[variables('apis').apiVersionNetworkSecurityGroups]",
+                "vnetName": "[concat(variables('vnetName'),'-',variables('suffixArray')[0])]",
+                "mnSubnetName": "[variables('mnSubnetName')]",
+                "txSubnetName": "[variables('txSubnetName')]",
+                "addressSpacePrefix": "[replace('10._.16.0/20','_',string(parameters('consortiumMemberId')))]",
+                "numSubnets": "[variables('numSubnets')]",
+                "txNsgName": "[concat(variables('txNsgName'),'-',variables('suffixArray')[0])]",
+                "mnNsgName": "[concat(variables('mnNsgName'),'-',variables('suffixArray')[0])]",
+                "gatewayAsn": "[add(mul(parameters('consortiumMemberId'), 10),65000)]",
+                "subnetPropertiesArray": [
+                    {
+                        "name": "[variables('txSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[replace('10._.17.0/24','_',string(parameters('consortiumMemberId')))]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('txNsgName'),'-',variables('suffixArray')[0]))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[variables('mnSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[replace('10._.18.0/24','_',string(parameters('consortiumMemberId')))]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('mnNsgName'),'-',variables('suffixArray')[0]))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "GatewaySubnet",
+                        "properties": {
+                            "addressPrefix": "[replace('10._.19.0/24','_',string(parameters('consortiumMemberId')))]"
+                        }
+                    }
+                ]
+            },
+            {
+                "apiVersionVirtualNetworks": "[variables('apis').apiVersionVirtualNetworks]",
+                "apiVersionNetworkSecurityGroups": "[variables('apis').apiVersionNetworkSecurityGroups]",
+                "vnetName": "[concat(variables('vnetName'),'-',variables('suffixArray')[1])]",
+                "mnSubnetName": "[variables('mnSubnetName')]",
+                "txSubnetName": "[variables('txSubnetName')]",
+                "addressSpacePrefix": "[replace('10._.32.0/20','_',string(parameters('consortiumMemberId')))]",
+                "numSubnets": "[variables('numSubnets')]",
+                "txNsgName": "[concat(variables('txNsgName'),'-',variables('suffixArray')[1])]",
+                "mnNsgName": "[concat(variables('mnNsgName'),'-',variables('suffixArray')[1])]",
+                "gatewayAsn": "[add(mul(parameters('consortiumMemberId'), 10),65010)]",
+                "subnetPropertiesArray": [
+                    {
+                        "name": "[variables('txSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[replace('10._.33.0/24','_',string(parameters('consortiumMemberId')))]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('txNsgName'),'-',variables('suffixArray')[1]))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[variables('mnSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[replace('10._.34.0/24','_',string(parameters('consortiumMemberId')))]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('mnNsgName'),'-',variables('suffixArray')[1]))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "GatewaySubnet",
+                        "properties": {
+                            "addressPrefix": "[replace('10._.35.0/24','_',string(parameters('consortiumMemberId')))]"
+                        }
+                    }
+                ]
+            },
+            {
+                "apiVersionVirtualNetworks": "[variables('apis').apiVersionVirtualNetworks]",
+                "apiVersionNetworkSecurityGroups": "[variables('apis').apiVersionNetworkSecurityGroups]",
+                "vnetName": "[concat(variables('vnetName'),'-',variables('suffixArray')[2])]",
+                "mnSubnetName": "[variables('mnSubnetName')]",
+                "txSubnetName": "[variables('txSubnetName')]",
+                "addressSpacePrefix": "[replace('10._.48.0/20','_',string(parameters('consortiumMemberId')))]",
+                "numSubnets": "[variables('numSubnets')]",
+                "txNsgName": "[concat(variables('txNsgName'),'-',variables('suffixArray')[2])]",
+                "mnNsgName": "[concat(variables('mnNsgName'),'-',variables('suffixArray')[2])]",
+                "gatewayAsn": "[add(mul(parameters('consortiumMemberId'), 10),65020)]",
+                "subnetPropertiesArray": [
+                    {
+                        "name": "[variables('txSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[replace('10._.49.0/24','_',string(parameters('consortiumMemberId')))]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('txNsgName'),'-',variables('suffixArray')[2]))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[variables('mnSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[replace('10._.50.0/24','_',string(parameters('consortiumMemberId')))]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('mnNsgName'),'-',variables('suffixArray')[2]))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "GatewaySubnet",
+                        "properties": {
+                            "addressPrefix": "[replace('10._.51.0/24','_',string(parameters('consortiumMemberId')))]"
+                        }
+                    }
+                ]
+            },
+            {
+                "apiVersionVirtualNetworks": "[variables('apis').apiVersionVirtualNetworks]",
+                "apiVersionNetworkSecurityGroups": "[variables('apis').apiVersionNetworkSecurityGroups]",
+                "vnetName": "[concat(variables('vnetName'),'-',variables('suffixArray')[3])]",
+                "mnSubnetName": "[variables('mnSubnetName')]",
+                "txSubnetName": "[variables('txSubnetName')]",
+                "addressSpacePrefix": "[replace('10._.64.0/20','_',string(parameters('consortiumMemberId')))]",
+                "numSubnets": "[variables('numSubnets')]",
+                "txNsgName": "[concat(variables('txNsgName'),'-',variables('suffixArray')[3])]",
+                "mnNsgName": "[concat(variables('mnNsgName'),'-',variables('suffixArray')[3])]",
+                "gatewayAsn": "[add(mul(parameters('consortiumMemberId'), 10),65030)]",
+                "subnetPropertiesArray": [
+                    {
+                        "name": "[variables('txSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[replace('10._.65.0/24','_',string(parameters('consortiumMemberId')))]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('txNsgName'),'-',variables('suffixArray')[3]))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[variables('mnSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[replace('10._.66.0/24','_',string(parameters('consortiumMemberId')))]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('mnNsgName'),'-',variables('suffixArray')[3]))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "GatewaySubnet",
+                        "properties": {
+                            "addressPrefix": "[replace('10._.67.0/24','_',string(parameters('consortiumMemberId')))]"
+                        }
+                    }
+                ]
+            },
+            {
+                "apiVersionVirtualNetworks": "[variables('apis').apiVersionVirtualNetworks]",
+                "apiVersionNetworkSecurityGroups": "[variables('apis').apiVersionNetworkSecurityGroups]",
+                "vnetName": "[concat(variables('vnetName'),'-',variables('suffixArray')[4])]",
+                "mnSubnetName": "[variables('mnSubnetName')]",
+                "txSubnetName": "[variables('txSubnetName')]",
+                "addressSpacePrefix": "[replace('10._.80.0/20','_',string(parameters('consortiumMemberId')))]",
+                "numSubnets": "[variables('numSubnets')]",
+                "txNsgName": "[concat(variables('txNsgName'),'-',variables('suffixArray')[4])]",
+                "mnNsgName": "[concat(variables('mnNsgName'),'-',variables('suffixArray')[4])]",
+                "gatewayAsn": "[add(mul(parameters('consortiumMemberId'), 10),65040)]",
+                "subnetPropertiesArray": [
+                    {
+                        "name": "[variables('txSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[replace('10._.81.0/24','_',string(parameters('consortiumMemberId')))]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('txNsgName'),'-',variables('suffixArray')[4]))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[variables('mnSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[replace('10._.82.0/24','_',string(parameters('consortiumMemberId')))]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('mnNsgName'),'-',variables('suffixArray')[4]))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "GatewaySubnet",
+                        "properties": {
+                            "addressPrefix": "[replace('10._.83.0/24','_',string(parameters('consortiumMemberId')))]"
+                        }
+                    }
+                ]
+            }
+        ],
         "locationArray": [
             "[parameters('location_1')]",
             "[parameters('location_2')]",
@@ -301,6 +620,21 @@
             "reg4",
             "reg5"
         ],
+        "Single1": "0",
+        "Single2": "1",
+        "Single3": "1",
+        "Single4": "1",
+        "Single5": "1",
+        "Leader1": "1",
+        "Leader2": "1",
+        "Leader3": "1",
+        "Leader4": "1",
+        "Leader5": "1",
+        "Member1": "1",
+        "Member2": "1",
+        "Member3": "1",
+        "Member4": "1",
+        "Member5": "1",
         "scriptReqSingle": [
             {
                 "fileUri": "[variables('leaderScriptUrl')]",
@@ -412,8 +746,8 @@
                 "consortiumData": "[parameters('consortiumData')]",
                 "remotePeerInfoEndpoint": "[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey": "[parameters('peerInfoPrimaryKey')]",
-                "remotePeerInfoDbName": "[parameters('peerInfoDbName')]",
-                "remotePeerInfoCollName": "[parameters('peerInfoCollName')]",
+                "remotePeerInfoDbName": "[variables('extensionSettings').peerInfoDbName]",
+                "remotePeerInfoCollName": "[variables('extensionSettings').peerInfoCollectionName]",
                 "mode": "[parameters('mode')]"
             },
             {
@@ -422,8 +756,8 @@
                 "consortiumData": "[parameters('consortiumData')]",
                 "remotePeerInfoEndpoint": "[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey": "[parameters('peerInfoPrimaryKey')]",
-                "remotePeerInfoDbName": "[parameters('peerInfoDbName')]",
-                "remotePeerInfoCollName": "[parameters('peerInfoCollName')]",
+                "remotePeerInfoDbName": "[variables('extensionSettings').peerInfoDbName]",
+                "remotePeerInfoCollName": "[variables('extensionSettings').peerInfoCollectionName]",
                 "mode": "[parameters('mode')]"
             },
             {
@@ -432,8 +766,8 @@
                 "consortiumData": "[parameters('consortiumData')]",
                 "remotePeerInfoEndpoint": "[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey": "[parameters('peerInfoPrimaryKey')]",
-                "remotePeerInfoDbName": "[parameters('peerInfoDbName')]",
-                "remotePeerInfoCollName": "[parameters('peerInfoCollName')]",
+                "remotePeerInfoDbName": "[variables('extensionSettings').peerInfoDbName]",
+                "remotePeerInfoCollName": "[variables('extensionSettings').peerInfoCollectionName]",
                 "mode": "[parameters('mode')]"
             },
             {
@@ -442,8 +776,8 @@
                 "consortiumData": "[parameters('consortiumData')]",
                 "remotePeerInfoEndpoint": "[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey": "[parameters('peerInfoPrimaryKey')]",
-                "remotePeerInfoDbName": "[parameters('peerInfoDbName')]",
-                "remotePeerInfoCollName": "[parameters('peerInfoCollName')]",
+                "remotePeerInfoDbName": "[variables('extensionSettings').peerInfoDbName]",
+                "remotePeerInfoCollName": "[variables('extensionSettings').peerInfoCollectionName]",
                 "mode": "[parameters('mode')]"
             },
             {
@@ -452,356 +786,11 @@
                 "consortiumData": "[parameters('consortiumData')]",
                 "remotePeerInfoEndpoint": "[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey": "[parameters('peerInfoPrimaryKey')]",
-                "remotePeerInfoDbName": "[parameters('peerInfoDbName')]",
-                "remotePeerInfoCollName": "[parameters('peerInfoCollName')]",
+                "remotePeerInfoDbName": "[variables('extensionSettings').peerInfoDbName]",
+                "remotePeerInfoCollName": "[variables('extensionSettings').peerInfoCollectionName]",
                 "mode": "[parameters('mode')]"
             }
         ],
-        "apis": {
-            "apiVersionDeployments": "2017-05-10",
-            "apiVersionNetworkSecurityGroups": "2017-04-01",
-            "apiVersionPublicIPAddresses": "2017-04-01",
-            "apiVersionLoadBalancers": "2017-04-01",
-            "apiVersionVirtualNetworks": "2017-04-01",
-            "apiVersionVirtualNetworkGateways": "2017-04-01",
-            "apiVersionVirtualMachineScaleSets": "2017-03-30",
-            "apiVersionConnections": "2017-04-01",
-            "apiVersionDocumentDb": "2016-03-31"
-        },
-        "vnetName": "[concat(variables('namingInfix'), '-vnet')]",
-        "txSubnetName": "[concat(uniqueString(resourceGroup().id, variables('namingInfix')), '-snet-tx')]",
-        "mnSubnetName": "[concat(uniqueString(resourceGroup().id, variables('namingInfix')), '-snet-mn')]",
-        "txNsgName": "[concat(variables('namingInfix'), '-TXnsg')]",
-        "mnNsgName": "[concat(variables('namingInfix'), '-MNnsg')]",
-        "sleepTime": 10,
-        "expiryTime": 300,
-        "Single1": "0",
-        "Single2": "1",
-        "Single3": "1",
-        "Single4": "1",
-        "Single5": "1",
-        "Leader1": "1",
-        "Leader2": "1",
-        "Leader3": "1",
-        "Leader4": "1",
-        "Leader5": "1",
-        "Member1": "1",
-        "Member2": "1",
-        "Member3": "1",
-        "Member4": "1",
-        "Member5": "1",
-        "flag": "[variables(concat(parameters('mode'),parameters('regionCount')))]",
-        "numSubnets": "[add(int(variables('flag')),2)]",
-        "vnetSettings": [
-            {
-                "apiVersionVirtualNetworks": "[variables('apis').apiVersionVirtualNetworks]",
-                "apiVersionNetworkSecurityGroups": "[variables('apis').apiVersionNetworkSecurityGroups]",
-                "vnetName": "[concat(variables('vnetName'),'-',variables('suffixArray')[0])]",
-                "mnSubnetName": "[variables('mnSubnetName')]",
-                "txSubnetName": "[variables('txSubnetName')]",
-                "addressSpacePrefix": "[replace('10._.16.0/20','_',string(parameters('consortiumId')))]",
-                "numSubnets": "[variables('numSubnets')]",
-                "txNsgName": "[concat(variables('txNsgName'),'-',variables('suffixArray')[0])]",
-                "mnNsgName": "[concat(variables('mnNsgName'),'-',variables('suffixArray')[0])]",
-                "gatewayAsn": "[add(mul(parameters('consortiumId'), 10),65000)]",
-                "subnetPropertiesArray": [
-                    {
-                        "name": "[variables('txSubnetName')]",
-                        "properties": {
-                            "addressPrefix": "[replace('10._.17.0/24','_',string(parameters('consortiumId')))]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('txNsgName'),'-',variables('suffixArray')[0]))]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "[variables('mnSubnetName')]",
-                        "properties": {
-                            "addressPrefix": "[replace('10._.18.0/24','_',string(parameters('consortiumId')))]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('mnNsgName'),'-',variables('suffixArray')[0]))]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "GatewaySubnet",
-                        "properties": {
-                            "addressPrefix": "[replace('10._.19.0/24','_',string(parameters('consortiumId')))]"
-                        }
-                    }
-                ]
-            },
-            {
-                "apiVersionVirtualNetworks": "[variables('apis').apiVersionVirtualNetworks]",
-                "apiVersionNetworkSecurityGroups": "[variables('apis').apiVersionNetworkSecurityGroups]",
-                "vnetName": "[concat(variables('vnetName'),'-',variables('suffixArray')[1])]",
-                "mnSubnetName": "[variables('mnSubnetName')]",
-                "txSubnetName": "[variables('txSubnetName')]",
-                "addressSpacePrefix": "[replace('10._.32.0/20','_',string(parameters('consortiumId')))]",
-                "numSubnets": "[variables('numSubnets')]",
-                "txNsgName": "[concat(variables('txNsgName'),'-',variables('suffixArray')[1])]",
-                "mnNsgName": "[concat(variables('mnNsgName'),'-',variables('suffixArray')[1])]",
-                "gatewayAsn": "[add(mul(parameters('consortiumId'), 10),65010)]",
-                "subnetPropertiesArray": [
-                    {
-                        "name": "[variables('txSubnetName')]",
-                        "properties": {
-                            "addressPrefix": "[replace('10._.33.0/24','_',string(parameters('consortiumId')))]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('txNsgName'),'-',variables('suffixArray')[1]))]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "[variables('mnSubnetName')]",
-                        "properties": {
-                            "addressPrefix": "[replace('10._.34.0/24','_',string(parameters('consortiumId')))]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('mnNsgName'),'-',variables('suffixArray')[1]))]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "GatewaySubnet",
-                        "properties": {
-                            "addressPrefix": "[replace('10._.35.0/24','_',string(parameters('consortiumId')))]"
-                        }
-                    }
-                ]
-            },
-            {
-                "apiVersionVirtualNetworks": "[variables('apis').apiVersionVirtualNetworks]",
-                "apiVersionNetworkSecurityGroups": "[variables('apis').apiVersionNetworkSecurityGroups]",
-                "vnetName": "[concat(variables('vnetName'),'-',variables('suffixArray')[2])]",
-                "mnSubnetName": "[variables('mnSubnetName')]",
-                "txSubnetName": "[variables('txSubnetName')]",
-                "addressSpacePrefix": "[replace('10._.48.0/20','_',string(parameters('consortiumId')))]",
-                "numSubnets": "[variables('numSubnets')]",
-                "txNsgName": "[concat(variables('txNsgName'),'-',variables('suffixArray')[2])]",
-                "mnNsgName": "[concat(variables('mnNsgName'),'-',variables('suffixArray')[2])]",
-                "gatewayAsn": "[add(mul(parameters('consortiumId'), 10),65020)]",
-                "subnetPropertiesArray": [
-                    {
-                        "name": "[variables('txSubnetName')]",
-                        "properties": {
-                            "addressPrefix": "[replace('10._.49.0/24','_',string(parameters('consortiumId')))]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('txNsgName'),'-',variables('suffixArray')[2]))]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "[variables('mnSubnetName')]",
-                        "properties": {
-                            "addressPrefix": "[replace('10._.50.0/24','_',string(parameters('consortiumId')))]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('mnNsgName'),'-',variables('suffixArray')[2]))]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "GatewaySubnet",
-                        "properties": {
-                            "addressPrefix": "[replace('10._.51.0/24','_',string(parameters('consortiumId')))]"
-                        }
-                    }
-                ]
-            },
-            {
-                "apiVersionVirtualNetworks": "[variables('apis').apiVersionVirtualNetworks]",
-                "apiVersionNetworkSecurityGroups": "[variables('apis').apiVersionNetworkSecurityGroups]",
-                "vnetName": "[concat(variables('vnetName'),'-',variables('suffixArray')[3])]",
-                "mnSubnetName": "[variables('mnSubnetName')]",
-                "txSubnetName": "[variables('txSubnetName')]",
-                "addressSpacePrefix": "[replace('10._.64.0/20','_',string(parameters('consortiumId')))]",
-                "numSubnets": "[variables('numSubnets')]",
-                "txNsgName": "[concat(variables('txNsgName'),'-',variables('suffixArray')[3])]",
-                "mnNsgName": "[concat(variables('mnNsgName'),'-',variables('suffixArray')[3])]",
-                "gatewayAsn": "[add(mul(parameters('consortiumId'), 10),65030)]",
-                "subnetPropertiesArray": [
-                    {
-                        "name": "[variables('txSubnetName')]",
-                        "properties": {
-                            "addressPrefix": "[replace('10._.65.0/24','_',string(parameters('consortiumId')))]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('txNsgName'),'-',variables('suffixArray')[3]))]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "[variables('mnSubnetName')]",
-                        "properties": {
-                            "addressPrefix": "[replace('10._.66.0/24','_',string(parameters('consortiumId')))]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('mnNsgName'),'-',variables('suffixArray')[3]))]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "GatewaySubnet",
-                        "properties": {
-                            "addressPrefix": "[replace('10._.67.0/24','_',string(parameters('consortiumId')))]"
-                        }
-                    }
-                ]
-            },
-            {
-                "apiVersionVirtualNetworks": "[variables('apis').apiVersionVirtualNetworks]",
-                "apiVersionNetworkSecurityGroups": "[variables('apis').apiVersionNetworkSecurityGroups]",
-                "vnetName": "[concat(variables('vnetName'),'-',variables('suffixArray')[4])]",
-                "mnSubnetName": "[variables('mnSubnetName')]",
-                "txSubnetName": "[variables('txSubnetName')]",
-                "addressSpacePrefix": "[replace('10._.80.0/20','_',string(parameters('consortiumId')))]",
-                "numSubnets": "[variables('numSubnets')]",
-                "txNsgName": "[concat(variables('txNsgName'),'-',variables('suffixArray')[4])]",
-                "mnNsgName": "[concat(variables('mnNsgName'),'-',variables('suffixArray')[4])]",
-                "gatewayAsn": "[add(mul(parameters('consortiumId'), 10),65040)]",
-                "subnetPropertiesArray": [
-                    {
-                        "name": "[variables('txSubnetName')]",
-                        "properties": {
-                            "addressPrefix": "[replace('10._.81.0/24','_',string(parameters('consortiumId')))]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('txNsgName'),'-',variables('suffixArray')[4]))]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "[variables('mnSubnetName')]",
-                        "properties": {
-                            "addressPrefix": "[replace('10._.82.0/24','_',string(parameters('consortiumId')))]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('mnNsgName'),'-',variables('suffixArray')[4]))]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "GatewaySubnet",
-                        "properties": {
-                            "addressPrefix": "[replace('10._.83.0/24','_',string(parameters('consortiumId')))]"
-                        }
-                    }
-                ]
-            }
-        ],
-        "httpPort": 80,
-        "adminSitePort": 3000,
-        "sshPort": 22,
-        "sshNATFrontEndStartingPort": 4000,
-        "sshNATFrontEndEndingPort": 4050,
-        "gethRPCPort": 8545,
-        "gethIPCPort": 30303,
-        "lbSettings": {
-            "resourceGuid": "[variables('resourceGuid')]",
-            "apiVersionPublicIPAddresses": "[variables('apis').apiVersionPublicIPAddresses]",
-            "lbPublicIPAddressName": "[concat(variables('namingInfix'), '-lbpip-',parameters('consortiumId'))]",
-            "publicIPAllocationMethod": "Dynamic",
-            "dnsHostName": "[concat(variables('namingInfix'), '-dns')]",
-            "apiVersionLoadBalancers": "[variables('apis').apiVersionLoadBalancers]",
-            "loadBalancerName": "[concat(variables('namingInfix'), '-txLB')]",
-            "lbFrontEndIpConfigName": "txIpConfig",
-            "backendAddressPoolName": "lbBackendPool",
-            "FrontendPort1": "[variables('httpPort')]",
-            "BackendPort1": "[variables('adminSitePort')]",
-            "FrontendPort2": "[variables('gethRPCPort')]",
-            "BackendPort2": "[variables('gethRPCPort')]",
-            "inboundNATRuleNamePrefix": "SSH-txVM",
-            "inboundNATRuleFrontendStartingPort": "[variables('sshNATFrontEndStartingPort')]",
-            "inboundNATRuleFrontendEndingPort": "[variables('sshNATFrontEndEndingPort')]",
-            "inboundNATRuleBackendPort": "[variables('sshPort')]"
-        },
-        "gatewaySettings": {
-            "resourceGuid": "[variables('resourceGuid')]",
-            "apiVersionVirtualNetworkGateways": "[variables('apis').apiVersionVirtualNetworkGateways]",
-            "gatewayPublicIPName": "[concat(variables('namingInfix'), '-gate-pip')]",
-            "gatewayName": "[concat(variables('namingInfix'),'-gateway')]",
-            "gatewaySubnetName": "GatewaySubnet",
-            "gatewaySku": "Standard",
-            "flag": "[variables('flag')]"
-        },
-        "ubuntuImage": {
-            "publisher": "Canonical",
-            "offer": "UbuntuServer",
-            "sku": "16.04.0-LTS",
-            "version": "latest"
-        },
-        "dbSettings": {
-            "dbAccName": "[concat(variables('namingInfix'), '-registrar')]",
-            "dbKind": "GlobalDocumentDB",
-            "failoverRegion1": "centralus"
-        },
-        "txVmssSettings": {
-            "resourceGuid": "[variables('resourceGuid')]",
-            "vmssName": "[concat('tx-', variables('namingInfix'))]",
-            "txCapacity": "[parameters('numTXNodesRegion')]",
-            "authenticationType": "[parameters('authType')]",
-            "nicName": "tx-nic",
-            "storageAccountType": "[parameters('txStorageAccountType')]",
-            "nodeVMSize": "[parameters('txNodeVMSize')]",
-            "adminUsername": "[parameters('adminUsername')]",
-            "adminPassword": "[parameters('adminPassword')]",
-            "sshPublicKey": "[parameters('adminSSHKey')]",
-            "ipConfigName": "tx-ipcnf",
-            "subnetName": "[variables('txSubnetName')]",
-            "internalDnsName": "[concat('tx-idns-',variables('namingInfix'))]",
-            "loadBalancerName": "[variables('lbSettings').loadBalancerName]",
-            "loadBalancerBackendAddressPoolName": "[variables('lbSettings').backendAddressPoolName]",
-            "loadBalancerInboundNatRuleNamePrefix": "[variables('lbSettings').inboundNATRuleNamePrefix]",
-            "apiVersionVirtualMachineScaleSets": "[variables('apis').apiVersionVirtualMachineScaleSets]"
-        },
-        "mnVmssSettings": {
-            "resourceGuid": "[variables('resourceGuid')]",
-            "vmssName": "[concat('mn-',variables('namingInfix'))]",
-            "mnCapacity": "[parameters('numMiningNodesRegion')]",
-            "authenticationType": "[parameters('authType')]",
-            "nicName": "mn-nic",
-            "storageAccountType": "[parameters('mnStorageAccountType')]",
-            "nodeVMSize": "[parameters('mnNodeVMSize')]",
-            "adminUsername": "[parameters('adminUsername')]",
-            "adminPassword": "[parameters('adminPassword')]",
-            "sshPublicKey": "[parameters('adminSSHKey')]",
-            "ipConfigName": "mn-ipcnf",
-            "subnetName": "[variables('mnSubnetName')]",
-            "internalDnsName": "[concat('mn-idns-',variables('namingInfix'))]",
-            "apiVersionVirtualMachineScaleSets": "[variables('apis').apiVersionVirtualMachineScaleSets]"
-        },
-        "adminHash": "[uniqueString(parameters('adminPassword'))]",
-        "maxPeers": 150,
-        "txNode": 0,
-        "mnNode": 1,
-        "extensionSettings": {
-            "adminUsername": "[parameters('adminUsername')]",
-            "ethereumAccountPsswd": "[parameters('ethereumAccountPsswd')]",
-            "ethereumAccountPassphrase": "[parameters('ethereumAccountPassphrase')]",
-            "artifactsLocationURL": "[variables('baseUrl')]",
-            "ethereumNetworkID": "[parameters('ethereumNetworkID')]",
-            "txNode": "[variables('txNode')]",
-            "mnNode": "[variables('mnNode')]",
-            "maxPeers": "[variables('maxPeers')]",
-            "gethIPCPort": "[variables('gethIPCPort')]",
-            "numBootNodes": 2,
-            "numMNNodes": "[parameters('numMiningNodesRegion')]",
-            "mnVMNamePrefix": "mn",
-            "genesisBlock": "[base64(parameters('genesisBlock'))]",
-            "adminHash": "[uniqueString(string(parameters('consortiumId')), variables('adminHash'))]",
-            "numTXNodes": "[parameters('numTXNodesRegion')]",
-            "txVMNamePrefix": "tx",
-            "adminSitePort": "[variables('adminSitePort')]",
-            "consortiumId": "[parameters('consortiumId')]",
-            "peerInfoDbName": "peerInfoDb",
-            "peerInfoCollectionName": "peerInfoColl",
-            "sleepTime": "[variables('sleepTime')]",
-            "expiryTime": "[variables('expiryTime')]"
-        },
-        "connectionSettings": {
-            "resourceGuid": "[variables('resourceGuid')]",
-            "apiVersionConnections": "[variables('apis').apiVersionConnections]",
-            "connectionName": "conn",
-            "gatewayName": "[variables('gatewaySettings').gatewayName]",
-            "connectionSharedKey": "[parameters('connectionSharedKey')]",
-            "regionCount": "[parameters('regionCount')]",
-            "connectionMemName": "conn-to-leader-gateway"
-        },
         "gatewayIdRegion1Single": "NA",
         "gatewayIdRegion1Leader": "[concat(resourceGroup().id,'/providers/Microsoft.Network/virtualNetworkGateways/',variables('namingInfix'),'-gateway-',variables('suffixArray')[0])]",
         "gatewayIdRegion1Member": "[concat(resourceGroup().id,'/providers/Microsoft.Network/virtualNetworkGateways/',variables('namingInfix'),'-gateway-',variables('suffixArray')[0])]",
@@ -1026,7 +1015,7 @@
             "type": "string",
             "value": "[concat('http://',reference('network-resources-deploy').outputs.lbFqdnReg1.value, ':', variables('gethRPCPort'))]"
         },
-        "ssh_to_a_tx_node_region1": {
+        "ssh_to_first_tx_node_region1": {
             "type": "string",
             "value": "[concat('ssh -p ', variables('sshNATFrontEndStartingPort'), ' ', parameters('adminUsername'), '@', reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
         },
