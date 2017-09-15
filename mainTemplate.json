@@ -1003,15 +1003,15 @@
         }
     ],
     "outputs": {
-        "admin_site": {
+        "admin-site": {
             "type": "string",
             "value": "[concat('http://',reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
         },
-        "ethereum_rpc_endpoint": {
+        "ethereum-rpc-endpoint": {
             "type": "string",
             "value": "[concat('http://',reference('network-resources-deploy').outputs.lbFqdnReg1.value, ':', variables('gethRPCPort'))]"
         },
-        "ssh_to_first_tx_node_region1": {
+        "ssh-to-first-tx-node-region1": {
             "type": "string",
             "value": "[concat('ssh -p ', variables('sshNATFrontEndStartingPort'), ' ', parameters('adminUsername'), '@', reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
         },
@@ -1019,15 +1019,15 @@
             "type": "string",
             "value": "[concat('http://',reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
         },
-        "consortium_member_gateway_id_region1": {
+        "consortium-member-gateway-id-region1": {
             "type": "string",
             "value": "[variables(concat('gatewayIdRegion1',parameters('mode')))]"
         },
-        "peer_info_endpoint": {
+        "peer-info-endpoint": {
             "type": "string",
             "value": "[reference(concat('Microsoft.DocumentDB/databaseAccounts/',variables('dbSettings').dbAccName),'2015-04-08').documentEndpoint]"
         },
-        "peer_info_primary_key": {
+        "peer-info-primary-key": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('dbSettings').dbAccName), variables('apis').apiVersionDocumentDb).primaryMasterKey]"
         },
