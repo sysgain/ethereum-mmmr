@@ -20,7 +20,7 @@
             ],
             "metadata": {
                 "description": "Mode of deployment of Ethereum consortium deployment"
-            },
+            }
         },
         "regionCount": {
             "type": "int",
