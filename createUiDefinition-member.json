@@ -8,11 +8,11 @@
                 "name": "namePrefix",
                 "type": "Microsoft.Common.TextBox",
                 "label": "Resource prefix",
-                "toolTip": "String used as a base for naming resources (5 alphanumeric characters or less).  A unique hash is prepended to the string for some resources, while resource-specific information is appended.",
+                "toolTip": "String used as a base for naming resources (4 alphanumeric characters or less).  A unique hash is prepended to the string for some resources, while resource-specific information is appended.",
                 "constraints": {
                     "required": true,
-                    "regex": "^[a-z][a-z0-9-]{1,4}$",
-                    "validationMessage": "Resource prefix must be between 2 and 5 characters long, must begin with a lowercase letter, and can contain only numbers and lowercase letters."
+                    "regex": "^[a-z][a-z0-9-]{1,3}$",
+                    "validationMessage": "Resource prefix must be between 2 and 4 characters long, must begin with a lowercase letter, and can contain only numbers and lowercase letters."
                 }
             },
             {
