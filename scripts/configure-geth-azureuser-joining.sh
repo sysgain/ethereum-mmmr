@@ -105,7 +105,7 @@ while sleep 5; do
         allremotedocs=`sh getpost-utility.sh $remotedocdbprimarykey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
         echo "allRemotedocs: $allremotedocs"
         hostcount=`echo $allremotedocs | grep -Po '"bootNodeUrlNode":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | wc -l`
-        if [ $hostcount -gt $nodecount ]; then
+        if [ $hostcount -ge $nodecount ]; then
            break
         fi
 done
