@@ -41,7 +41,7 @@
         "ethereumNetworkID": {
             "value": 10101010
         },
-        "consortiumId": {
+        "consortiumMemberId": {
             "value": 0
         },
         "ethereumAccountPsswd": {
