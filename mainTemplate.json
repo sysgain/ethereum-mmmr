@@ -176,9 +176,6 @@
         "maxPeers": 25,
         "txIpConfig": "tx-ipconfig",
         "mnIpConfig": "mn-ipconfig",
-        "sshNATRuleNamePrefix": "SSH-txVM",
-        "txloadBalancerName": "[concat(variables('namingInfix'), '-txLB')]",
-        "loadBalancerBackendAddressPoolName": "LBBackendPool",
         "virtualNetworkName": "[concat(variables('namingInfix'), '-vnet')]",
         "addressPrefix": "[replace('10._.16.0/20', '_', variables('consortiumId'))]",
         "txVMSSNamePrefix": "[concat('tx-',variables('namingInfix'),'-reg1')]",
@@ -365,6 +362,24 @@
             "sku": "16.04.0-LTS",
             "version": "latest"
         },
+        "lbSettings": {
+            "loadBalancerName": "[concat(variables('namingInfix'), '-txLB')]",
+            "resourceGuid": "[variables('resourceGuid')]",
+            "dnsHostName": "[variables('namingInfix')]",
+            "lbFrontEndIpConfigName": "LBFrontEnd",
+            "backendAddressPoolName": "LBBackendPool",
+            "FrontendPort1": "[variables('httpPort')]",
+            "BackendPort1": "[variables('adminSitePort')]",
+            "FrontendPort2": "[variables('gethRPCPort')]",
+            "BackendPort2": "[variables('gethRPCPort')]",
+            "sshNATRuleNamePrefix": "SSH-txVM",
+            "sshNATFrontEndStartingPort": "[variables('sshNATFrontEndStartingPort')]",
+            "sshNATFrontEndEndingPort": "[variables('sshNATFrontEndEndingPort')]",
+            "natBackendPort": "[variables('sshPort')]",
+            "apiVersionLoadBalancers": "[variables('apiVersionLoadBalancers')]",
+            "apiVersionPublicIPAddresses": "[variables('apiVersionPublicIPAddresses')]",
+            "location": "[parameters('location')]"
+        },
         "txVmssSettings": {
             "resourceGuid": "[variables('resourceGuid')]",
             "vmssName": "[variables('txVMSSNamePrefix')]",
@@ -378,9 +393,9 @@
             "sshPublicKey": "[parameters('adminSSHKey')]",
             "ipConfigName": "[variables('txIpConfig')]",
             "subnetRef": "[variables('txSubnetRef')]",
-            "loadBalancerName": "[variables('txloadBalancerName')]",
-            "loadBalancerBackendAddressPoolName": "[variables('loadBalancerBackendAddressPoolName')]",
-            "loadBalancerInboundNatRuleNamePrefix": "[variables('sshNATRuleNamePrefix')]",
+            "loadBalancerName": "[variables('lbSettings').loadBalancerName]",
+            "loadBalancerBackendAddressPoolName": "[variables('lbSettings').backendAddressPoolName]",
+            "loadBalancerInboundNatRuleNamePrefix": "[variables('lbSettings').sshNATRuleNamePrefix]",
             "internalDnsName": "[variables('txinternalDnsName')]",
             "apiVersionVirtualMachineScaleSets": "[variables('apiVersionVirtualMachineScaleSets')]"
         },
@@ -419,12 +434,38 @@
             "fileUri": "[variables('scriptFileUris')]",
             "filename": "[variables('scriptFilename')]",
             "peerInfoDbName": "[variables('peerInfoDbName')]",
-            "peerInfoCollectionName":"[variables('peerInfoCollectionName')]",
+            "peerInfoCollectionName": "[variables('peerInfoCollectionName')]",
             "sleepTime": "[variables('sleepTime')]",
             "expiryTime": "[variables('expiryTime')]"
         }
     },
     "resources": [
+        {
+            "name": "[variables('dbAccName')]",
+            "type": "Microsoft.DocumentDB/databaseAccounts",
+            "apiVersion": "[variables('apiVersionCosmosDb')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "resourceGuid": "[variables('resourceGuid')]"
+            },
+            "kind": "[variables('dbKind')]",
+            "properties": {
+                "name": "[variables('dbAccName')]",
+                "consistencyPolicy": {
+                    "defaultConsistencyLevel": "BoundedStaleness",
+                    "maxIntervalInSeconds": 5,
+                    "maxStalenessPrefix": 100
+                },
+                "locations": [
+                    {
+                        "locationName": "[variables('failoverRegion1')]",
+                        "failoverPriority": 0
+                    }
+                ],
+                "databaseAccountOfferType": "Standard",
+                "enableAutomaticFailover": true
+            }
+        },
         {
             "apiVersion": "[variables('apiVersionNetworkSecurityGroups')]",
             "type": "Microsoft.Network/networkSecurityGroups",
@@ -553,50 +594,8 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "loadBalancerName": {
-                        "value": "[variables('txloadBalancerName')]"
-                    },
-                    "resourceGuid": {
-                        "value": "[variables('resourceGuid')]"
-                    },
-                    "dnsHostName": {
-                        "value": "[variables('namingInfix')]"
-                    },
-                    "backendAddressPoolName": {
-                        "value": "[variables('loadBalancerBackendAddressPoolName')]"
-                    },
-                    "FrontendPort1": {
-                        "value": "[variables('httpPort')]"
-                    },
-                    "BackendPort1": {
-                        "value": "[variables('adminSitePort')]"
-                    },
-                    "FrontendPort2": {
-                        "value": "[variables('gethRPCPort')]"
-                    },
-                    "BackendPort2": {
-                        "value": "[variables('gethRPCPort')]"
-                    },
-                    "sshNATRuleNamePrefix":{
-                        "value": "[variables('sshNATRuleNamePrefix')]"
-                    },
-                    "sshNATFrontEndStartingPort": {
-                        "value": "[variables('sshNATFrontEndStartingPort')]"
-                    },
-                    "sshNATFrontEndEndingPort": {
-                        "value": "[variables('sshNATFrontEndEndingPort')]"
-                    },
-                    "natBackendPort": {
-                        "value": "[variables('sshPort')]"
-                    },
-                    "apiVersionLoadBalancers": {
-                        "value": "[variables('apiVersionLoadBalancers')]"
-                    },
-                    "apiVersionPublicIPAddresses": {
-                        "value": "[variables('apiVersionPublicIPAddresses')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
+                    "lbSettings": {
+                        "value": "[variables('lbSettings')]"
                     }
                 }
             }
@@ -645,32 +644,6 @@
                         "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('dbAccName')), variables('apiVersionCosmosDb')).primaryMasterKey]"
                     }
                 }
-            }
-        },
-        {
-            "name": "[variables('dbAccName')]",
-            "type": "Microsoft.DocumentDB/databaseAccounts",
-            "apiVersion": "[variables('apiVersionCosmosDb')]",
-            "location": "[parameters('location')]",
-            "tags": {
-                "resourceGuid": "[variables('resourceGuid')]"
-            },
-            "kind": "[variables('dbKind')]",
-            "properties": {
-                "name": "[variables('dbAccName')]",
-                "consistencyPolicy": {
-                    "defaultConsistencyLevel": "BoundedStaleness",
-                    "maxIntervalInSeconds": 5,
-                    "maxStalenessPrefix": 100
-                },
-                "locations": [
-                    {
-                        "locationName": "[variables('failoverRegion1')]",
-                        "failoverPriority": 0
-                    }
-                ],
-                "databaseAccountOfferType": "Standard",
-                "enableAutomaticFailover": true
             }
         }
     ],

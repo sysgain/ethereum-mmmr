@@ -2,81 +2,53 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "loadBalancerName": {
-            "type": "string"
-        },
-        "resourceGuid": {
-            "type": "string"
-        },
-        "dnsHostName": {
-            "type": "string"
-        },
-        "backendAddressPoolName": {
-            "type": "string"
-        },
-        "FrontendPort1": {
-            "type": "int"
-        },
-        "BackendPort1": {
-            "type": "int"
-        },
-        "FrontendPort2": {
-            "type": "int"
-        },
-        "BackendPort2": {
-            "type": "int"
-        },
-        "sshNATRuleNamePrefix":{
-            "type": "string"
-        },
-        "sshNATFrontEndStartingPort": {
-            "type": "int"
-        },
-        "sshNATFrontEndEndingPort": {
-            "type": "int"
-        },
-        "natBackendPort": {
-            "type": "int"
-        },
-        "apiVersionPublicIPAddresses": {
-            "type": "string"
-        },
-        "apiVersionLoadBalancers": {
-            "type": "string"
-        },
-        "location": {
-            "type": "string"
+        "lbSettings": {
+            "type": "object"
         }
     },
     "variables": {
-        "resourceGuid": "[parameters('resourceGuid')]",
-        "lbID": "[resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancerName'))]",
-        "lbPublicIPAddressName": "[concat(parameters('dnsHostName'), '-pip')]",
-        "lbFrontEndIpConfigName": "LoadBalancerFrontEnd",
+        "loadBalancerName": "[parameters('lbSettings').loadBalancerName]",
+        "resourceGuid": "[parameters('lbSettings').resourceGuid]",
+        "dnsHostName": "[parameters('lbSettings').dnsHostName]",
+        "lbFrontEndIpConfigName": "[parameters('lbSettings').lbFrontEndIpConfigName]",
+        "backendAddressPoolName": "[parameters('lbSettings').backendAddressPoolName]",
+        "FrontendPort1": "[parameters('lbSettings').FrontendPort1]",
+        "BackendPort1": "[parameters('lbSettings').BackendPort1]",
+        "FrontendPort2": "[parameters('lbSettings').FrontendPort2]",
+        "BackendPort2": "[parameters('lbSettings').BackendPort2]",
+        "sshNATRuleNamePrefix": "[parameters('lbSettings').sshNATRuleNamePrefix]",
+        "sshNATFrontEndStartingPort": "[parameters('lbSettings').sshNATFrontEndStartingPort]",
+        "sshNATFrontEndEndingPort": "[parameters('lbSettings').sshNATFrontEndEndingPort]",
+        "natBackendPort": "[parameters('lbSettings').natBackendPort]",
+        "apiVersionLoadBalancers": "[parameters('lbSettings').apiVersionLoadBalancers]",
+        "apiVersionPublicIPAddresses": "[parameters('lbSettings').apiVersionPublicIPAddresses]",
+        "location": "[parameters('lbSettings').location]",
+        "lbID": "[resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName'))]",
+        "lbPublicIPAddressName": "[concat(variables('dnsHostName'), '-pip')]",
         "lbFrontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/',variables('lbFrontEndIpConfigName'))]",
-        "lbBackendAddressPoolID": "[concat(variables('lbID'), '/backendAddressPools/', parameters('backendAddressPoolName'))]"
+        "lbBackendAddressPoolID": "[concat(variables('lbID'), '/backendAddressPools/', variables('backendAddressPoolName'))]"
     },
     "resources": [
         {
-            "apiVersion": "[parameters('apiVersionPublicIPAddresses')]",
+            "apiVersion": "[variables('apiVersionPublicIPAddresses')]",
             "type": "Microsoft.Network/publicIPAddresses",
             "name": "[variables('lbPublicIPAddressName')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "tags": {
                 "resourceGuid": "[variables('resourceGuid')]"
             },
             "properties": {
                 "publicIPAllocationMethod": "Dynamic",
                 "dnsSettings": {
-                    "domainNameLabel": "[parameters('dnsHostName')]"
+                    "domainNameLabel": "[variables('dnsHostName')]"
                 }
             }
         },
         {
-            "apiVersion": "[parameters('apiVersionLoadBalancers')]",
-            "name": "[parameters('loadBalancerName')]",
+            "apiVersion": "[variables('apiVersionLoadBalancers')]",
+            "name": "[variables('loadBalancerName')]",
             "type": "Microsoft.Network/loadBalancers",
-            "location": "[parameters('location')]",
+            "location": "variables('location')]",
             "tags": {
                 "resourceGuid": "[variables('resourceGuid')]"
             },
@@ -96,7 +68,7 @@
                 ],
                 "backendAddressPools": [
                     {
-                        "name": "[parameters('backendAddressPoolName')]"
+                        "name": "[variables('backendAddressPoolName')]"
                     }
                 ],
                 "loadBalancingRules": [
@@ -110,8 +82,8 @@
                                 "id": "[variables('lbBackendAddressPoolID')]"
                             },
                             "protocol": "Tcp",
-                            "frontendPort": "[parameters('FrontendPort1')]",
-                            "backendPort": "[parameters('BackendPort1')]",
+                            "frontendPort": "[variables('FrontendPort1')]",
+                            "backendPort": "[variables('BackendPort1')]",
                             "idleTimeoutInMinutes": 5,
                             "probe": {
                                 "id": "[concat(variables('lbID'),'/probes/lbProbe1')]"
@@ -128,8 +100,8 @@
                                 "id": "[variables('lbBackendAddressPoolID')]"
                             },
                             "protocol": "Tcp",
-                            "frontendPort": "[parameters('FrontendPort2')]",
-                            "backendPort": "[parameters('BackendPort2')]",
+                            "frontendPort": "[variables('FrontendPort2')]",
+                            "backendPort": "[variables('BackendPort2')]",
                             "idleTimeoutInMinutes": 5,
                             "probe": {
                                 "id": "[concat(variables('lbID'),'/probes/lbProbe2')]"
@@ -139,15 +111,15 @@
                 ],
                 "inboundNatPools": [
                     {
-                        "name": "[parameters('sshNATRuleNamePrefix')]",
+                        "name": "[variables('sshNATRuleNamePrefix')]",
                         "properties": {
                             "frontendIPConfiguration": {
-                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancerName')),'/frontendIPConfigurations/',variables('lbFrontEndIpConfigName'))]"
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')),'/frontendIPConfigurations/',variables('lbFrontEndIpConfigName'))]"
                             },
                             "protocol": "Tcp",
-                            "frontendPortRangeStart": "[parameters('sshNATFrontEndStartingPort')]",
-                            "frontendPortRangeEnd": "[parameters('sshNATFrontEndEndingPort')]",
-                            "backendPort": "[parameters('natBackendPort')]"
+                            "frontendPortRangeStart": "[variables('sshNATFrontEndStartingPort')]",
+                            "frontendPortRangeEnd": "[variables('sshNATFrontEndEndingPort')]",
+                            "backendPort": "[variables('natBackendPort')]"
                         }
                     }
                 ],
@@ -156,7 +128,7 @@
                         "name": "lbProbe1",
                         "properties": {
                             "protocol": "Tcp",
-                            "port": "[parameters('BackendPort1')]",
+                            "port": "[variables('BackendPort1')]",
                             "intervalInSeconds": 5,
                             "numberOfProbes": 2
                         }
@@ -165,7 +137,7 @@
                         "name": "lbProbe2",
                         "properties": {
                             "protocol": "Tcp",
-                            "port": "[parameters('BackendPort2')]",
+                            "port": "[variables('BackendPort2')]",
                             "intervalInSeconds": 5,
                             "numberOfProbes": 2
                         }
