@@ -6,7 +6,7 @@
 if [ $# -lt 2 ]; then echo "Incomplete parameters supplied. usage: \"$0 <config file path> <ethereum account passwd>\""; exit 1; fi
 GETH_CFG=$1;
 PASSWD=$2;
-
+$CONSORTIUM_MEMBER_ID=0
 # Load config variables
 if [ ! -e $GETH_CFG ]; then echo "Config file not found. Exiting"; exit 1; fi
 . $GETH_CFG

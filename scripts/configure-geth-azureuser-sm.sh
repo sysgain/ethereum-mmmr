@@ -34,7 +34,6 @@ MN_NODE_SEQNUM=${12};   #Only supplied for NODE_TYPE=1
 NUM_TX_NODES=${12};     #Only supplied for NODE_TYPE=0
 TX_NODE_PREFIX=${13};   #Only supplied for NODE_TYPE=0
 ADMIN_SITE_PORT=${14};  #Only supplied for NODE_TYPE=0
-#CONSORTIUM_MEMBER_ID=${17};         #Only supplied for NODE_TYPE=0
 PRIMARY_KEY=${15}
 DOCDB_END_POINT_URL=${16}
 REGIONID=${17}
@@ -45,10 +44,10 @@ EXPIRYTIME=${21}
 #########################################################################
 # Globals
 #########################################################################
-declare -a NODE_KEYS
+declare NODE_KEY
 PREFUND_ADDRESS=""
 declare -a BOOTNODES
-BOOTNODE_URLS="";
+declare -a BOOTNODE_URLS="";
 
 #########################################################################
 # Constants
