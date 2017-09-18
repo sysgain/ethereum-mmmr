@@ -260,6 +260,7 @@ function create_config
 	  printf "%s\n" "NUM_MN_NODES=$NUM_MN_NODES" >> $GETH_CFG_FILE_PATH;
 	  printf "%s\n" "TX_NODE_PREFIX=$TX_NODE_PREFIX" >> $GETH_CFG_FILE_PATH;
 	  printf "%s\n" "NUM_TX_NODES=$NUM_TX_NODES" >> $GETH_CFG_FILE_PATH;
+          printf "%s\n" "BOOTNODES=\"${BOOTNODES[*]}\"" >> $GETH_CFG_FILE_PATH;
 	  printf "%s\n" "ADMIN_SITE_PORT=$ADMIN_SITE_PORT" >> $GETH_CFG_FILE_PATH;
           printf "%s\n" "masterkey=$masterkey" >> $GETH_CFG_FILE_PATH;
           printf "%s\n" "endpointurl=$endpointurl" >> $GETH_CFG_FILE_PATH;
