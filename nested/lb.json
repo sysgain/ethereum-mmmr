@@ -48,7 +48,7 @@
             "apiVersion": "[variables('apiVersionLoadBalancers')]",
             "name": "[variables('loadBalancerName')]",
             "type": "Microsoft.Network/loadBalancers",
-            "location": "variables('location')]",
+            "location": "[variables('location')]",
             "tags": {
                 "resourceGuid": "[variables('resourceGuid')]"
             },
