@@ -86,7 +86,7 @@ setup_dependencies
 sleep 180
 setup_node_info
 setup_bootnodes
-echo "BootNode URLs are:${BOOTNODE_URLS}"
+echo "BootNode URLs are:${BOOTNODE_URLS[*]}"
 setup_genesis_file_system_ethereum_account
 initialize_geth
 setup_admin_website
