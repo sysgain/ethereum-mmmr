@@ -318,7 +318,7 @@
             "apiVersionLoadBalancers": "[variables('apis').apiVersionLoadBalancers]",
             "loadBalancerName": "[concat(variables('namingInfix'), '-txLb')]",
             "lbFrontEndIpConfigName": "LBFrontEnd",
-            "backendAddressPoolName": "lbBackendPool",
+            "backendAddressPoolName": "LBBackendPool",
             "FrontendPort1": "[variables('httpPort')]",
             "BackendPort1": "[variables('adminSitePort')]",
             "FrontendPort2": "[variables('gethRPCPort')]",
