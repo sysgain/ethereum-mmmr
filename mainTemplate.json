@@ -144,7 +144,7 @@
         }
     },
     "variables": {
-        "namingInfix": "[toLower(substring(concat(parameters('namePrefix'),'-',uniqueString(resourceGroup().id)), 0, 8))]",
+        "namingInfix": "[toLower(substring(concat(parameters('namePrefix'),uniqueString(resourceGroup().id)), 0, 6))]",
         "vmssSetupUrl": "[concat(parameters('baseUrl'), '/nested/vmss.json')]",
         "scriptFileUris": "[concat(parameters('baseUrl'), '/scripts/configure-geth-sm.sh')]",
         "scriptFilename": "configure-geth-sm.sh",
@@ -179,7 +179,6 @@
         "sshNATRuleNamePrefix": "SSH-txVM",
         "txloadBalancerName": "[concat(variables('namingInfix'), '-txLB')]",
         "loadBalancerBackendAddressPoolName": "LoadBalancerBackend",
-        
         "virtualNetworkName": "[concat(variables('namingInfix'), '-vnet')]",
         "addressPrefix": "[replace('10._.16.0/20', '_', variables('consortiumId'))]",
         "txVMSSNamePrefix": "[concat('tx-',variables('namingInfix'),'-reg1')]",
