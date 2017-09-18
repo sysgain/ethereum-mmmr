@@ -247,7 +247,7 @@ function create_config
 	printf "%s\n" "NETWORK_ID=$NETWORK_ID" >> $GETH_CFG_FILE_PATH;
 	printf "%s\n" "MAX_PEERS=$MAX_PEERS" >> $GETH_CFG_FILE_PATH;
 	printf "%s\n" "NODE_TYPE=$NODE_TYPE" >> $GETH_CFG_FILE_PATH;
-	printf "%s\n" "BOOTNODE_URLS=\"$BOOTNODE_URLS\"" >> $GETH_CFG_FILE_PATH;
+	printf "%s\n" "BOOTNODE_URLS=\"${BOOTNODE_URLS[*]}\"" >> $GETH_CFG_FILE_PATH;
 	printf "%s\n" "MN_NODE_PREFIX=$MN_NODE_PREFIX" >> $GETH_CFG_FILE_PATH;
 	printf "%s\n" "NUM_BOOT_NODES=$NUM_BOOT_NODES" >> $GETH_CFG_FILE_PATH;
 	printf "%s\n" "MINER_THREADS=$MINER_THREADS" >> $GETH_CFG_FILE_PATH;
