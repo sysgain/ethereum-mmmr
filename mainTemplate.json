@@ -317,7 +317,7 @@
             "dnsHostName": "[concat(variables('namingInfix'), '-dns')]",
             "apiVersionLoadBalancers": "[variables('apis').apiVersionLoadBalancers]",
             "loadBalancerName": "[concat(variables('namingInfix'), '-txLb')]",
-            "lbFrontEndIpConfigName": "txIpConfig",
+            "lbFrontEndIpConfigName": "LBFrontEnd",
             "backendAddressPoolName": "lbBackendPool",
             "FrontendPort1": "[variables('httpPort')]",
             "BackendPort1": "[variables('adminSitePort')]",
