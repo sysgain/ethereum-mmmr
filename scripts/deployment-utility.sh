@@ -196,7 +196,7 @@ function initialize_geth
 #########################################
 echo "===== Starting initialization of geth for private network =====";
 if [ $NODE_TYPE -eq 1 ] && [ $MN_NODE_SEQNUM -lt $NUM_BOOT_NODES ]; then #Boot node logic
-	printf %s ${NODE_KEYS[$MN_NODE_SEQNUM]} > $NODEKEY_FILE_PATH;
+	printf %s ${NODE_KEY} > $NODEKEY_FILE_PATH;
 fi
 
 ########################
