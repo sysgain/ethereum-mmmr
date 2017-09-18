@@ -130,7 +130,7 @@ function setup_bootnodes
         while sleep 10; do
                 alldocs=`sh getpost-utility.sh $masterkey "${endpointurl}dbs/${dbname}/colls/${collname}/docs" get`
                 hostcount=`echo $alldocs | grep -Po '"hostname":.*?",' | cut -d "," -f1 | cut -d ":" -f2 | wc -l`
-                if [ $hostcount -gt $nodecount ]; then
+                if [ $hostcount -ge $nodecount ]; then
                         break
                 fi
         done
@@ -179,7 +179,7 @@ rm $HOMEDIR/priv_genesis.key;
 rm $PASSWD_FILE;
 
 cd $HOMEDIR
-wget -N ${ARTIFACTS_URL_PREFIX}/scripts/start-private-blockchain.sh || unsuccessful_exit "failed to download start-private-blockchain.sh";
+wget -N ${ARTIFACTS_URL_PREFIX}/scripts/start-private-blockchain-sm.sh || unsuccessful_exit "failed to download start-private-blockchain-sm.sh";
 wget -N ${ARTIFACTS_URL_PREFIX}/genesis-template.json || unsuccessful_exit "failed to download genesis-template.json";
 # Place our calculated difficulty into genesis file
 sed s/#DIFFICULTY/$DIFFICULTY/ $HOMEDIR/genesis-template.json > $HOMEDIR/genesis-intermediate1.json;
@@ -272,7 +272,7 @@ function create_config
 function setup_rc_local
 {
 echo "===== Setting up rc.local for restart on VM reboot =====";
-echo -e '#!/bin/bash' "\nsudo -u $AZUREUSER /bin/bash $HOMEDIR/start-private-blockchain.sh $GETH_CFG_FILE_PATH $PASSWD" | sudo tee /etc/rc.local 2>&1 1>/dev/null
+echo -e '#!/bin/bash' "\nsudo -u $AZUREUSER /bin/bash $HOMEDIR/start-private-blockchain-sm.sh $GETH_CFG_FILE_PATH $PASSWD" | sudo tee /etc/rc.local 2>&1 1>/dev/null
 if [ $? -ne 0 ]; then
 	unsuccessful_exit "failed to setup rc.local for restart on VM reboot";
 fi
