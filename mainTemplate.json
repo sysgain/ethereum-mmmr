@@ -268,7 +268,7 @@
         "leaderFilename": "configure-geth.sh",
         "memberScriptUrl": "[concat(variables('baseUrl'),'/scripts/configure-geth-joining.sh')]",
         "memberFilename": "configure-geth-joining.sh",
-        "namingInfix": "[toLower(substring(concat(parameters('namePrefix'),uniqueString(resourceGroup().id)), 0, 5))]",
+        "namingInfix": "[toLower(substring(concat(parameters('namePrefix'),uniqueString(resourceGroup().id)), 0, 6))]",
         "maxPeers": 200,
         "txNode": 0,
         "mnNode": 1,
