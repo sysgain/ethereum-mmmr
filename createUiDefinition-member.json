@@ -1130,7 +1130,7 @@
             "txStorageAccountType": "[steps('NetworkSize').txSection.txStoragePerformance]",
             "connectionSharedKey": "[steps('EthereumSettings').connectionSharedKey]",
             "consortiumMemberGatewayId": "[steps('EthereumSettings').consortiumMemberGateway]",
-            "consortiumData": "[steps('EthereumSettings').consortiumInformation]",
+            "consortiumDataURL": "[steps('EthereumSettings').consortiumInformation]",
             "peerInfoEndpoint": "[steps('EthereumSettings').peerInfoEndpoint]",
             "peerInfoPrimaryKey": "[steps('EthereumSettings').peerInfoKey]"
         }

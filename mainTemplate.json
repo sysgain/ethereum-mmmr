@@ -224,7 +224,7 @@
                 "description": "The ResourceId of the Consortium Member VNet Gateawy to which to connect to"
             }
         },
-        "consortiumData": {
+        "consortiumDataURL": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
@@ -745,7 +745,7 @@
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
-                "consortiumData": "[parameters('consortiumData')]",
+                "consortiumData": "[parameters('consortiumDataURL')]",
                 "remotePeerInfoEndpoint": "[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey": "[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName": "[variables('extensionSettings').peerInfoDbName]",
@@ -755,7 +755,7 @@
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
-                "consortiumData": "[parameters('consortiumData')]",
+                "consortiumData": "[parameters('consortiumDataURL')]",
                 "remotePeerInfoEndpoint": "[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey": "[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName": "[variables('extensionSettings').peerInfoDbName]",
@@ -765,7 +765,7 @@
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
-                "consortiumData": "[parameters('consortiumData')]",
+                "consortiumData": "[parameters('consortiumDataURL')]",
                 "remotePeerInfoEndpoint": "[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey": "[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName": "[variables('extensionSettings').peerInfoDbName]",
@@ -775,7 +775,7 @@
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
-                "consortiumData": "[parameters('consortiumData')]",
+                "consortiumData": "[parameters('consortiumDataURL')]",
                 "remotePeerInfoEndpoint": "[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey": "[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName": "[variables('extensionSettings').peerInfoDbName]",
@@ -785,7 +785,7 @@
             {
                 "fileUri": "[variables('memberScriptUrl')]",
                 "filename": "[variables('memberFilename')]",
-                "consortiumData": "[parameters('consortiumData')]",
+                "consortiumData": "[parameters('consortiumDataURL')]",
                 "remotePeerInfoEndpoint": "[parameters('peerInfoEndpoint')]",
                 "remotePeerInfoPrimaryKey": "[parameters('peerInfoPrimaryKey')]",
                 "remotePeerInfoDbName": "[variables('extensionSettings').peerInfoDbName]",
@@ -1015,7 +1015,7 @@
             "type": "string",
             "value": "[concat('ssh -p ', variables('sshNATFrontEndStartingPort'), ' ', parameters('adminUsername'), '@', reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
         },
-        "consortium-data": {
+        "consortium-data-URL": {
             "type": "string",
             "value": "[concat('http://',reference('network-resources-deploy').outputs.lbFqdnReg1.value)]"
         },
