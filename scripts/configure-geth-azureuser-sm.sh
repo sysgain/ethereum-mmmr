@@ -97,7 +97,7 @@ setup_rc_local
 # Start geth
 ########################
 echo "===== Starting private blockchain network =====";
-/bin/bash $HOMEDIR/start-private-blockchain.sh $GETH_CFG_FILE_PATH $PASSWD || unsuccessful_exit "failed while running start-private-blockchain.sh";
+/bin/bash $HOMEDIR/start-private-blockchain-sm.sh $GETH_CFG_FILE_PATH $PASSWD || unsuccessful_exit "failed while running start-private-blockchain-sm.sh";
 echo "===== Started private blockchain network successfully =====";
 echo "===== All commands in ${0} succeeded. Exiting. =====";
 exit 0;
