@@ -289,15 +289,15 @@
             "vnetgatewayUrl": "[concat(variables('baseUrl'),'/nested/vnet-gateway.json')]"
         },
         "apis": {
-            "apiVersionDeployments": "2017-05-10",
-            "apiVersionNetworkSecurityGroups": "2017-04-01",
-            "apiVersionPublicIPAddresses": "2017-04-01",
-            "apiVersionLoadBalancers": "2017-04-01",
-            "apiVersionVirtualNetworks": "2017-04-01",
-            "apiVersionVirtualNetworkGateways": "2017-04-01",
-            "apiVersionVirtualMachineScaleSets": "2017-03-30",
-            "apiVersionConnections": "2017-04-01",
-            "apiVersionDocumentDb": "2016-03-31"
+            "apiVersionDeployments": "2016-02-01",
+            "apiVersionNetworkSecurityGroups": "2017-06-01",
+            "apiVersionPublicIPAddresses": "2017-06-01",
+            "apiVersionLoadBalancers": "2017-06-01",
+            "apiVersionVirtualNetworks": "2017-06-01",
+            "apiVersionVirtualNetworkGateways": "2017-06-01",
+            "apiVersionVirtualMachineScaleSets": "2016-04-30-preview",
+            "apiVersionConnections": "2017-06-01",
+            "apiVersionDocumentDb": "2015-04-08"
         },
         "vnetName": "[concat(variables('namingInfix'), '-vnet')]",
         "txSubnetName": "[concat(uniqueString(resourceGroup().id, variables('namingInfix')), '-snet-tx')]",
