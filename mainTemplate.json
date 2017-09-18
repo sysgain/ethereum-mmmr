@@ -295,7 +295,7 @@
             "apiVersionLoadBalancers": "2017-06-01",
             "apiVersionVirtualNetworks": "2017-06-01",
             "apiVersionVirtualNetworkGateways": "2017-06-01",
-            "apiVersionVirtualMachineScaleSets": "2016-04-30-preview",
+            "apiVersionVirtualMachineScaleSets": "2017-03-30",
             "apiVersionConnections": "2017-06-01",
             "apiVersionDocumentDb": "2015-04-08"
         },
