@@ -279,8 +279,8 @@
         "sshNATFrontEndEndingPort": 4050,
         "gethRPCPort": 8545,
         "gethIPCPort": 30303,
-        "peerInfoDbName": "peer-registrar",
-        "peerInfoCollectionName": "data-collection",
+        "peerInfoDbName": "peer_registrar",
+        "peerInfoCollectionName": "data_collection",
         "linkedUrls": {
             "vmssSetupUrl": "[concat(variables('baseUrl'),'/nested/vmss.json')]",
             "connectionsSetupUrl": "[concat(variables('baseUrl'),'/nested/connections.json')]",
