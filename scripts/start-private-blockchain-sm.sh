@@ -61,7 +61,7 @@ VERBOSITY=4;
 
 echo "===== Starting geth node =====";
 set -x;
-nohup geth --datadir $GETH_HOME -verbosity $VERBOSITY --bootnodes $BOOTNODE_URLS --maxpeers $MAX_PEERS --nat none --networkid $NETWORK_ID --identity $IDENTITY $MINE_OPTIONS $FAST_SYNC --rpc --rpcaddr "$IPADDR" --rpccorsdomain "*" >> $GETH_LOG_FILE_PATH 2>&1 &
+nohup geth --datadir $GETH_HOME -verbosity $VERBOSITY $BOOTNODE_URLS --maxpeers $MAX_PEERS --nat none --networkid $NETWORK_ID --identity $IDENTITY $MINE_OPTIONS $FAST_SYNC --rpc --rpcaddr "$IPADDR" --rpccorsdomain "*" >> $GETH_LOG_FILE_PATH 2>&1 &
 if [ $? -ne 0 ]; then echo "Previous command failed. Exiting"; exit $?; fi
 set +x;
 echo "===== Started geth node =====";
