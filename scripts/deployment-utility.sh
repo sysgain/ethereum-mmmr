@@ -1,3 +1,9 @@
+# Utility function to exit with message
+unsuccessful_exit()
+{
+  echo "FATAL: Exiting script due to: $1";
+  exit 1;
+}
 function setup_dependencies
 {
         ################
@@ -181,7 +187,8 @@ function setup_system_ethereum_account
 
 	PRIV_KEY=`echo "$PASSPHRASE" | sha256sum | sed s/-// | sed "s/ //"`;
 	printf "%s" $PRIV_KEY > $HOMEDIR/priv_genesis.key;
-	PREFUND_ADDRESS=`geth --datadir $GETH_HOME --password $PASSWD_FILE account import $HOMEDIR/priv_genesis.key | grep -oP '\{\K[^}]+'`;
+	PREFUND_ADDRESS=`geth --datadir $GETH_HOME --password $PASSWD_FILE account import $HOMEDIR/priv_genesis.key | grep -oP '\{\K[^}]+'` || unsuccessful_exit "failed to import pre-fund account";
+        if [ -z $PREFUND_ADDRESS ]; then unsuccessful_exit "could not determine address of pre-fund account after importing into geth"; fi
 	rm $HOMEDIR/priv_genesis.key;
 	rm $PASSWD_FILE;
 }
