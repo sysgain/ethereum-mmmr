@@ -101,7 +101,7 @@ echo "remotepkey=$remotedocdbprimarykey"
 cd $HOMEDIR;
 hostcount=0
 allremotedocs=""
-while sleep 5; do
+while sleep 10; do
         allremotedocs=`sh getpost-utility.sh $remotedocdbprimarykey "${remoteendpointurl}dbs/${remotedbname}/colls/${remotecollname}/docs" get`
         echo "allRemotedocs: $allremotedocs"
         hostcount=`echo $allremotedocs | grep -Po '"bootNodeUrlNode":.*?",' | cut -d "," -f1 | cut -d '"' -f4 | wc -l`
