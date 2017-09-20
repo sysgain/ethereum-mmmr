@@ -79,7 +79,7 @@
             "metadata": {
                 "description": "Number of mining nodes to create for each consortium member"
             },
-            "minValue": 2,
+            "minValue": 1,
             "maxValue": 15
         },
         "mnNodeVMSize": {
