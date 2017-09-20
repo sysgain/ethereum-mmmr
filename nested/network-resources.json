@@ -1,0 +1,326 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetSettings": {
+            "type": "array"
+        },
+        "lbSettings": {
+            "type": "object"
+        },
+        "gatewaySettings": {
+            "type": "object"
+        },
+        "regionCount": {
+            "type": "int"
+        },
+        "locationArray": {
+            "type": "array"
+        },
+        "suffixArray": {
+            "type": "array"
+        }
+    },
+    "variables": {
+        "resourceGuid": "[parameters('lbSettings').resourceGuid]",
+        "apiVersionVirtualNetworks": "[parameters('vnetSettings')[0].apiVersionVirtualNetworks]",
+        "apiVersionNetworkSecurityGroups": "[parameters('vnetSettings')[0].apiVersionNetworkSecurityGroups]",
+        "apiVersionPublicIPAddresses": "[parameters('lbSettings').apiVersionPublicIPAddresses]",
+        "flag": "[parameters('gatewaySettings').flag]",
+        "numSubnets": "[parameters('vnetSettings')[0].numSubnets]",
+        "lbPublicIPAddressName": "[parameters('lbSettings').lbPublicIPAddressName]",
+        "publicIPAllocationMethod": "[parameters('lbSettings').publicIPAllocationMethod]",
+        "dnsHostName": "[parameters('lbSettings').dnsHostName]",
+        "apiVersionLoadBalancers": "[parameters('lbSettings').apiVersionLoadBalancers]",
+        "loadBalancerName": "[parameters('lbSettings').loadBalancerName]",
+        "lbFrontEndIpConfigName": "[parameters('lbSettings').lbFrontEndIpConfigName]",
+        "backendAddressPoolName": "[parameters('lbSettings').backendAddressPoolName]",
+        "FrontendPort1": "[parameters('lbSettings').FrontendPort1]",
+        "BackendPort1": "[parameters('lbSettings').BackendPort1]",
+        "FrontendPort2": "[parameters('lbSettings').FrontendPort2]",
+        "BackendPort2": "[parameters('lbSettings').BackendPort2]",
+        "gatewayPublicIPName": "[parameters('gatewaySettings').gatewayPublicIPName]",
+        "inboundNATRuleNamePrefix": "[parameters('lbSettings').inboundNATRuleNamePrefix]",
+        "inboundNATRuleFrontendStartingPort": "[parameters('lbSettings').inboundNATRuleFrontendStartingPort]",
+        "inboundNATRuleFrontendEndingPort": "[parameters('lbSettings').inboundNATRuleFrontendEndingPort]",
+        "inboundNATRuleBackendPort": "[parameters('lbSettings').inboundNATRuleBackendPort]"
+    },
+    "resources": [
+        {
+            "apiVersion": "[variables('apiVersionNetworkSecurityGroups')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('vnetSettings')[copyIndex()].mnNsgName]",
+            "location": "[parameters('locationArray')[copyIndex()]]",
+            "tags": {
+                "resourceGuid": "[variables('resourceGuid')]"
+            },
+            "copy": {
+                "name": "loop",
+                "count": "[parameters('regionCount')]"
+            },
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "block-bootnodes",
+                        "properties": {
+                            "description": "Block Internet Bootnodes",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "30303",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "Internet",
+                            "access": "Deny",
+                            "priority": 100,
+                            "direction": "Outbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersionNetworkSecurityGroups')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('vnetSettings')[copyIndex()].txNsgName]",
+            "location": "[parameters('locationArray')[copyIndex()]]",
+            "tags": {
+                "resourceGuid": "[variables('resourceGuid')]"
+            },
+            "copy": {
+                "name": "loop",
+                "count": "[parameters('regionCount')]"
+            },
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "allow-ssh",
+                        "properties": {
+                            "description": "Allow SSH",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "allow-geth-rpc",
+                        "properties": {
+                            "description": "Allow geth RPC",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "8545",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 101,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "allow-etheradmin",
+                        "properties": {
+                            "description": "Allow etheradmin web service",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "3000",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 102,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "block-bootnodes",
+                        "properties": {
+                            "description": "Block Internet Bootnodes",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "30303",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "Internet",
+                            "access": "Deny",
+                            "priority": 100,
+                            "direction": "Outbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersionVirtualNetworks')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('vnetSettings')[copyIndex()].vnetName]",
+            "location": "[parameters('locationArray')[copyIndex()]]",
+            "tags": {
+                "resourceGuid": "[variables('resourceGuid')]"
+            },
+            "copy": {
+                "name": "loop",
+                "count": "[parameters('regionCount')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('vnetSettings')[copyIndex()].txNsgName)]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('vnetSettings')[copyIndex()].mnNsgName)]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vnetSettings')[copyIndex()].addressSpacePrefix]"
+                    ]
+                },
+                "subnets": "[take(parameters('vnetSettings')[copyIndex()].subnetPropertiesArray, variables('numSubnets'))]"
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersionPublicIPAddresses')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[concat(variables('lbPublicIPAddressName'),'-',parameters('suffixArray')[copyIndex()])]",
+            "location": "[parameters('locationArray')[copyIndex()]]",
+            "tags": {
+                "resourceGuid": "[variables('resourceGuid')]"
+            },
+            "copy": {
+                "name": "loop",
+                "count": "[parameters('regionCount')]"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "[variables('publicIPAllocationMethod')]",
+                "dnsSettings": {
+                    "domainNameLabel": "[concat(variables('dnsHostName'),'-',parameters('suffixArray')[copyIndex()])]"
+                }
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersionLoadBalancers')]",
+            "name": "[concat(variables('loadBalancerName'),'-',parameters('suffixArray')[copyIndex()])]",
+            "type": "Microsoft.Network/loadBalancers",
+            "location": "[parameters('locationArray')[copyIndex()]]",
+            "tags": {
+                "resourceGuid": "[variables('resourceGuid')]"
+            },
+            "copy": {
+                "name": "loop",
+                "count": "[parameters('regionCount')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('lbPublicIPAddressName'),'-',parameters('suffixArray')[copyIndex()]))]"
+            ],
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "[variables('lbFrontEndIpConfigName')]",
+                        "properties": {
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('lbPublicIPAddressName'),'-',parameters('suffixArray')[copyIndex()]))]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[variables('backendAddressPoolName')]"
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "name": "LB-Rule1",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(variables('loadBalancerName'),'-',parameters('suffixArray')[copyIndex()])),'/frontendIPConfigurations/',variables('lbFrontEndIpConfigName'))]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(variables('loadBalancerName'),'-',parameters('suffixArray')[copyIndex()])),'/backendAddressPools/', variables('backendAddressPoolName'))]"
+                            },
+                            "protocol": "Tcp",
+                            "frontendPort": "[variables('FrontendPort1')]",
+                            "backendPort": "[variables('BackendPort1')]",
+                            "idleTimeoutInMinutes": 5,
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(variables('loadBalancerName'),'-',parameters('suffixArray')[copyIndex()])),'/probes/lbProbe1')]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "LB-Rule2",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(variables('loadBalancerName'),'-',parameters('suffixArray')[copyIndex()])),'/frontendIPConfigurations/',variables('lbFrontEndIpConfigName'))]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(variables('loadBalancerName'),'-',parameters('suffixArray')[copyIndex()])),'/backendAddressPools/', variables('backendAddressPoolName'))]"
+                            },
+                            "protocol": "Tcp",
+                            "frontendPort": "[variables('FrontendPort2')]",
+                            "backendPort": "[variables('BackendPort2')]",
+                            "idleTimeoutInMinutes": 5,
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(variables('loadBalancerName'),'-',parameters('suffixArray')[copyIndex()])),'/probes/lbProbe2')]"
+                            }
+                        }
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "lbProbe1",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": "[variables('BackendPort1')]",
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    },
+                    {
+                        "name": "lbProbe2",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": "[variables('BackendPort2')]",
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    }
+                ],
+                "inboundNatPools": [
+                    {
+                        "name": "[variables('inboundNATRuleNamePrefix')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(variables('loadBalancerName'),'-',parameters('suffixArray')[copyIndex()])),'/frontendIPConfigurations/',variables('lbFrontEndIpConfigName'))]"
+                            },
+                            "protocol": "Tcp",
+                            "frontendPortRangeStart": "[variables('inboundNATRuleFrontendStartingPort')]",
+                            "frontendPortRangeEnd": "[variables('inboundNATRuleFrontendEndingPort')]",
+                            "backendPort": "[variables('inboundNATRuleBackendPort')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "condition": "[equals(variables('flag'),'1')]",
+            "apiVersion": "[variables('apiVersionVirtualNetworks')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[concat(variables('gatewayPublicIPName'),'-',parameters('suffixArray')[copyIndex()])]",
+            "location": "[parameters('locationArray')[copyIndex()]]",
+            "tags": {
+                "resourceGuid": "[variables('resourceGuid')]"
+            },
+            "copy": {
+                "name": "loop",
+                "count": "[parameters('regionCount')]"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic"
+            }
+        }
+    ],
+    "outputs": {
+        "lbFqdnReg1": {
+            "type": "string",
+            "value": "[reference(concat(variables('lbPublicIPAddressName'),'-',parameters('suffixArray')[0])).dnsSettings.fqdn]"
+        }
+    }
+}

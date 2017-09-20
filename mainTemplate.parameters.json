@@ -1,0 +1,93 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "namePrefix": {
+            "value": "eth"
+        },
+        "mode": {
+            "value": "Leader"
+        },
+        "regionCount": {
+            "value": 2
+        },
+        "location_1": {
+            "value": "westus"
+        },
+        "location_2": {
+            "value": "eastus"
+        },
+        "location_3": {
+            "value": "centralus"
+        },
+        "location_4": {
+            "value": "eastus2"
+        },
+        "location_5": {
+            "value": "westus2"
+        },
+        "authType": {
+            "value": "password"
+        },
+        "adminUsername": {
+            "value": "gethadmin"
+        },
+        "adminPassword": {
+            "value": "Ashpassword123"
+        },
+        "adminSSHKey": {
+            "value": ""
+        },
+        "ethereumNetworkID": {
+            "value": 10101010
+        },
+        "consortiumMemberId": {
+            "value": 0
+        },
+        "ethereumAccountPsswd": {
+            "value": "Ashpassword123"
+        },
+        "ethereumAccountPassphrase": {
+            "value": "Ashpassword123"
+        },
+        "numMiningNodesRegion": {
+            "value": 2
+        },
+        "mnNodeVMSize": {
+            "value": "Standard_A1"
+        },
+        "mnStorageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "numTXNodesRegion": {
+            "value": 2
+        },
+        "txNodeVMSize": {
+            "value": "Standard_A1"
+        },
+        "txStorageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "connectionSharedKey": {
+            "value": "Ashpassword123"
+        },
+        "consortiumMemberGatewayId": {
+            "value": ""
+        },
+        "consortiumDataURL": {
+            "value": ""
+        },
+        "peerInfoEndpoint": {
+            "value": ""
+        },
+        "peerInfoPrimaryKey": {
+            "value": ""
+        },
+        "genesisBlock": {
+            "value": ""
+        },
+        "baseUrl": {
+            "value": "https://raw.githubusercontent.com/sysgain/ethereum-mmmr/mmmr-dev3"
+        }
+    }
+}

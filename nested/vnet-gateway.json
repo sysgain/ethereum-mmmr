@@ -1,0 +1,78 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetSettings": {
+            "type": "array"
+        },
+        "gatewaySettings": {
+            "type": "object"
+        },
+        "regionCount": {
+            "type": "int"
+        },
+        "locationArray": {
+            "type": "array"
+        },
+        "suffixArray": {
+            "type": "array"
+        }
+    },
+    "variables": {
+        "resourceGuid": "[parameters('gatewaySettings').resourceGuid]",
+        "apiVersionVirtualNetworkGateways": "[parameters('gatewaySettings').apiVersionVirtualNetworkGateways]",
+        "gatewayPublicIPName": "[parameters('gatewaySettings').gatewayPublicIPName]",
+        "gatewayName": "[parameters('gatewaySettings').gatewayName]",
+        "gatewaySubnetName": "[parameters('gatewaySettings').gatewaySubnetName]",
+        "gatewaySku": "[parameters('gatewaySettings').gatewaySku]",
+        "flag": "[parameters('gatewaySettings').flag]"
+    },
+    "resources": [
+        {
+            "condition": "[equals(variables('flag'),'1')]",
+            "apiVersion": "[variables('apiVersionVirtualNetworkGateways')]",
+            "type": "Microsoft.Network/virtualNetworkGateways",
+            "name": "[concat(variables('gatewayName'),'-',parameters('suffixArray')[copyIndex()])]",
+            "location": "[parameters('locationArray')[copyIndex()]]",
+            "tags": {
+                "resourceGuid": "[variables('resourceGuid')]"
+            },
+            "copy": {
+                "name": "loop",
+                "count": "[parameters('regionCount')]"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "vNetGatewayConfig",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('vnetSettings')[copyIndex()].vnetName),'/subnets/',variables('gatewaySubnetName'))]"
+                            },
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(variables('gatewayPublicIPName'),'-',parameters('suffixArray')[copyIndex()]))]"
+                            }
+                        }
+                    }
+                ],
+                "gatewayType": "Vpn",
+                "sku": {
+                    "name": "[variables('gatewaySku')]",
+                    "tier": "[variables('gatewaySku')]"
+                },
+                "vpnType": "RouteBased",
+                "enableBgp": true,
+                "bgpSettings": {
+                    "asn": "[parameters('vnetSettings')[copyIndex()].gatewayAsn]"
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "gatewayIdReg1": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/virtualNetworkGateways',concat(variables('gatewayName'),'-',parameters('suffixArray')[0]))]"
+        }
+    }
+}
