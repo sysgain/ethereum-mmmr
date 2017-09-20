@@ -12,7 +12,6 @@
         },
         "mode": {
             "type": "string",
-            "defaultValue": "Leader",
             "allowedValues": [
                 "Leader",
                 "Member",
@@ -91,7 +90,7 @@
         },
         "adminPassword": {
             "type": "securestring",
-            "defaultValue": "Ashpassword123",
+            "defaultValue": "",
             "metadata": {
                 "description": "Administrator password for each deployed VM"
             }
@@ -121,14 +120,14 @@
         },
         "ethereumAccountPsswd": {
             "type": "securestring",
-            "defaultValue": "Ashpassword123",
+            "defaultValue": "",
             "metadata": {
                 "description": "Password used to secure the default Ethereum account that will be generated"
             }
         },
         "ethereumAccountPassphrase": {
             "type": "securestring",
-            "defaultValue": "Ashpassword123",
+            "defaultValue": "",
             "metadata": {
                 "description": "Password used to generate the private key associated with the default Ethereum account that is generated.  Consider a password with sufficient randomness to ensure a strong private key"
             }
@@ -212,7 +211,7 @@
         },
         "connectionSharedKey": {
             "type": "string",
-            "defaultValue": "Ashpassword123",
+            "defaultValue": "",
             "metadata": {
                 "description": "Shared Key for the Gateway Connection"
             }
@@ -258,7 +257,7 @@
                 "description": "The base URL for dependent assets",
                 "artifactsBaseUrl": ""
             },
-            "defaultValue": "https://raw.githubusercontent.com/sysgain/ethereum-mmmr/mmmr-dev3"
+            "defaultValue": "https://raw.githubusercontent.com/sysgain/ethereum-mmmr/master"
         }
     },
     "variables": {
