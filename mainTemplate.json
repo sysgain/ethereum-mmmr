@@ -79,7 +79,7 @@
             "metadata": {
                 "description": "Number of mining nodes to create for each consortium member"
             },
-            "minValue": 1,
+            "minValue": 2,
             "maxValue": 15
         },
         "mnNodeVMSize": {
@@ -173,7 +173,7 @@
         "gethIPCPort": 30303,
         "txNode": 0,
         "mnNode": 1,
-        "maxPeers": 25,
+        "maxPeers": 30,
         "txIpConfig": "tx-ipconfig",
         "mnIpConfig": "mn-ipconfig",
         "virtualNetworkName": "[concat(variables('namingInfix'), '-vnet')]",

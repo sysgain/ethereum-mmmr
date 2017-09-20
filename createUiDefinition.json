@@ -120,14 +120,10 @@
                                 "name": "numMiningNodesPerMember",
                                 "type": "Microsoft.Common.DropDown",
                                 "label": "Number of mining nodes per member",
-                                "defaultValue": "1",
+                                "defaultValue": "2",
                                 "toolTip": "Mining nodes record transactions within a blockchain network.  Choose the number of nodes that meet your availability and security requirements.",
                                 "constraints": {
                                     "allowedValues": [
-                                        {
-                                            "label": "1",
-                                            "value": 1
-                                        },
                                         {
                                             "label": "2",
                                             "value": 2
